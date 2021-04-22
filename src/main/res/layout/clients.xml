@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/LinearLayoutClientsList"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	tools:context=".ClientsActivity" >
+
+	<include layout="@layout/toobar" />
+
+	<Spinner
+		android:id="@+id/spinnerGroupClients"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" />
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1" >
+
+	<ListView
+		android:id="@+id/lvClients"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:divider="@color/greydivider"
+		android:dividerHeight="@dimen/twodp"
+		android:drawSelectorOnTop="false"
+		android:layout_toLeftOf="@+id/quickscroll"
+		android:overScrollMode="never"
+		android:scrollbars="none" />
+
+	<TextView android:id="@android:id/empty"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:text="@string/list_is_empty"
+		android:gravity="top" />
+
+	<com.andraskindler.quickscroll.QuickScroll
+		android:id="@+id/quickscroll"
+		android:layout_width="wrap_content"
+		android:layout_alignTop="@id/lvClients"
+		android:layout_alignBaseline="@id/lvClients"
+		android:layout_height="match_parent"
+		android:layout_alignParentRight="true"/>
+
+</RelativeLayout>
+        
+</LinearLayout>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:key="root_preferences">
+    
+    <ListPreference
+        android:key="app_theme"
+        android:summary="@string/app_theme"
+        android:title="@string/app_theme_title"
+        android:defaultValue="DARK"
+        android:entries="@array/app_theme_entries"
+        android:entryValues="@array/app_theme_values"
+        android:dialogTitle="@string/app_theme_dialog_title"
+        >
+        
+    </ListPreference>
+    
+    <EditTextPreference
+        android:key="web_server_address"
+        android:title="@string/preferences_web_server_address_title"
+        android:summary="@string/preferences_server_address_summary"
+        android:defaultValue="192.168.0.100"        
+        android:singleLine="true" >
+    </EditTextPreference>
+    
+    <ru.code22.mtrade.DatePreference
+        android:key="start_date_for_occupied_places"
+        android:title="@string/start_date_for_occupied_places"
+        android:defaultValue="2014.01.01"
+        >
+    </ru.code22.mtrade.DatePreference>
+    
+    <EditTextPreference
+        android:key="server_address"
+        android:title="@string/preferences_ftp_server_address_title"
+        android:summary="@string/preferences_server_address_summary"
+        android:singleLine="true" >
+    </EditTextPreference>
+    
+    <EditTextPreference
+        android:key="server_address_for_wifi_connection"
+        android:title="@string/preferences_ftp_server_address_for_wifi_connection_title"
+        android:summary="@string/preferences_server_address_for_wifi_connection_summary"
+        android:singleLine="true" >
+    </EditTextPreference>
+    
+
+    <EditTextPreference
+        android:key="server_user"
+        android:summary="@string/preferences_server_user_summary"
+        android:title="@string/preferences_server_user_title"
+        android:singleLine="true"  >
+    </EditTextPreference>
+    
+    <EditTextPreference
+        android:key="server_password"
+        android:summary="@string/preferences_server_password_summary"
+        android:title="@string/preferences_server_password_title"
+        android:singleLine="true" >
+    </EditTextPreference>
+    
+    <EditTextPreference
+        android:key="server_directory"
+        android:summary="@string/preferences_server_directory_summary"
+        android:title="@string/preferences_server_directory_title"
+        android:singleLine="true" >
+    </EditTextPreference>
+    
+    <ListPreference
+        android:key="data_format"
+        android:summary="@string/data_format_summary"
+        android:title="@string/data_format_title"
+        android:defaultValue="DM"
+        android:entries="@array/data_format_entries"
+        android:entryValues="@array/data_format_values"
+        android:dialogTitle="@string/data_format_dialog_title"
+        >
+        
+    </ListPreference>
+
+    <ListPreference
+        android:key="currency"
+        android:summary="@string/currency_summary"
+        android:title="@string/currency_title"
+        android:defaultValue="RUR"
+        android:entries="@array/currency_entries"
+        android:entryValues="@array/currency_values"
+        android:dialogTitle="@string/currency_dialog_title"
+        >
+
+    </ListPreference>
+
+    
+</PreferenceScreen>

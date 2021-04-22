@@ -1,0 +1,4 @@
+/build
+/.cxx/
+signing.properties
+google-services.json

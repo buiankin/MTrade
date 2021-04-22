@@ -1,0 +1,121 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+
+    signingConfigs {
+        config {
+            keyAlias 'androiddebugkey'
+            storeFile file('C:/android/workspace/keys/debug.keystore')
+            keyPassword 'android'
+            storePassword 'android'
+        }
+        release
+    }
+
+    compileSdkVersion 29
+    defaultConfig {
+        applicationId "ru.code22.mtrade"
+        minSdkVersion 16
+        targetSdkVersion 29
+        versionCode 395
+        versionName "3.95"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        ndk{
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+        }
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+        android.ndkVersion '20.0.5594570'
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.config
+            debuggable true
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            path 'src/main/jni/Android.mk'
+        }
+    }
+    packagingOptions {
+        pickFirst 'lib/armeabi-v7a/libmain.so'
+        pickFirst 'lib/mips/libmain.so'
+        pickFirst 'lib/x86/libmain.so'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.4.0-alpha02'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'com.androidessence:recyclerviewcursoradapter:1.0.0'
+
+    //implementation files('libs/commons-net-3.6.jar')
+    //implementation files('libs/jheader-0.1.jar')
+    //implementation files('libs/ksoap2-android-assembly-3.3.0-jar-with-dependencies.jar')
+    //implementation files('libs/universal-image-loader-1.9.5.jar')
+    // чуть не воспользовался WildcardFileFilter от апача из commons.io, но там минимальные требования api 24
+    // поэтому ставим версию 2.6 (я ее скопировал в lib)
+    //implementation "commons-io:commons-io:2.7"
+    // add SDKs for desired Firebase products
+    // https://firebase.google.com/docs/android/setup#available-libraries
+
+    implementation 'com.google.firebase:firebase-core:18.0.3'
+    implementation 'com.google.firebase:firebase-iid:21.1.0'
+    implementation 'com.google.firebase:firebase-messaging:21.1.0'
+
+    implementation 'android.arch.work:work-runtime:1.0.1'
+    implementation 'androidx.preference:preference:1.1.1'
+
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'org.jetbrains:annotations-java5:15.0'
+
+    implementation 'com.google.android.play:core:1.10.0'
+    debugImplementation 'com.idescout.sql:sqlscout-server:4.1'
+    releaseImplementation 'com.idescout.sql:sqlscout-server-noop:4.1'//for new version updater
+
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+
+}
+
+// Add a file signing.properties
+File propFile = file('signing.properties');
+if (propFile.exists()) {
+    def Properties props = new Properties()
+    props.load(new FileInputStream(propFile))
+
+    if (props.containsKey('STORE_FILE') && props.containsKey('STORE_PASSWORD') &&
+            props.containsKey('KEY_ALIAS') && props.containsKey('KEY_PASSWORD')) {
+        android.signingConfigs.release.storeFile = file(props['STORE_FILE'])
+        android.signingConfigs.release.storePassword = props['STORE_PASSWORD']
+        android.signingConfigs.release.keyAlias = props['KEY_ALIAS']
+        android.signingConfigs.release.keyPassword = props['KEY_PASSWORD']
+    } else {
+        android.buildTypes.release.signingConfig = null
+    }
+} else {
+    android.buildTypes.release.signingConfig = null
+}
+
+apply plugin: 'com.google.gms.google-services'

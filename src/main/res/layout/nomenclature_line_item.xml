@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayoutNomenclatureLineItem"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/layoutNomenclatureGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/GRAY">
+
+        <TextView
+            android:id="@+id/tvNomenclatureGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:text="NomenclatureGroup"
+            android:layout_toLeftOf="@id/ibtnNomenclatureGroup"
+            android:textStyle="bold"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toStartOf="@id/ibtnNomenclatureGroup" />
+
+        <ImageButton
+            android:id="@+id/ibtnNomenclatureGroup"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="false"
+            android:background="@android:drawable/ic_menu_gallery"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:padding="0dp"
+            android:scaleType="center"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:id="@+id/tvNomenclatureGroupSales"
+            android:layout_below="@id/tvNomenclatureGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NomenclatureGroupSales"
+            android:textColor="@color/DARK_ORANGE"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/LinearLayoutNomenclatureList_1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/tvNomenclatureLineDescr"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="TextView" />
+
+
+        <LinearLayout
+            android:id="@+id/linearLayoutSumQuantity2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            
+        <ImageButton
+            android:id="@+id/ibtnNomenclatureLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:cropToPadding="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:padding="0dp"
+            android:scaleType="center"
+            android:background="@android:drawable/ic_menu_gallery" />
+            
+            <TextView
+                android:id="@+id/tvNomenclatureLinePrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="Price" />
+
+            <TextView
+                android:id="@+id/tvNomenclatureLineRests"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="Rests" />
+
+            <TextView
+                android:id="@+id/tvNomenclatureLineSales"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="Sales" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LinearLayoutNomenclatureList_2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right" >
+
+        <TextView
+            android:id="@+id/tvNomenclatureLineSalesHistoryPeriod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:text="SalesHistoryPeriod" />
+
+        <TextView
+            android:id="@+id/tvNomenclatureLineSalesNowPeriod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SalesNowPeriod" />
+    </LinearLayout>
+
+</LinearLayout>

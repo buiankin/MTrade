@@ -1,0 +1,160 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".PlacesActivity" >
+    
+    
+<LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false" >
+
+            <LinearLayout
+                android:id="@+id/layoutOrderTime"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/tvOrderTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_order_time" />
+                
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+                
+                <EditText
+                    android:id="@+id/etPlacesTime"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:hint="@string/hint_time_not_set"
+                    android:imeOptions="actionNext"
+                    android:inputType="time"
+                    android:singleLine="true"
+                    android:ems="5"
+                    android:text="00:00" />
+                
+				<Button
+                    android:id="@+id/buttonPlacesSelectTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:text="..." />
+				</LinearLayout>                
+            
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textViewOrderDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_date" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <EditText
+                        android:id="@+id/etPlacesDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:clickable="false"
+                        android:cursorVisible="false"
+                        android:ellipsize="end"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:hint="@string/hint_date_not_set"
+                        android:imeOptions="actionNext"
+                        android:inputType="date"
+                        android:singleLine="true"
+                        android:ems="5"
+                        android:text="01.01.2013" />
+
+                    <Button
+                        android:id="@+id/buttonPlacesSelectDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:text="..." />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+        
+        <TextView
+            android:id="@+id/textViewPlace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_place" />
+
+        <LinearLayout
+            android:id="@+id/layoutPlaces"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <EditText
+                android:id="@+id/editTextPlace"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:ellipsize="end"
+                android:ems="10"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:inputType="textNoSuggestions"
+                android:singleLine="true" />
+        </LinearLayout>
+            
+	<FrameLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="1" >
+	        
+	<ListView android:layout_width="match_parent" 
+	  android:layout_height="match_parent" 
+	  android:id="@+id/listViewPlaces">
+	</ListView>
+	
+	<TextView android:id="@android:id/empty" 
+  		android:layout_width="match_parent"
+  		android:layout_height="match_parent"
+  		android:text="@string/list_is_empty" />
+	
+	</FrameLayout>
+	
+	
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/buttonPlacesOk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@android:string/ok"
+            />
+        
+        <Button
+            android:id="@+id/buttonPlacesCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@android:string/cancel"
+            />
+    </LinearLayout>
+
+</LinearLayout>

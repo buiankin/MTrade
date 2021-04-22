@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <SeekBarPreference
+        android:layout_width="match_parent"
+        android:key="nomenclatureListColumnsPortrait"
+        android:max="10"
+        android:title="@string/list_columns_portrait"
+        android:defaultValue="2"
+        app:showSeekBarValue="true"
+        app:min="2" />
+
+    <SeekBarPreference
+        android:layout_width="match_parent"
+        android:key="nomenclatureListColumnsLandscape"
+        android:max="12"
+        android:title="@string/list_columnds_landscape"
+        android:defaultValue="4"
+        app:showSeekBarValue="true"
+        app:min="2" />
+
+</PreferenceScreen>

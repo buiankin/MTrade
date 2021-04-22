@@ -1,0 +1,34 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/trade_points_item_descr"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="TextView"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/trade_points_item_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/trade_points_item_descr"
+        android:layout_toLeftOf="@+id/trade_points_item_pricetype"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/trade_points_item_pricetype"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/trade_points_item_descr"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/trade_points_item_descr"
+        android:text="TextView" />
+
+</RelativeLayout>

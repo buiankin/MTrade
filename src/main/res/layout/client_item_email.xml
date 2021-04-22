@@ -1,0 +1,58 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingTop="2dip"
+    android:paddingBottom="2dip"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:mode="twoLine"
+>
+    
+    <TextView android:id="@+id/client_item_text1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dip"
+        android:layout_marginTop="6dip"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="client_item_text1"
+    />
+
+    <TextView android:id="@+id/client_item_text2_0"
+        style="@style/textViewEmail"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/client_item_text1"
+        android:layout_alignLeft="@id/client_item_text1"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="client_item_text2_0"
+        />
+
+        
+    <TextView android:id="@+id/client_item_text2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/client_item_text2_0"
+        android:layout_alignLeft="@id/client_item_text1"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="client_item_text2"
+    />
+
+    <TextView
+        android:id="@+id/client_item_text3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/client_item_text1"
+        android:text="client_item_text3"
+    />
+
+    <TextView
+        android:id="@+id/client_item_text4"
+        style="@style/textViewDolgPast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/client_item_text2"
+        android:layout_below="@id/client_item_text1"
+        android:text="client_item_text4"
+         />
+
+
+</RelativeLayout>

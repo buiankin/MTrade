@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <ListPreference
+        android:key="payment_agreement_select_style"
+        android:summary="@string/payment_agreement_select_style"
+        android:title="@string/payment_agreement_select_style_title"
+        android:defaultValue="DEFAULT"
+        android:entries="@array/payment_agreement_select_style_entries"
+        android:entryValues="@array/payment_agreement_select_style_values"
+        android:dialogTitle="@string/payment_agreement_select_style_dialog_title"
+        >
+    </ListPreference>
+</PreferenceScreen>        

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_routes"
+            android:icon="@drawable/ic_menu_routes"
+            android:title="@string/tab_routes" />
+        <item
+            android:id="@+id/nav_orders"
+            android:icon="@drawable/ic_menu_orders"
+            android:title="@string/tab_orders" />
+        <item
+            android:id="@+id/nav_payments"
+            android:icon="@drawable/ic_menu_payments"
+            android:title="@string/tab_payments" />
+        <item
+            android:id="@+id/nav_messages"
+            android:icon="@drawable/ic_menu_messages"
+            android:title="@string/tab_messages" />
+        <item
+            android:id="@+id/nav_exchange"
+            android:icon="@drawable/ic_menu_exchange"
+            android:title="@string/tab_exchange" />
+
+    </group>
+
+    <group android:id="@+id/nav_setings_exit">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/action_settings" />
+        <item
+            android:id="@+id/nav_exit"
+            android:icon="@drawable/ic_menu_exit"
+            android:title="@string/action_exit" />
+    </group>
+
+</menu>

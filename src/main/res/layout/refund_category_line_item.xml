@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+    
+    <LinearLayout
+        android:id="@+id/linearLayoutSumQuantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:orientation="vertical" >
+        
+    <TextView
+        android:id="@+id/textViewRefundLineDiscount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Discount"
+        android:textColor="@color/DARK_GREEN" />
+        
+    <TextView
+        android:id="@+id/textViewRefundLineSum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Sum" />
+    
+    <TextView
+        android:id="@+id/textViewRefundDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Quantity" />
+        
+    </LinearLayout>
+    
+    <TextView
+        android:id="@+id/textViewRefundLineNomenclature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@id/linearLayoutSumQuantity"
+        android:text="TextView" />
+
+</RelativeLayout>
+    

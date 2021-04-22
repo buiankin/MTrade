@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_print_list"
+        android:orderInCategory="100"
+        android:title="@string/action_print_list"/>
+    <item
+        android:id="@+id/action_print_ko"
+        android:orderInCategory="101"
+        android:title="@string/action_print_ko"/>
+    <item
+        android:id="@+id/action_print_both"
+        android:orderInCategory="102"
+        android:title="@string/action_print_both"/>
+
+</menu>

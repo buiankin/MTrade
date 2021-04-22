@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutNomenclatureLineItemGroup"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/GRAY">
+
+    <TextView
+        android:id="@+id/tvNomenclatureGroup"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="NomenclatureGroup"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvNomenclatureGroupSales"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="NomenclatureGroupSales"
+        android:textColor="@color/DARK_ORANGE"
+        android:textStyle="bold" />
+
+
+</LinearLayout>

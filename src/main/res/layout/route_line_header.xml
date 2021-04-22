@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutNomenclatureLineItemGroup"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="?android:attr/selectableItemBackground"
+    >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+    <TextView
+        android:id="@+id/tvRouteLineHeaderLineNo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="1."
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvRouteLineHeaderDescr"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:text="RouteLineHeaderDescr"
+        android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <RelativeLayout android:id="@+id/layoutNomenclatureLineItemGroupDebt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        >
+
+    <TextView
+        android:id="@+id/tvRouteLineHeaderDebt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/tvRouteLineHeaderDebtPast"
+        android:text="RouteLineHeaderDebt"/>
+
+    <TextView
+        android:id="@+id/tvRouteLineHeaderDebtPast"
+        style="@style/textViewDolgPast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:text="RouteLineHeaderDebtPast" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayoutContractsLineItem"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/layoutContractsGroup"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/GRAY" >
+        
+        <TextView
+            android:id="@+id/tvContractsGroup"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="ContractsGroup"
+            android:textStyle="bold" />
+        
+        <ImageButton
+            android:id="@+id/ibtnContractsGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="false"
+            android:padding="0dp"
+            android:scaleType="center"
+  			android:focusable="false"
+  			android:focusableInTouchMode="false"            
+            android:src="@android:drawable/ic_menu_gallery" />
+        
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LinearLayoutContractsList_1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/tvContractsLineDescr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="TextView" />
+
+
+        <LinearLayout
+            android:id="@+id/linearLayoutSumQuantity2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            
+        <ImageButton
+            android:id="@+id/ibtnContractsLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:cropToPadding="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:padding="0dp"
+            android:scaleType="center"
+            android:src="@android:drawable/ic_menu_gallery" />
+            
+            <TextView
+                android:id="@+id/tvContractsLinePrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="Price" />
+
+            <TextView
+                android:id="@+id/tvContractsLineRests"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="Rests" />
+
+            <TextView
+                android:id="@+id/tvContractsLineSales"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="Sales" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LinearLayoutContractsList_2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right" >
+
+        <TextView
+            android:id="@+id/tvContractsLineSalesHistoryPeriod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:text="SalesHistoryPeriod" />
+
+        <TextView
+            android:id="@+id/tvContractsLineSalesNowPeriod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SalesNowPeriod" />
+    </LinearLayout>
+
+</LinearLayout>

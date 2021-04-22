@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sabd="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_create_order"
+        android:orderInCategory="101"
+        android:title="@string/action_create_order"
+        android:icon="@android:drawable/ic_menu_add"
+        sabd:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_create_payment"
+        android:orderInCategory="102"
+        android:title="@string/action_create_payment"
+        android:icon="@android:drawable/ic_menu_add"
+        sabd:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_create_refund"
+        android:orderInCategory="103"
+        android:title="@string/action_create_refund"
+        android:icon="@android:drawable/ic_menu_add"
+        sabd:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_create_distribs"
+        android:orderInCategory="104"
+        android:title="@string/action_create_distribs"
+        android:icon="@android:drawable/ic_menu_add"
+        sabd:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_cancel_visit"
+        android:orderInCategory="105"
+        android:title="@string/action_cancel_visit"/>
+
+    <item
+        android:id="@+id/action_end_visit"
+        android:orderInCategory="106"
+        android:title="@string/action_end_visit"/>
+
+</menu>

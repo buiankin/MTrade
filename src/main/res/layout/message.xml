@@ -1,0 +1,306 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+     android:layout_width="match_parent"
+    android:orientation="vertical"
+    tools:context=".MessageActivity">
+
+    <include layout="@layout/toobar" />
+
+
+<ScrollView
+    android:id="@+id/ScrollView1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:overScrollMode="never"
+    android:scrollbars="vertical" >
+
+<LinearLayout android:id="@+id/LinearLayoutNomenclatureList"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+     >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/tvMessageType"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/label_message_type" />
+
+        <TextView
+            android:id="@+id/tvMessageDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    </LinearLayout>
+
+    <EditText
+       android:id="@+id/etMessageType"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:clickable="false"
+       android:cursorVisible="false"
+       android:ellipsize="end"
+       android:ems="10"
+       android:focusable="false"
+       android:focusableInTouchMode="false"
+       android:inputType="textNoSuggestions"
+       android:singleLine="true" />
+
+    <Spinner
+       android:id="@+id/spinnerMessageType"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tvMessageAbonent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_abonent" />
+
+        <LinearLayout
+            android:id="@+id/layoutMessageAbonent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/etMessageAbonent"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:ellipsize="end"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:gravity="center_vertical|left"
+                android:inputType="textNoSuggestions"
+                android:singleLine="true" />
+
+            <Button
+                android:id="@+id/buttonMessageSelectAbonent"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:text="..." />
+
+            <Button
+                android:id="@+id/ButtonMessageClearAbonent"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:text="X" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvMessageClient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_client" />
+
+        <LinearLayout
+            android:id="@+id/layoutMessageClient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/etMessageClient"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:ellipsize="end"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:gravity="center_vertical|left"
+                android:inputType="textNoSuggestions"
+                android:singleLine="true" />
+
+            <Button
+                android:id="@+id/buttonMessageSelectClient"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:text="..." />
+
+            <Button
+                android:id="@+id/ButtonMessageClearClient"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:text="X" />
+        </LinearLayout>
+
+		<TextView
+            android:id="@+id/tvMessageAgreement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_agreement" />
+
+		<LinearLayout
+            android:id="@+id/layoutMessageAgreement"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/etMessageAgreement"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:ellipsize="end"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:gravity="center_vertical|left"
+                android:inputType="textNoSuggestions"
+                android:singleLine="true" />
+
+            <Button
+                android:id="@+id/buttonMessageSelectAgreement"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:text="..." />
+
+            <Button
+                android:id="@+id/ButtonMessageClearAgreement"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:text="X" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvMessageLabelDate1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_date_begin" />
+
+        <LinearLayout
+            android:id="@+id/layoutMessageDate1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/etMessageDate1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="date" />
+
+            <Button
+                android:id="@+id/btnMessageDate1Edit"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="..." />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvMessageLabelDate2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/label_date_end" />
+
+        <LinearLayout
+            android:id="@+id/layoutMessageDate2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/etMessageDate2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="date" />
+
+            <Button
+                android:id="@+id/btnMessageDate2Edit"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="..." />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvMessageLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_message_text" />
+
+        <EditText
+            android:id="@+id/etMessageText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:gravity="center_vertical|top" >
+
+            <requestFocus />
+        </EditText>
+
+        <WebView
+            android:id="@+id/wvMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvMessageFile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+        <LinearLayout
+            android:id="@+id/layoutMessageFile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/etMessageFile"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:ellipsize="end"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:gravity="center_vertical|left"
+                android:inputType="textNoSuggestions"
+                android:singleLine="true" />
+
+            <Button
+                android:id="@+id/buttonMessageSelectFile"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:text="..." />
+
+            <Button
+                android:id="@+id/ButtonMessageClearFile"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:text="X" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imageViewMessage"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:src="@mipmap/ic_launcher" />
+
+</LinearLayout>
+</ScrollView>
+</LinearLayout>

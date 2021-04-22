@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvExchangeState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/exchange_not_executed" />
+
+    <Button
+        android:id="@+id/btnExchangeWebService"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/exchange_ws" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btnConnect"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="@string/connect" />
+
+        <Button
+            android:id="@+id/btnRefresh"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="@string/refresh" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnQueryDocs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/query_docs" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btnReceive"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="@string/receive" />
+
+        <Button
+            android:id="@+id/btnNomenclaturePhotos"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="@string/nomenclature_photos" />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/etTest"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clickable="false"
+        android:cursorVisible="false"
+        android:ellipsize="end"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:hint="@string/hint_empty_log"
+        android:imeOptions="actionDone"
+        android:inputType="textMultiLine|textNoSuggestions" />
+
+
+</LinearLayout>

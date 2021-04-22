@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".PaymentActivity" >
+
+    <include layout="@layout/toobar" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/pagerPayment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <androidx.viewpager.widget.PagerTabStrip
+            android:id="@+id/pagerTabStrip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top" >
+        </androidx.viewpager.widget.PagerTabStrip>
+    </androidx.viewpager.widget.ViewPager>
+
+</LinearLayout>

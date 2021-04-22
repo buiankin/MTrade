@@ -1,0 +1,37 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayoutContractsList"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ContractsActivity" >
+    
+    <LinearLayout android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"> 
+    <Spinner
+        android:id="@+id/spinnerGroupContracts"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lvContracts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@color/greydivider"
+        android:dividerHeight="@dimen/twodp"
+        android:drawSelectorOnTop="false"
+        android:fastScrollEnabled="true"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false"
+        android:scrollbarAlwaysDrawVerticalTrack="false"
+        android:textFilterEnabled="true" >
+
+    </ListView>
+    
+	<TextView android:id="@android:id/empty" 
+  		android:layout_width="match_parent" android:layout_height="match_parent"
+  		android:text="@string/list_is_empty" />
+    
+</LinearLayout>

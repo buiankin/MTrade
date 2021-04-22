@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_copy_order"
+        android:orderInCategory="101"
+        android:title="@string/action_copy_order"/>
+    <item
+        android:id="@+id/action_copy_order_to_refund"
+        android:orderInCategory="102"
+        android:title="@string/action_copy_order_to_refund"/>
+    <item
+        android:id="@+id/action_delete_order"
+        android:orderInCategory="103"
+        android:title="@string/action_delete_order"/>
+    <item
+        android:id="@+id/action_cancel_order"
+        android:orderInCategory="104"
+        android:title="@string/action_cancel_order"/>
+    <item
+        android:id="@+id/action_copy_refund"
+        android:orderInCategory="105"
+        android:title="@string/action_copy_refund"/>
+    <item
+        android:id="@+id/action_delete_refund"
+        android:orderInCategory="106"
+        android:title="@string/action_delete_refund"/>
+    <item
+        android:id="@+id/action_cancel_refund"
+        android:orderInCategory="107"
+        android:title="@string/action_cancel_refund"/>
+    
+    <item
+        android:id="@+id/action_delete_distribs"
+        android:orderInCategory="108"
+        android:title="@string/action_delete_distribs"/>
+    <item
+        android:id="@+id/action_cancel_distribs"
+        android:orderInCategory="109"
+        android:title="@string/action_cancel_distribs"/>
+
+</menu>

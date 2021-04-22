@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    tools:context=".NomenclatureGridActivity">
+
+    <include layout="@layout/toobar" />
+
+    <LinearLayout
+        android:id="@+id/LinearLayoutNomenclatureListButtons"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <ToggleButton
+            android:id="@+id/toggleButtonNomenclatureInStock"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:textOff="@string/toggle_button_nomenclature_in_stock"
+            android:textOn="@string/toggle_button_nomenclature_in_stock" />
+        <ToggleButton
+            android:id="@+id/toggleButtonNomenclaturePacks"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:textOff="@string/toggle_button_nomenclature_packs"
+            android:textOn="@string/toggle_button_nomenclature_packs" />
+
+        <Spinner
+            android:id="@+id/spinnerGroupNomenclature"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent" />
+    </LinearLayout>
+
+<androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/grid_view"
+    android:scrollbars="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
+
+</LinearLayout>
