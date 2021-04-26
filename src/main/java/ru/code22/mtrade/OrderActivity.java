@@ -185,7 +185,7 @@ public class OrderActivity extends AppCompatActivity implements onSomeEventListe
 		MySingleton g=MySingleton.getInstance();
 		//if (g.MyDatabase.m_order_editing.dont_need_send==1)
 		//	return true;
-		if (g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+		if (g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
 		{
 			Cursor clientsCursor=getContentResolver().query(MTradeContentProvider.CLIENTS_CONTENT_URI, new String[]{"blocked"}, "id=?", new String[]{g.MyDatabase.m_order_editing.client_id.toString()}, null);
 			int blockedIndex=clientsCursor.getColumnIndex("blocked");
@@ -1782,7 +1782,7 @@ public boolean onAgreementSelected(View view0, long _id)
 	    	}
 	    	g.MyDatabase.m_order_editing.agreement_id=new MyID(agreementId);
 	    	g.MyDatabase.m_order_editing.stuff_agreement_name=agreementDescr;
-	    	if (g.Common.TITAN||g.Common.INFOSTART)
+	    	if (g.Common.TITAN||g.Common.ISTART)
 	    	{
 	    		// Скидка
 		    	int saleIdIndex = agreementsCursor.getColumnIndex("sale_id");
@@ -1841,7 +1841,7 @@ public boolean onAgreementSelected(View view0, long _id)
 		    	redrawSumWeight();
 		    }
 		    // Долг контрагента по договору
-		    if (g.Common.TITAN||g.Common.INFOSTART)
+		    if (g.Common.TITAN||g.Common.ISTART)
 		    {
 		    	double agreement_debt=0;
 		    	double agreement_debt_past=0;

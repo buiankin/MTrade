@@ -433,7 +433,7 @@ public class PaymentPageFragment extends Fragment {
             TextView textViewDebtPast30 = (TextView) m_view.findViewById(R.id.textViewDebtPast30);
             EditText etDebtPast30 = (EditText) m_view.findViewById(R.id.editTextDebtPast30);
 
-            if (g.Common.TITAN || g.Common.INFOSTART) {
+            if (g.Common.TITAN || g.Common.ISTART) {
                 // Долг по договору
                 EditText etAgreementDebt = (EditText) m_view.findViewById(R.id.editTextAgreementDebt);
                 etAgreementDebt.setText(String.format("%.2f", g.MyDatabase.m_payment_editing.stuff_agreement_debt));
@@ -459,7 +459,7 @@ public class PaymentPageFragment extends Fragment {
             // Долг по договору
             TextView textViewDebtByAgreement = (TextView) m_view.findViewById(R.id.textViewDebtByAgreement);
             TableLayout tableLayoutAgreementDebt = (TableLayout) m_view.findViewById(R.id.tableLayoutAgreementDebt);
-            if (g.Common.TITAN || g.Common.INFOSTART) {
+            if (g.Common.TITAN || g.Common.ISTART) {
                 textViewDebtByAgreement.setVisibility(View.VISIBLE);
                 tableLayoutAgreementDebt.setVisibility(View.VISIBLE);
                 EditText editTextAgreementDebt = (EditText) m_view.findViewById(R.id.editTextAgreementDebt);

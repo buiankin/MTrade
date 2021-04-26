@@ -94,7 +94,7 @@ public class PrefActivity extends AppCompatActivity{
 
 			Intent intent=getActivity().getIntent();
 			//Bundle bundle=intent.getBundleExtra("extrasBundle");
-			m_bHideFormatSettings=intent.getBooleanExtra("readOnly", false)||Constants.MY_INFOSTART;
+			m_bHideFormatSettings=intent.getBooleanExtra("readOnly", false)||Constants.MY_ISTART;
 
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 

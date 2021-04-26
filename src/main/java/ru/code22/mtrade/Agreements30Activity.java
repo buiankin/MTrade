@@ -60,7 +60,7 @@ public class Agreements30Activity extends AppCompatActivity
 		lvAgreements.setEmptyView(findViewById(android.R.id.empty));		
 		
 
-        //if (MySingleton.getInstance().Common.TITAN||MySingleton.getInstance().Common.INFOSTART||MySingleton.getInstance().Common.FACTORY)
+        //if (MySingleton.getInstance().Common.TITAN||MySingleton.getInstance().Common.ISTART||MySingleton.getInstance().Common.FACTORY)
         //{
     		String[] fromColumns = {"agreement_descr", "organization_descr", "pricetype_descr", "default_manager_descr", "saldo", "saldo_past"};
             int[] toViews = {R.id.agreement_item_descr, R.id.agreement_item_organization, R.id.agreement_item_price_type, R.id.agreementTextViewManager, R.id.agreementTextViewDebt, R.id.agreementTextViewDebtPast};
@@ -132,7 +132,7 @@ public class Agreements30Activity extends AppCompatActivity
         // Now create and return a CursorLoader that will take care of
         // creating a Cursor for the data being displayed.
     	Globals g=(Globals)getApplication();
-    	//if (MySingleton.getInstance().Common.TITAN||MySingleton.getInstance().Common.INFOSTART)
+    	//if (MySingleton.getInstance().Common.TITAN||MySingleton.getInstance().Common.ISTART)
     	//{
 	    	return new CursorLoader(this, MTradeContentProvider.AGREEMENTS30_LIST_WITH_SALDO_ONLY_CONTENT_URI,
 		            PROJECTION_TN, "owner_id=?", new String[]{m_client_id.toString()}, "organizations.descr");

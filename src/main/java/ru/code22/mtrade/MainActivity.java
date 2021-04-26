@@ -544,7 +544,7 @@ public class MainActivity extends AppCompatActivity
         // TODO остальные таблицы
         // ...
         // Если демо-режим, загружаем данные из архива
-        if (MySingleton.getInstance().m_DataFormat.equals("DM") && !Constants.MY_INFOSTART) {
+        if (MySingleton.getInstance().m_DataFormat.equals("DM") && !Constants.MY_ISTART) {
             int size;
             InputStream is = getResources().openRawResource(R.raw.demo_arch);
             //ZipInputStream zin = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipFile), BUFFER_SIZE));
@@ -2206,7 +2206,7 @@ public class MainActivity extends AppCompatActivity
         cursorDebt.close();
 
         // Долг контрагента по договору
-        if (g.Common.TITAN || g.Common.INFOSTART || g.Common.FACTORY) {
+        if (g.Common.TITAN || g.Common.ISTART || g.Common.FACTORY) {
             double agreement_debt = 0;
             double agreement_debt_past = 0;
             Cursor cursorAgreementDebt = getContentResolver().query(MTradeContentProvider.SALDO_EXTENDED_CONTENT_URI, new String[]{"saldo", "saldo_past"}, "agreement_id=?", new String[]{rec.agreement_id.toString()}, null);
@@ -5080,7 +5080,7 @@ public class MainActivity extends AppCompatActivity
             break;
             case FRAME_TYPE_ORDERS: {
                 //boolean bOrdersMode = true;
-                //if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.INFOSTART || g.Common.FACTORY) {
+                //if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.ISTART || g.Common.FACTORY) {
                 //    bOrdersMode = getIsOrdersMode();
                 //}
                 menu.setGroupVisible(R.id.menu_group_orders, true);
@@ -5623,7 +5623,7 @@ public class MainActivity extends AppCompatActivity
                         getContentResolver().delete(singleUri, "editing_backup<>0", null);
                     }
                     // Переименовываем файл изображения
-                    if ((g.Common.TITAN || g.Common.INFOSTART || g.Common.FACTORY) && g.MyDatabase.m_order_editing_created) {
+                    if ((g.Common.TITAN || g.Common.ISTART || g.Common.FACTORY) && g.MyDatabase.m_order_editing_created) {
                         File photoFileDir = g.Common.getMyStorageFileDir(getBaseContext(), "photo");
                         File attachFileDir = g.Common.getMyStorageFileDir(getBaseContext(), "attaches");
                         File fileOrderImage1 = new File(photoFileDir, "order_image_1.jpg");
@@ -7502,7 +7502,7 @@ public class MainActivity extends AppCompatActivity
                             }
                             // Платежи отправляемые
                             ArrayList<UUID> uuidsPayments = new ArrayList();
-                            if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.INFOSTART || g.Common.FACTORY) {
+                            if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.ISTART || g.Common.FACTORY) {
                                 bytes.reset();
                                 TextDatabase.SaveSendPayments(bw, getContentResolver(), g.MyDatabase, uuidsPayments);
                                 bw.flush();
@@ -7599,7 +7599,7 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 // Платежи отправляемые
                                 ArrayList<UUID> uuidsPaymentsXML = new ArrayList();
-                                if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.INFOSTART || g.Common.FACTORY) {
+                                if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.ISTART || g.Common.FACTORY) {
                                     ze = new ZipEntry("payments.xml");
                                     zipStream.putNextEntry(ze);
                                     TextDatabase.SaveSendPaymentsXML(zipStream, getContentResolver(), g.MyDatabase, uuidsPaymentsXML);
@@ -8140,9 +8140,10 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean bDontShowMessages = sharedPreferences.getString("data_format", "DM").equals("PH");
         boolean bDontShowPayments = sharedPreferences.getString("data_format", "DM").equals("PH");
-        boolean bDontShowRoutes = !sharedPreferences.getString("data_format", "PL").equals("PL");
+        String dataFormat=sharedPreferences.getString("data_format", "PL");
+        boolean bDontShowRoutes = !(dataFormat.equals("PL")||dataFormat.equals("VK"));
 
-        //if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.INFOSTART || g.Common.FACTORY) {
+        //if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.ISTART || g.Common.FACTORY) {
         //    bOrdersMode = getIsOrdersMode();
         //}
         if (bDontShowMessages) {
@@ -8203,7 +8204,7 @@ public class MainActivity extends AppCompatActivity
             btnRefresh.setVisibility(View.VISIBLE);
             btnRefresh.setText(R.string.refresh);
             btnReceive.setVisibility(View.VISIBLE);
-            if (!g.Common.PRAIT && !g.Common.MEGA && !g.Common.PRODLIDER && !g.Common.TITAN && !g.Common.TANDEM && !g.Common.INFOSTART && !g.Common.FACTORY)
+            if (!g.Common.PRAIT && !g.Common.MEGA && !g.Common.PRODLIDER && !g.Common.TITAN && !g.Common.TANDEM && !g.Common.ISTART && !g.Common.FACTORY)
                 btnNomenclaturePhotos.setVisibility(View.GONE);
             else
                 btnNomenclaturePhotos.setVisibility(View.VISIBLE);
@@ -8214,7 +8215,7 @@ public class MainActivity extends AppCompatActivity
 
         MySlider slidingDrawer1 = (MySlider) findViewById(R.id.slidingDrawer1);
 
-        if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.INFOSTART || g.Common.FACTORY) {
+        if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.ISTART || g.Common.FACTORY) {
             slidingDrawer1.setOnDrawerScrollListener(new OnDrawerScrollListener() {
 
                 @Override

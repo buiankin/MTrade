@@ -3663,7 +3663,7 @@ public class TextDatabase {
 				nom_idx = 0;
 			} else if (bUpdateMode && sc.length() > 4 && sc.substring(0, 4).equals("@@@#")) {
 				// запись с указанным ID надо удалить
-				if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.INFOSTART || g.Common.FACTORY) {
+				if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.ISTART || g.Common.FACTORY) {
 					switch (sc.length()) {
 						case 4 + 36 * 4:
 							contentResolver.delete(MTradeContentProvider.EQUIPMENT_RESTS_CONTENT_URI, "client_id=? and nomenclature_id=? and distr_point_id=? and doc_id=?", new String[]{sc.substring(4, 4 + 36), sc.substring(4 + 36, 4 + 36 + 36), sc.substring(4 + 36 + 36, 4 + 36 + 36 + 36), sc.substring(4 + 36 + 36 + 36, 4 + 36 + 36 + 36 + 36)});
@@ -3744,7 +3744,7 @@ public class TextDatabase {
 						er.flags = Integer.parseInt(sc);
 						break;
 					case 6: // agreement_id
-						if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.INFOSTART || g.Common.FACTORY) {
+						if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.ISTART || g.Common.FACTORY) {
 							er.agreement_id = new MyID();
 						} else {
 							er.agreement_id = new MyID(sc);
@@ -4666,7 +4666,7 @@ public class TextDatabase {
 					if (bUpdateMode)
 					{
 						// запись с указанным ID надо удалить
-						if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.INFOSTART || g.Common.FACTORY)
+						if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.ISTART || g.Common.FACTORY)
 						{
 							if (xpp.getAttributeValue(null, "doc_id")!=null)
 								contentResolver.delete(MTradeContentProvider.EQUIPMENT_RESTS_CONTENT_URI, "client_id=? and nomenclature_id=? and distr_point_id=? and doc_id=?", new String[]{xpp.getAttributeValue(null, "client_id"), xpp.getAttributeValue(null, "nomenclature_id"), xpp.getAttributeValue(null, "distr_point_id"), xpp.getAttributeValue(null, "doc_id")});
@@ -4694,7 +4694,7 @@ public class TextDatabase {
 					cv.put("flags", Integer.parseInt(StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "flags"), "0")));
 
 					// Второй вариант - смотреть, есть ли это поле, но так сделано для лучшего понимания формата данных
-					if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.INFOSTART || g.Common.FACTORY) {
+					if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.ISTART || g.Common.FACTORY) {
 						cv.put("agreement_id", Constants.emptyID);
 					} else {
 						cv.put("agreement_id", xpp.getAttributeValue(null, "agreement_id"));
@@ -6508,7 +6508,7 @@ public class TextDatabase {
 						ContentValues[] values_2 = new ContentValues[bulk_l_idx];
 						int i;
 						for (i = 0; i < bulk_l_idx; i++) {
-							values_2[i] = values[i];
+							values_2[i] = values_l[i];
 						}
 						contentResolver.bulkInsert(MTradeContentProvider.ROUTES_LINES_CONTENT_URI, values_2);
 					}
@@ -7073,8 +7073,10 @@ public class TextDatabase {
 
 								contentResolver.insert(MTradeContentProvider.MESSAGES_CONTENT_URI, cv);
 							}
+							result.xmlMode=XMLMode.E_MODE_MESSAGE;
 							result.bSuccess=true;
 							result.ResultMessage=context.getString(R.string.message_messages_loaded);
+
 							break;
 						}
 						default:
@@ -11765,7 +11767,7 @@ public class TextDatabase {
 	    bw.write(String.format("%d\r\n", g.Common.ZERO_MINUS_VER(myBase.m_curators_version)));
 	    if (g.Common.SNEGOROD)
 	    {
-	    	if (g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+	    	if (g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
 	    	{
 	    		bw.write(String.format("%d\r\n", Common.ZERO_MINUS_VER(myBase.m_simple_discounts_version)));
 	    	} else
@@ -11826,7 +11828,7 @@ public class TextDatabase {
 		serializer.attribute(null, "curators_version", String.format("%d", g.Common.ZERO_MINUS_VER(myBase.m_curators_version)));
 		if (g.Common.SNEGOROD)
 		{
-			if (g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+			if (g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
 			{
 				serializer.attribute(null, "simple_discounts_version", String.format("%d", Common.ZERO_MINUS_VER(myBase.m_simple_discounts_version)));
 			} else
@@ -11911,7 +11913,7 @@ public class TextDatabase {
     	    cv.put("priceProcent", g.MyDatabase.m_order_editing.stuff_discount_procent);
         } else
         {
-            if (g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+            if (g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
             {
                 double priceProcent=0.0;
                 // TODO
@@ -11949,7 +11951,7 @@ public class TextDatabase {
         contentResolver.insert(MTradeContentProvider.RESTS_SALES_STUFF_CONTENT_URI,  cv);
         if (g.Common.MEGA)
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_MEGA_CONTENT_URI,  cv);
-        else if (g.Common.TITAN||g.Common.PHARAON||g.Common.INFOSTART||g.Common.FACTORY)
+        else if (g.Common.TITAN||g.Common.PHARAON||g.Common.ISTART||g.Common.FACTORY)
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_SIMPLE_CONTENT_URI,  cv);
         else
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_OTHER_CONTENT_URI,  cv);
@@ -12011,7 +12013,7 @@ public class TextDatabase {
         {
     	    cv.put("priceProcent", 0.0);
         } else
-        if (g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+        if (g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
         {
     	    cv.put("priceProcent", 0.0);
         } else
@@ -12024,7 +12026,7 @@ public class TextDatabase {
         contentResolver.insert(MTradeContentProvider.RESTS_SALES_STUFF_CONTENT_URI,  cv);
         if (g.Common.MEGA)
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_MEGA_CONTENT_URI,  cv);
-        else if (g.Common.TITAN||g.Common.PHARAON||g.Common.INFOSTART||g.Common.FACTORY)
+        else if (g.Common.TITAN||g.Common.PHARAON||g.Common.ISTART||g.Common.FACTORY)
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_SIMPLE_CONTENT_URI,  cv);
         else
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_OTHER_CONTENT_URI,  cv);

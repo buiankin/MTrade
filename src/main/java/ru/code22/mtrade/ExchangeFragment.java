@@ -168,7 +168,7 @@ public class ExchangeFragment extends Fragment {
             btnRefresh.setVisibility(View.VISIBLE);
             btnRefresh.setText(R.string.refresh);
             btnReceive.setVisibility(View.VISIBLE);
-            if (!g.Common.PRAIT && !g.Common.MEGA && !g.Common.PRODLIDER && !g.Common.TITAN && !g.Common.TANDEM && !g.Common.INFOSTART && !g.Common.FACTORY)
+            if (!g.Common.PRAIT && !g.Common.MEGA && !g.Common.PRODLIDER && !g.Common.TITAN && !g.Common.TANDEM && !g.Common.ISTART && !g.Common.FACTORY)
                 btnNomenclaturePhotos.setVisibility(View.GONE);
             else
                 btnNomenclaturePhotos.setVisibility(View.VISIBLE);
@@ -225,7 +225,7 @@ public class ExchangeFragment extends Fragment {
         /*
         MySlider slidingDrawer1 = (MySlider) findViewById(R.id.slidingDrawer1);
 
-        if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.INFOSTART || g.Common.FACTORY) {
+        if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.ISTART || g.Common.FACTORY) {
             slidingDrawer1.setOnDrawerScrollListener(new MySlider.OnDrawerScrollListener() {
 
                 @Override

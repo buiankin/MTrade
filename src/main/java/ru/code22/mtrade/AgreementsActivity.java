@@ -78,7 +78,7 @@ public class AgreementsActivity extends AppCompatActivity
 		lvAgreements = (ListView)findViewById(R.id.lvAgreements);
 		lvAgreements.setEmptyView(findViewById(android.R.id.empty));		
 
-        if (MySingleton.getInstance().Common.TITAN||MySingleton.getInstance().Common.INFOSTART||MySingleton.getInstance().Common.FACTORY)
+        if (MySingleton.getInstance().Common.TITAN||MySingleton.getInstance().Common.ISTART||MySingleton.getInstance().Common.FACTORY)
         {
     		String[] fromColumns = {"agreement_descr", "organization_descr", "pricetype_descr", "default_manager_descr", "saldo", "saldo_past"};
             int[] toViews = {R.id.agreement_item_descr, R.id.agreement_item_organization, R.id.agreement_item_price_type, R.id.agreementTextViewManager, R.id.agreementTextViewDebt, R.id.agreementTextViewDebtPast};
@@ -157,7 +157,7 @@ public class AgreementsActivity extends AppCompatActivity
 		}
 		// Возможно, здесь проверка FACTORY лишняя
         // но это когда все места, откуда открывается форма договоров, будут проверены
-    	if (MySingleton.getInstance().Common.TITAN||MySingleton.getInstance().Common.INFOSTART||MySingleton.getInstance().Common.FACTORY)
+    	if (MySingleton.getInstance().Common.TITAN||MySingleton.getInstance().Common.ISTART||MySingleton.getInstance().Common.FACTORY)
     	{
 	    	return new CursorLoader(this, MTradeContentProvider.AGREEMENTS_LIST_WITH_SALDO_ONLY_CONTENT_URI,
 		            PROJECTION_TN, "owner_id=?", new String[]{m_client_id.toString()}, "organizations.descr");

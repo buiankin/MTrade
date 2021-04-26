@@ -582,7 +582,7 @@ public class PaymentActivity extends AppCompatActivity implements onSomePaymentE
                     }
 
                     // Долг контрагента по договору
-                    if (g.Common.TITAN || g.Common.INFOSTART) {
+                    if (g.Common.TITAN || g.Common.ISTART) {
                         double agreement_debt = 0;
                         double agreement_debt_past = 0;
                         Cursor cursorAgreementDebt = getContentResolver().query(MTradeContentProvider.SALDO_EXTENDED_CONTENT_URI, new String[]{"saldo", "saldo_past"}, "agreement_id=?", new String[]{g.MyDatabase.m_payment_editing.agreement_id.toString()}, null);

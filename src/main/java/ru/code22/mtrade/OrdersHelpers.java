@@ -45,7 +45,6 @@ public class OrdersHelpers {
 		g.MyDatabase.m_order_editing_modified=false;
 		//g.MyDatabase.m_order_editing.stuff_full_ticket_m=m_settings_ticket_m;
 		//g.MyDatabase.m_order_editing.stuff_full_ticket_w=m_settings_ticket_w;
-		g.Common.honorBeerman(2);
 		// test
 		//byte[] textData={};
 		//int ix=NativeCallsClass.convertJpegFile("test", "test", textData, 0, 0, 150, 100, 75, 1);
@@ -64,7 +63,6 @@ public class OrdersHelpers {
 		Cursor cursor;
 		boolean result=TextDatabase.ReadOrderBy_Id(activity.getContentResolver(), rec, g.MyDatabase.m_order_editing_id);
 		if (result==false) {
-            g.Common.honorBeerman(4);
             bCreatedOrder = true;
             rec.Clear();
             if (client_id == null || client_id.isEmpty()) {
@@ -193,7 +191,7 @@ public class OrdersHelpers {
 					rec.stuff_agreement30_name=new String(descr);
 					rec.stuff_agreement_required=(flags&1)!=0;
 					/*
-					if (g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+					if (g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
 					{
 						int saleIdIndex = cursor.getColumnIndex("sale_id");
 						String sale_id = cursor.getString(saleIdIndex);
@@ -240,7 +238,7 @@ public class OrdersHelpers {
 				int descrIndex = cursor.getColumnIndex("descr");
 				String descr = cursor.getString(descrIndex);
 				rec.stuff_agreement_name = new String(descr);
-				if (g.Common.TITAN || g.Common.INFOSTART) {
+				if (g.Common.TITAN || g.Common.ISTART) {
 					int saleIdIndex = cursor.getColumnIndex("sale_id");
 					String sale_id = cursor.getString(saleIdIndex);
 					Cursor discountCursor = activity.getContentResolver().query(MTradeContentProvider.SIMPLE_DISCOUNTS_CONTENT_URI, new String[]{"descr", "priceProcent"}, "id=?", new String[]{sale_id}, null);
@@ -407,7 +405,7 @@ public class OrdersHelpers {
 	    }
 	    cursor.close();
 	    // Долг контрагента по договору
-	    if (g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+	    if (g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
 	    {
 	    	double agreement_debt=0;
 	    	double agreement_debt_past=0;
@@ -732,7 +730,7 @@ public class OrdersHelpers {
 				}
 				cursorNomenclature.close();
 			} else
-			if (g.Common.TITAN||g.Common.PHARAON||g.Common.INFOSTART||g.Common.FACTORY)
+			if (g.Common.TITAN||g.Common.PHARAON||g.Common.ISTART||g.Common.FACTORY)
 			{
 				Cursor cursorPrice=activity.getContentResolver().query(MTradeContentProvider.PRICES_CONTENT_URI, new String[]{"price", "k"}, "nomenclature_id=? and price_type_id=?", new String[]{line.nomenclature_id.toString(), g.MyDatabase.m_order_editing.price_type_id.toString()}, null);
 				if (cursorPrice.moveToFirst())
@@ -988,7 +986,7 @@ public class OrdersHelpers {
 					redrawSumWeight(activity);
 				}
 				/*
-				if (g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+				if (g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
 				{
 					// Скидка
 					int saleIdIndex = agreementsCursor.getColumnIndex("sale_id");
@@ -1026,7 +1024,7 @@ public class OrdersHelpers {
 					redrawSumWeight(activity);
 				}
 				// Долг контрагента по договору
-				if (g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+				if (g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
 				{
 					double agreement_debt=0;
 					double agreement_debt_past=0;
@@ -1160,7 +1158,7 @@ public class OrdersHelpers {
 		    	}
 		    	g.MyDatabase.m_order_editing.agreement_id=new MyID(agreementId);
 		    	g.MyDatabase.m_order_editing.stuff_agreement_name=agreementDescr;
-		    	if (g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+		    	if (g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
 		    	{
 		    		// Скидка
 			    	int saleIdIndex = agreementsCursor.getColumnIndex("sale_id");
@@ -1224,7 +1222,7 @@ public class OrdersHelpers {
                     }
                 }
 			    // Долг контрагента по договору
-			    if (g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+			    if (g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
 			    {
 			    	double agreement_debt=0;
 			    	double agreement_debt_past=0;
