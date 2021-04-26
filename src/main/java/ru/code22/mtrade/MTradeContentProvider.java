@@ -211,7 +211,7 @@ public class MTradeContentProvider extends ContentProvider {
 	// БД
 	//private static final String DIR = "/sdcard";
     public static final String DB_NAME = "mdata.db";
-    public static final int DB_VERSION = 70;
+    public static final int DB_VERSION = 71;
     
     // Таблица
     private static final String ORDERS_TABLE = "orders";
@@ -1542,14 +1542,14 @@ public class MTradeContentProvider extends ContentProvider {
 		      db.insert("clients", null, cv);
 		      */
 			  
-			  // Version=2
 		      db.execSQL("create table settings ("+
 		    		  "_id integer primary key autoincrement, " +
 		    		  "fmt text null, "+
 		    		  "ticket_m double null,"+
 		    		  "ticket_w double null,"+
 		    		  "agent_id text null,"+
-		    		  "gps_interval ind default 0"+
+		    		  "gps_interval ind default 0,"+
+                      "agent_price_type_id text null"+
 		    		  ");");
 		      
 		      db.execSQL("create table salesloaded ("+
@@ -2907,6 +2907,11 @@ public class MTradeContentProvider extends ContentProvider {
                     db.execSQL("alter table clients add column email_for_cheques text");
                     db.execSQL("update clients set email_for_cheques=''");
                 }
+
+                if (oldVersion<71) {
+                    db.execSQL("alter table settings add column agent_price_type_id text null");
+                }
+
 
 		    	/*
 		    	if (oldVersion<43)
@@ -4606,7 +4611,7 @@ public class MTradeContentProvider extends ContentProvider {
                             "join nomenclature on nomenclature_id=nomenclature.id and isFolder<>1 " +
                             ";");
                 } else
-                    //if (g.Common.TITAN||g.Common.PHARAON||g.Common.INFOSTART)
+                    //if (g.Common.TITAN||g.Common.PHARAON||g.Common.ISTART)
                     if (sUriMatcher.match(uri) == URI_DISCOUNTS_STUFF_SIMPLE) {
                         // Тут простейший (обычный для 1С) вариант, скидка от номенклатуры не зависит
                         // а только от договора, но номенклатуру все равно выберем
@@ -7407,6 +7412,7 @@ public class MTradeContentProvider extends ContentProvider {
         //settingsProjectionMap.put("ticket_w", "ticket_w");
         settingsProjectionMap.put("agent_id", "agent_id"); 
         settingsProjectionMap.put("gps_interval", "gps_interval");
+        settingsProjectionMap.put("agent_price_type_id", "agent_price_type_id");
         
         salesLoadedProjectionMap = new HashMap<String, String>();
         salesLoadedProjectionMap.put("_id", "_id");

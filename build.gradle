@@ -28,7 +28,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        android.ndkVersion '20.0.5594570'
+        android.ndkVersion '21.0.6113669'
     }
     buildTypes {
         release {
@@ -67,6 +67,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0-alpha02'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.androidessence:recyclerviewcursoradapter:1.0.0'
+
+    implementation 'commons-net:commons-net:3.8.0'
 
     //implementation files('libs/commons-net-3.6.jar')
     //implementation files('libs/jheader-0.1.jar')

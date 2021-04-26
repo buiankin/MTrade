@@ -223,8 +223,6 @@ public class QuantityActivity extends AppCompatActivity
 	
 	private void acceptData(boolean checkQuantity)
 	{
-		Common.honorBeerman(6);
-		
 		Intent intent=new Intent();
 		// Если открывали из списка номенклатуры
 		if (m_id!=0)
@@ -580,7 +578,7 @@ public class QuantityActivity extends AppCompatActivity
 		
 		ListView listViewQuantitySalesHistory=(ListView)findViewById(R.id.listViewQuantitySalesHistory);
 
-		if (g.Common.PRODLIDER||g.Common.TANDEM||g.Common.PRAIT||g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+		if (g.Common.PRODLIDER||g.Common.TANDEM||g.Common.PRAIT||g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
 		{
 		
 	        String[] fromColumns = {"numdoc", "price", "quantity"};
@@ -819,7 +817,7 @@ public class QuantityActivity extends AppCompatActivity
 				m_price_ed_izm_id=cursorNomenclature.getString(edizm_1_id_Index);
 				m_price_edIzm=cursorNomenclature.getString(quant_1_Index);
 			} else
-			if (g.Common.TITAN||g.Common.PHARAON||g.Common.INFOSTART||g.Common.FACTORY)
+			if (g.Common.TITAN||g.Common.PHARAON||g.Common.ISTART||g.Common.FACTORY)
 			{
 			   	Cursor cursorPrice=getContentResolver().query(MTradeContentProvider.PRICES_CONTENT_URI, new String[]{"ed_izm_id", "edIzm", "price", "priceProcent", "k"}, "nomenclature_id=? and price_type_id=?", new String[]{m_nomenclature_id.toString(), m_price_type_id.toString()}, null);
 			   	double price=0.0;
@@ -1084,8 +1082,6 @@ public class QuantityActivity extends AppCompatActivity
 			}
 		}
 
-	    Common.honorBeerman(6);
-		
 	}
 
 	@Override
@@ -1124,7 +1120,7 @@ public class QuantityActivity extends AppCompatActivity
 				MySingleton g = MySingleton.getInstance();
 				AlertDialog.Builder builder=new AlertDialog.Builder(this);
 				builder.setTitle(getResources().getString(R.string.quantity_not_set));
-				if (g.Common.INFOSTART)
+				if (g.Common.ISTART)
 				{
 					builder.setMessage(getResources().getString(R.string.ask_remove_nomenclature_from_order));
 				} else
@@ -1135,7 +1131,7 @@ public class QuantityActivity extends AppCompatActivity
 					@Override
 					public void onClick(DialogInterface arg0, int arg1) {
 						MySingleton g = MySingleton.getInstance();
-						if (g.Common.INFOSTART) {
+						if (g.Common.ISTART) {
 							Intent intent = new Intent();
 							// 24.10.2019
 							intent.putExtra("_id", m_id);

@@ -1869,7 +1869,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
       		} else
 			if (resultCode==QuantityActivity.QUANTITY_RESULT_DELETE_LINE)
 			{
-				// Только для формата INFOSTART так, ну, по крайней мере, пока так
+				// Только для формата ISTART так, ну, по крайней мере, пока так
 				// в других случаях при вводе нулевого количества просто ничего не происходит
 				m_bQuantityChanged=true;
 				if (data!=null)

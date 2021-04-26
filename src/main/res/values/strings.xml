@@ -236,6 +236,7 @@
 	<string name="message_archive_error">Archive error</string>
 	<string name="message_file_error">File error</string>
 	<string name="message_file_not_sent">File not sent</string>
+    <string name="message_file_not_sent_reply_code">File not sent, reply code: %d</string>
 	<string name="message_cannot_authorize_on_server">Can\'t authorize on server</string>
 	<string name="message_cannot_enter_ftp_user_directory">Can\'t enter FTP user directory</string>
 
@@ -594,5 +595,7 @@
     <string name="Weight">Weight</string>
     <string name="Price_kg">Price/kg</string>
     <string name="no_email"><![CDATA[<no email>]]></string>
+    <string name="message_settings_loaded">Settings loaded</string>
+    <string name="message_settings_not_changed">Settings not changed</string>
 
 </resources>

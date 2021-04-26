@@ -469,6 +469,7 @@
 	<string name="message_archive_error">Помилка при роботі з архівом</string>
 	<string name="message_file_error">Файлова помилка</string>
 	<string name="message_file_not_sent">Чи не вдалося відправити файл</string>
+	<string name="message_file_not_sent_reply_code">Чи не вдалося відправити файл, reply code: %d</string>
 	<string name="title_exchange">Обмін</string>
 	<string name="ftp_message_connection_error">Помилка зв\'язку</string>
 	<string name="ftp_message_io_error">Помилка вводу-виводу</string>
@@ -545,5 +546,7 @@
     <string name="Weight">Weight</string>
     <string name="Price_kg">Price/kg</string>
     <string name="no_email"><![CDATA[<no email>]]></string>
+    <string name="message_settings_loaded">Settings loaded</string>
+    <string name="message_settings_not_changed">Settings not changed</string>
 
 </resources>

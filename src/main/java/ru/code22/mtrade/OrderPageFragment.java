@@ -1488,7 +1488,7 @@ public class OrderPageFragment extends Fragment {
 				});
 	    		
 			} else
-	    	if (g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+	    	if (g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
 	    	{
 	    		etDiscount.setText(rec.stuff_discount);
 	    		buttonSelectDiscount.setVisibility(View.GONE);
@@ -1532,7 +1532,7 @@ public class OrderPageFragment extends Fragment {
 			// Долг по договору
 			TextView textViewDebtByAgreement=(TextView)m_view.findViewById(R.id.textViewDebtByAgreement);
 			TableLayout tableLayoutAgreementDebt=(TableLayout)m_view.findViewById(R.id.tableLayoutAgreementDebt);
-			if (g.Common.TITAN||g.Common.INFOSTART)
+			if (g.Common.TITAN||g.Common.ISTART)
 			{
 				textViewDebtByAgreement.setVisibility(View.VISIBLE);
 				tableLayoutAgreementDebt.setVisibility(View.VISIBLE);
@@ -2507,7 +2507,6 @@ public class OrderPageFragment extends Fragment {
     			buttonEditLines.setOnClickListener(new OnClickListener() {
     				@Override
     				public void onClick(View v) {
-    					Common.honorBeerman(6);
     					Intent intent=new Intent(getActivity(), NomenclatureActivity.class);
     					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
     					startActivityForResult(intent, OPEN_NOMENCLATURE_FROM_ORDER_REQUEST);
@@ -2520,7 +2519,6 @@ public class OrderPageFragment extends Fragment {
     			buttonEditLinesGrid.setOnClickListener(new OnClickListener() {
     				@Override
     				public void onClick(View v) {
-    					Common.honorBeerman(6);
     					Intent intent=new Intent(getActivity(), NomenclatureGridActivity.class);
     					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
     					startActivityForResult(intent, OPEN_NOMENCLATURE_GRID_FROM_ORDER_REQUEST);

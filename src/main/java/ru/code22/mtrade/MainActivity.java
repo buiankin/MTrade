@@ -175,6 +175,7 @@ import com.google.android.play.core.install.model.InstallStatus;
 import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.idescout.sql.SqlScoutServer;
 import com.nostra13.universalimageloader.utils.L;
 //import android.annotation.SuppressLint;
 //import android.support.v4.app.Fragment;
@@ -185,6 +186,8 @@ public class MainActivity extends AppCompatActivity
 
     private AppUpdateManager appUpdateManager;
     private InstallStateUpdatedListener installStateUpdatedListener;
+
+    private SqlScoutServer sqlScoutServer;
 
     //private static final int IDD_RECEIVE_PROGRESS = 0;
     private static final int IDD_REINDEX_CREATED = 1;
@@ -374,6 +377,8 @@ public class MainActivity extends AppCompatActivity
     //double m_settings_ticket_w;
     String m_settings_agent_id;
     int m_settings_gps_interval;
+    // Пусть так и лежит только в базе, считывать не будем
+    //String m_settings_agent_price_type_id;
 
     //
     boolean m_bRefreshPressed;
@@ -461,6 +466,9 @@ public class MainActivity extends AppCompatActivity
             if (m_settings_gps_interval < 0) {
                 g.Common.HAVE_GPS_SETTINGS = true;
             }
+            //int index_agent_price_type_id = cursor.getColumnIndex("agent_price_type_id");
+            //m_settings_agent_price_type_id = cursor.getString(index_agent_price_type_id);
+
         } else {
             // Формат данных не заполняем специально
             m_settings_DataFormat = "";
@@ -468,6 +476,7 @@ public class MainActivity extends AppCompatActivity
             //m_settings_ticket_w = 0.0;
             m_settings_agent_id = null;
             m_settings_gps_interval = 0;
+            //m_settings_agent_price_type_id = null;
         }
         cursor.close();
         if (m_settings_agent_id == null || m_settings_agent_id.replace(" ", "").isEmpty()) {
@@ -485,6 +494,7 @@ public class MainActivity extends AppCompatActivity
         //cv.put("ticket_w", m_settings_ticket_w);
         cv.put("agent_id", m_settings_agent_id);
         cv.put("gps_interval", m_settings_gps_interval);
+        //cv.put("agent_price_type_id", m_settings_agent_price_type_id);
         // если update не сработает, добавится строка через insert (так сделано в ContentProvider)
         getContentResolver().update(MTradeContentProvider.SETTINGS_CONTENT_URI, cv, "", null);
     }
@@ -544,7 +554,7 @@ public class MainActivity extends AppCompatActivity
         // TODO остальные таблицы
         // ...
         // Если демо-режим, загружаем данные из архива
-        if (MySingleton.getInstance().m_DataFormat.equals("DM") && !Constants.MY_INFOSTART) {
+        if (MySingleton.getInstance().m_DataFormat.equals("DM") && !Constants.MY_ISTART) {
             int size;
             InputStream is = getResources().openRawResource(R.raw.demo_arch);
             //ZipInputStream zin = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipFile), BUFFER_SIZE));
@@ -727,6 +737,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // http://www.idescout.com/wiki/index.php/Main/ConnectToAndroidDbs
+        sqlScoutServer = SqlScoutServer.create(this, getPackageName());
+
         MySingleton g = MySingleton.getInstance();
 
         mParamsToCreateDocsWhenRequestPermissions = null;
@@ -1323,6 +1336,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        sqlScoutServer.resume();
         // TODO Auto-generated method stub
         MySingleton g = MySingleton.getInstance();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -1362,7 +1376,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onPause() {
+        super.onPause(); sqlScoutServer.pause();
+    }
+
+    @Override
     protected void onDestroy() {
+        sqlScoutServer.destroy();
         MySingleton g = MySingleton.getInstance();
         if (g.MyDatabase.m_seance_closed) {
             ContentValues cv = new ContentValues();
@@ -2206,7 +2226,7 @@ public class MainActivity extends AppCompatActivity
         cursorDebt.close();
 
         // Долг контрагента по договору
-        if (g.Common.TITAN || g.Common.INFOSTART || g.Common.FACTORY) {
+        if (g.Common.TITAN || g.Common.ISTART || g.Common.FACTORY) {
             double agreement_debt = 0;
             double agreement_debt_past = 0;
             Cursor cursorAgreementDebt = getContentResolver().query(MTradeContentProvider.SALDO_EXTENDED_CONTENT_URI, new String[]{"saldo", "saldo_past"}, "agreement_id=?", new String[]{rec.agreement_id.toString()}, null);
@@ -5080,7 +5100,7 @@ public class MainActivity extends AppCompatActivity
             break;
             case FRAME_TYPE_ORDERS: {
                 //boolean bOrdersMode = true;
-                //if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.INFOSTART || g.Common.FACTORY) {
+                //if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.ISTART || g.Common.FACTORY) {
                 //    bOrdersMode = getIsOrdersMode();
                 //}
                 menu.setGroupVisible(R.id.menu_group_orders, true);
@@ -5623,7 +5643,7 @@ public class MainActivity extends AppCompatActivity
                         getContentResolver().delete(singleUri, "editing_backup<>0", null);
                     }
                     // Переименовываем файл изображения
-                    if ((g.Common.TITAN || g.Common.INFOSTART || g.Common.FACTORY) && g.MyDatabase.m_order_editing_created) {
+                    if ((g.Common.TITAN || g.Common.ISTART || g.Common.FACTORY) && g.MyDatabase.m_order_editing_created) {
                         File photoFileDir = g.Common.getMyStorageFileDir(getBaseContext(), "photo");
                         File attachFileDir = g.Common.getMyStorageFileDir(getBaseContext(), "attaches");
                         File fileOrderImage1 = new File(photoFileDir, "order_image_1.jpg");
@@ -6698,7 +6718,7 @@ public class MainActivity extends AppCompatActivity
                             String zipFileName = null;
 
                             publishProgress(FTP_STATE_RECEIVE_ARCH, 0);
-                            ftpClient.enterLocalPassiveMode();
+                            Common.ftpEnterMode(ftpClient, !g.Common.VK);
                             fileList = ftpClient.listFiles();//"*.zip");
                             for (FTPFile ftpFile : fileList) {
                                 if (ftpFile.getName().equalsIgnoreCase("arch.zip")) {
@@ -6722,7 +6742,7 @@ public class MainActivity extends AppCompatActivity
 
                                 bNothingReceived = false;
                                 OutputStream outFile = new FileOutputStream(zipFile);
-                                ftpClient.enterLocalPassiveMode();
+                                Common.ftpEnterMode(ftpClient, !g.Common.VK);
                                 ftpClient.setCopyStreamListener(streamListener);
                                 ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
                                 //ftpClient.retrieveFile(m_FTP_server_directory+"/arch.zip", outFile);
@@ -7259,7 +7279,7 @@ public class MainActivity extends AppCompatActivity
                                             }
                                             publishProgress(FTP_STATE_RECEIVE_ARCH, 0);
                                             OutputStream outFile = new FileOutputStream(historyZipFile);
-                                            ftpClient.enterLocalPassiveMode();
+                                            Common.ftpEnterMode(ftpClient, !g.Common.VK);
                                             ftpClient.setCopyStreamListener(streamListener);
                                             ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
                                             if (ftpClient.retrieveFile(history_file_name, outFile)) {
@@ -7352,7 +7372,7 @@ public class MainActivity extends AppCompatActivity
 		    					zipFile=new File(Environment.getDataDirectory(), "/data/"+ getBaseContext().getPackageName()+"/arch.zip");
 		    				}
 	    	        		OutputStream outFile=new FileOutputStream(zipFile);
-	    	        		ftpClient.enterLocalPassiveMode();
+	    	        		Common.ftpEnterMove(ftpClient, !g.Common.VK);
 	    	            	ftpClient.setCopyStreamListener(streamListener);
 	    	        		ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
 	    	        		//ftpClient.retrieveFile(m_FTP_server_directory+"/arch.zip", outFile);
@@ -7502,7 +7522,7 @@ public class MainActivity extends AppCompatActivity
                             }
                             // Платежи отправляемые
                             ArrayList<UUID> uuidsPayments = new ArrayList();
-                            if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.INFOSTART || g.Common.FACTORY) {
+                            if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.ISTART || g.Common.FACTORY) {
                                 bytes.reset();
                                 TextDatabase.SaveSendPayments(bw, getContentResolver(), g.MyDatabase, uuidsPayments);
                                 bw.flush();
@@ -7599,7 +7619,7 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 // Платежи отправляемые
                                 ArrayList<UUID> uuidsPaymentsXML = new ArrayList();
-                                if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.INFOSTART || g.Common.FACTORY) {
+                                if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.ISTART || g.Common.FACTORY) {
                                     ze = new ZipEntry("payments.xml");
                                     zipStream.putNextEntry(ze);
                                     TextDatabase.SaveSendPaymentsXML(zipStream, getContentResolver(), g.MyDatabase, uuidsPaymentsXML);
@@ -7683,7 +7703,7 @@ public class MainActivity extends AppCompatActivity
                                                 if (!tempFile.isDirectory()) {
                                                     InputStream inFile = new FileInputStream(tempFile);
                                                     file_length = tempFile.length();
-                                                    ftpClient.enterLocalPassiveMode();
+                                                    Common.ftpEnterMove(ftpClient, !g.Common.VK);
                                                     ftpClient.setCopyStreamListener(streamListener);
                                                     ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
                                                     if (ftpClient.storeFile(tempFile.getName(), inFile)) {
@@ -7708,7 +7728,7 @@ public class MainActivity extends AppCompatActivity
                                             if (!tempFile.isDirectory()) {
                                                 InputStream inFile = new FileInputStream(tempFile);
                                                 file_length = tempFile.length();
-                                                ftpClient.enterLocalPassiveMode();
+                                                Common.ftpEnterMove(ftpClient, !g.Common.VK);
                                                 ftpClient.setCopyStreamListener(streamListener);
                                                 ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
                                                 if (ftpClient.storeFile(tempFile.getName(), inFile)) {
@@ -7733,7 +7753,7 @@ public class MainActivity extends AppCompatActivity
                                         if (!tempFile.isDirectory()) {
                                             InputStream inFile = new FileInputStream(tempFile);
                                             file_length = tempFile.length();
-                                            ftpClient.enterLocalPassiveMode();
+                                            Common.ftpEnterMode(ftpClient, !g.Common.VK);
                                             ftpClient.setCopyStreamListener(streamListener);
                                             ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
                                             if (ftpClient.storeFile(tempFile.getName(), inFile)) {
@@ -7754,7 +7774,7 @@ public class MainActivity extends AppCompatActivity
                                 // архив
                                 InputStream inFile = new FileInputStream(zipFile);
                                 file_length = zipFile.length();
-                                ftpClient.enterLocalPassiveMode();
+                                Common.ftpEnterMode(ftpClient, !g.Common.VK);
                                 ftpClient.setCopyStreamListener(streamListener);
                                 ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
                                 //ftpClient.storeFile(m_FTP_server_directory+"/eoutf.zip", inFile);
@@ -7846,7 +7866,7 @@ public class MainActivity extends AppCompatActivity
 
                                 } else {
                                     // Не удалось отправить файл
-                                    textToLog.add(getString(R.string.message_file_not_sent));
+                                    textToLog.add(getString(R.string.message_file_not_sent_reply_code, ftpClient.getReplyCode() ));
                                     publishProgress(-2, textToLog.size());
                                 }
                                 inFile.close();
@@ -7941,7 +7961,7 @@ public class MainActivity extends AppCompatActivity
                                         publishProgress(FTP_STATE_RECEIVE_IMAGE, 0);
 
                                         OutputStream outFile = new FileOutputStream(imageFile);
-                                        ftpClient.enterLocalPassiveMode();
+                                        Common.ftpEnterMode(ftpClient, !g.Common.VK);
                                         ftpClient.setCopyStreamListener(streamListener);
                                         ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
                                         if (ftpClient.retrieveFile(ftpName, outFile)) {
@@ -8140,9 +8160,10 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean bDontShowMessages = sharedPreferences.getString("data_format", "DM").equals("PH");
         boolean bDontShowPayments = sharedPreferences.getString("data_format", "DM").equals("PH");
-        boolean bDontShowRoutes = !sharedPreferences.getString("data_format", "PL").equals("PL");
+        String dataFormat=sharedPreferences.getString("data_format", "PL");
+        boolean bDontShowRoutes = !(dataFormat.equals("PL")||dataFormat.equals("VK"));
 
-        //if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.INFOSTART || g.Common.FACTORY) {
+        //if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.ISTART || g.Common.FACTORY) {
         //    bOrdersMode = getIsOrdersMode();
         //}
         if (bDontShowMessages) {
@@ -8203,7 +8224,7 @@ public class MainActivity extends AppCompatActivity
             btnRefresh.setVisibility(View.VISIBLE);
             btnRefresh.setText(R.string.refresh);
             btnReceive.setVisibility(View.VISIBLE);
-            if (!g.Common.PRAIT && !g.Common.MEGA && !g.Common.PRODLIDER && !g.Common.TITAN && !g.Common.TANDEM && !g.Common.INFOSTART && !g.Common.FACTORY)
+            if (!g.Common.PRAIT && !g.Common.MEGA && !g.Common.PRODLIDER && !g.Common.TITAN && !g.Common.TANDEM && !g.Common.ISTART && !g.Common.FACTORY)
                 btnNomenclaturePhotos.setVisibility(View.GONE);
             else
                 btnNomenclaturePhotos.setVisibility(View.VISIBLE);
@@ -8214,7 +8235,7 @@ public class MainActivity extends AppCompatActivity
 
         MySlider slidingDrawer1 = (MySlider) findViewById(R.id.slidingDrawer1);
 
-        if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.INFOSTART || g.Common.FACTORY) {
+        if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.ISTART || g.Common.FACTORY) {
             slidingDrawer1.setOnDrawerScrollListener(new OnDrawerScrollListener() {
 
                 @Override

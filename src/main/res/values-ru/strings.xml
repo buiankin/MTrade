@@ -221,6 +221,7 @@
 	<string name="message_archive_error">Ошибка при работе с архивом</string>
 	<string name="message_file_error">Файловая ошибка</string>
 	<string name="message_file_not_sent">Не удалось отправить файл</string>
+	<string name="message_file_not_sent_reply_code">Не удалось отправить файл, код ответа: %d</string>
 	<string name="message_cannot_authorize_on_server">Не удалось авторизоваться на сервере</string>
 	<string name="message_cannot_enter_ftp_user_directory">Не удалось зайти в домашний каталог пользователя FTP</string>
 	<string name="title_exchange">Обмен</string>
@@ -549,5 +550,7 @@
     <string name="Weight">Масса</string>
 	<string name="Price_kg">Цена/кг</string>
     <string name="no_email"><![CDATA[<email не указан>]]></string>
+    <string name="message_settings_loaded">Settings loaded</string>
+    <string name="message_settings_not_changed">Settings not changed</string>
 
 </resources>

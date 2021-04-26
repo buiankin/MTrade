@@ -34,6 +34,8 @@ import android.util.TypedValue;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import org.apache.commons.net.ftp.FTPClient;
+
 public class Common {
 
 	static final String LOG_TAG = "mtradeLogs";
@@ -77,7 +79,7 @@ public class Common {
 	public boolean TITAN = false;
 	public boolean PHARAON = false;
 	public boolean TANDEM = false;
-	public boolean INFOSTART = false;
+	public boolean ISTART = false;
 	public boolean FACTORY = false;
 
 	public boolean NEW_BACKUP_FORMAT = true;
@@ -94,7 +96,7 @@ public class Common {
 
     public boolean isDataFormatWithTradePoints()
     {
-        if (MEGA||PHARAON||TANDEM||TITAN||FACTORY||VK)
+        if (MEGA||PHARAON||TANDEM||TITAN||FACTORY)
             return false;
         return true;
     }
@@ -422,19 +424,6 @@ public class Common {
 	    return myStorageFileDir;
 	}
 	
-	public static void honorBeerman(int delay)
-	{
-		/*
-		if (Common.PRODLIDER&&!Common.HAVE_GPS_SETTINGS&&!Common.DEMO)
-		{
-			try {
-				TimeUnit.SECONDS.sleep(delay);
-			} catch (InterruptedException e) {
-			}
-		}
-		*/
-	}
-
 	public static String MyDateFormat(String formatString, Date date)
 	{
 		DateFormat simpleDateFormat = new java.text.SimpleDateFormat(formatString);
@@ -545,7 +534,7 @@ public class Common {
 
 	public String getCurrency(Context context)
     {
-    	if (INFOSTART||VK) {
+    	if (ISTART||VK) {
 			if (m_currency.equals("RUR")) {
 				return context.getString(R.string.currency_rur);
 			}
@@ -564,7 +553,7 @@ public class Common {
 
     public String getCurrencyFormatted(Context context)
     {
-		if (INFOSTART||VK) {
+		if (ISTART||VK) {
 			if (m_currency.equals("RUR")) {
 				return context.getString(R.string.currency_format_rur);
 			}
@@ -723,5 +712,14 @@ public class Common {
 			dialog = null;
 		}
 	}
+
+	public static void ftpEnterMode(FTPClient ftpClient, boolean passiveMode) {
+		if (passiveMode)
+			ftpClient.enterLocalPassiveMode();
+		else
+			ftpClient.enterLocalActiveMode();
+	}
+
+
 
 }

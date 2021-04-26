@@ -159,17 +159,19 @@ public class TextDatabase {
 	}
 
 	//возвращает склад по умолчанию
+	// (на самом деле здесь и ниже descr меняется, не используется и не возвращается из функции)
 	static public MyID getDefaultStock(ContentResolver contentResolver, String descr) {
 		// По умолчанию и не акционный
 		Cursor cursor = contentResolver.query(MTradeContentProvider.STOCKS_CONTENT_URI, new String[]{"id", "descr"}, "(flags&3)=1", null, "descr");
-		if (cursor != null && cursor.moveToNext()) {
+		if (cursor.moveToNext()) {
 			int idIndex = cursor.getColumnIndex("id");
 			int descrIndex = cursor.getColumnIndex("descr");
 			String id = cursor.getString(idIndex);
 			descr = cursor.getString(descrIndex);
+			cursor.close();
 			return new MyID(id);
 		}
-		//
+		cursor.close();
 		descr = "";
 		return new MyID();
 	}
@@ -177,16 +179,18 @@ public class TextDatabase {
 	// возвращает договор, если он один
 	static public MyID getDefaultAgreement(ContentResolver contentResolver, MyID client_id, String descr) {
 		Cursor cursor = contentResolver.query(MTradeContentProvider.AGREEMENTS_CONTENT_URI, new String[]{"id", "descr"}, "owner_id=?", new String[]{client_id.toString()}, null);
-		if (cursor != null && cursor.moveToNext()) {
+		if (cursor.moveToNext()) {
 			int idIndex = cursor.getColumnIndex("id");
 			int descrIndex = cursor.getColumnIndex("descr");
 			String id = cursor.getString(idIndex);
 			descr = cursor.getString(descrIndex);
 			// второго нет
-			if (!cursor.moveToNext())
+			if (!cursor.moveToNext()) {
+				cursor.close();
 				return new MyID(id);
+			}
 		}
-		//
+		cursor.close();
 		descr = "";
 		return new MyID();
 	}
@@ -195,18 +199,34 @@ public class TextDatabase {
 	static public MyID getDefaultTradePoint(ContentResolver contentResolver, MyID client_id, String descr) {
 		// По умолчанию и не акционный
 		Cursor cursor = contentResolver.query(MTradeContentProvider.DISTR_POINTS_CONTENT_URI, new String[]{"id", "descr"}, "owner_id=?", new String[]{client_id.toString()}, null);
-		if (cursor != null && cursor.moveToNext()) {
+		if (cursor.moveToNext()) {
 			int idIndex = cursor.getColumnIndex("id");
 			int descrIndex = cursor.getColumnIndex("descr");
 			String id = cursor.getString(idIndex);
 			descr = cursor.getString(descrIndex);
 			// второй нет
-			if (!cursor.moveToNext())
+			if (!cursor.moveToNext()) {
+				cursor.close();
 				return new MyID(id);
+			}
 		}
+		cursor.close();
 		descr = "";
 		return new MyID();
 	}
+
+	// возвращает тип цены агента по умолчанию (если договор и контрагента не выбрали, чтобы даже в этом случае в заказе были цены)
+	static public MyID getDefaultAgentPriceType(ContentResolver contentResolver) {
+		Cursor cursor = contentResolver.query(MTradeContentProvider.SETTINGS_CONTENT_URI, new String[]{"agent_price_type_id"},"", null, null);
+		if (cursor.moveToNext()) {
+			String agent_price_type_id=cursor.getString(0);
+			cursor.close();
+			return new MyID(agent_price_type_id);
+		}
+		cursor.close();
+		return new MyID();
+	}
+
 
 	// Этой функцией лучше не пользоваться (вместо нее - см. URI_DISCOUNTS_STUFF)
 	static ClientPriceRecord GetClientPrice(ContentResolver contentResolver, MyID client_id, MyID nomenclature_id) {
@@ -3663,7 +3683,7 @@ public class TextDatabase {
 				nom_idx = 0;
 			} else if (bUpdateMode && sc.length() > 4 && sc.substring(0, 4).equals("@@@#")) {
 				// запись с указанным ID надо удалить
-				if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.INFOSTART || g.Common.FACTORY) {
+				if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.ISTART || g.Common.FACTORY) {
 					switch (sc.length()) {
 						case 4 + 36 * 4:
 							contentResolver.delete(MTradeContentProvider.EQUIPMENT_RESTS_CONTENT_URI, "client_id=? and nomenclature_id=? and distr_point_id=? and doc_id=?", new String[]{sc.substring(4, 4 + 36), sc.substring(4 + 36, 4 + 36 + 36), sc.substring(4 + 36 + 36, 4 + 36 + 36 + 36), sc.substring(4 + 36 + 36 + 36, 4 + 36 + 36 + 36 + 36)});
@@ -3744,7 +3764,7 @@ public class TextDatabase {
 						er.flags = Integer.parseInt(sc);
 						break;
 					case 6: // agreement_id
-						if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.INFOSTART || g.Common.FACTORY) {
+						if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.ISTART || g.Common.FACTORY) {
 							er.agreement_id = new MyID();
 						} else {
 							er.agreement_id = new MyID(sc);
@@ -3918,6 +3938,8 @@ public class TextDatabase {
 
 		E_MODE_GPS_M,
 		E_MODE_GPS_M_RECORD,
+
+		E_MODE_SETTINGS_M,
 
 		E_MODE_SALES_HISTORY_HEADERS,
 		E_MODE_SALES_HISTORY_HEADERS_RECORD
@@ -4666,7 +4688,7 @@ public class TextDatabase {
 					if (bUpdateMode)
 					{
 						// запись с указанным ID надо удалить
-						if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.INFOSTART || g.Common.FACTORY)
+						if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.ISTART || g.Common.FACTORY)
 						{
 							if (xpp.getAttributeValue(null, "doc_id")!=null)
 								contentResolver.delete(MTradeContentProvider.EQUIPMENT_RESTS_CONTENT_URI, "client_id=? and nomenclature_id=? and distr_point_id=? and doc_id=?", new String[]{xpp.getAttributeValue(null, "client_id"), xpp.getAttributeValue(null, "nomenclature_id"), xpp.getAttributeValue(null, "distr_point_id"), xpp.getAttributeValue(null, "doc_id")});
@@ -4694,7 +4716,7 @@ public class TextDatabase {
 					cv.put("flags", Integer.parseInt(StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "flags"), "0")));
 
 					// Второй вариант - смотреть, есть ли это поле, но так сделано для лучшего понимания формата данных
-					if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.INFOSTART || g.Common.FACTORY) {
+					if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.ISTART || g.Common.FACTORY) {
 						cv.put("agreement_id", Constants.emptyID);
 					} else {
 						cv.put("agreement_id", xpp.getAttributeValue(null, "agreement_id"));
@@ -5860,6 +5882,39 @@ public class TextDatabase {
 		return updateInterval;
 	}
 
+	// Вернет true, если данные изменились
+	static boolean LoadXML_Settings(Context context, MyDatabase myBase, XmlPullParser xpp) throws IOException, XmlPullParserException {
+
+		ContentResolver contentResolver=context.getContentResolver();
+
+		//XMLMode xmlmode = XMLMode.E_MODE_SETTINGS_M;
+
+		String agent_price_type_id = StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "agent_price_type_id"), "");
+		
+		ContentValues cv=new ContentValues();
+
+		boolean bDataChanged=false;
+		Cursor cursor = contentResolver.query(MTradeContentProvider.SETTINGS_CONTENT_URI, new String[]{"agent_price_type_id"}, null, null, null);
+		// вообще такого быть не должно, но, допустим, если нет настроек, то и не будем записывать ничего
+		if (cursor.moveToFirst()) {
+			String old_agent_price_type_id=StringUtils.defaultIfBlank(cursor.getString(0), "");
+			if (!old_agent_price_type_id.equals(agent_price_type_id))
+			{
+				cv.put("agent_price_type_id", agent_price_type_id);
+				bDataChanged=true;
+			}
+		}
+		cursor.close();
+		
+		if (bDataChanged)
+		{
+			contentResolver.update(MTradeContentProvider.SETTINGS_CONTENT_URI, cv, "", null);
+		}
+
+		return bDataChanged;
+	}
+
+
 
 
 	static ResultLoadXML LoadXML_Organizations(Context context, MyDatabase myBase, XmlPullParser xpp, boolean bUpdateMode) throws IOException, XmlPullParserException {
@@ -6508,7 +6563,7 @@ public class TextDatabase {
 						ContentValues[] values_2 = new ContentValues[bulk_l_idx];
 						int i;
 						for (i = 0; i < bulk_l_idx; i++) {
-							values_2[i] = values[i];
+							values_2[i] = values_l[i];
 						}
 						contentResolver.bulkInsert(MTradeContentProvider.ROUTES_LINES_CONTENT_URI, values_2);
 					}
@@ -7007,6 +7062,15 @@ public class TextDatabase {
 						result.bSuccess=true;
 						result.ResultMessage=context.getString(R.string.message_gps_updates_loaded);
 						result.nResult=update_interval;
+					} else if (xmlmode == XMLMode.E_MODE_NODE && name.equalsIgnoreCase("Settings_M")) {
+						boolean bDataChanged=LoadXML_Settings(context, myBase, xpp);
+						result.xmlMode=XMLMode.E_MODE_SETTINGS_M;
+						result.bSuccess=true;
+						if (bDataChanged)
+							result.ResultMessage=context.getString(R.string.message_settings_loaded);
+						else
+							result.ResultMessage=context.getString(R.string.message_settings_not_changed);
+
 					} else if (xmlmode == XMLMode.E_MODE_NODE && name.equals("Organizations")) {
 						result=LoadXML_Organizations(context, myBase, xpp, bUpdateMode);
 					} else if (xmlmode == XMLMode.E_MODE_NODE && name.equals("Prices")) {
@@ -7073,8 +7137,10 @@ public class TextDatabase {
 
 								contentResolver.insert(MTradeContentProvider.MESSAGES_CONTENT_URI, cv);
 							}
+							result.xmlMode=XMLMode.E_MODE_MESSAGE;
 							result.bSuccess=true;
 							result.ResultMessage=context.getString(R.string.message_messages_loaded);
+
 							break;
 						}
 						default:
@@ -11765,7 +11831,7 @@ public class TextDatabase {
 	    bw.write(String.format("%d\r\n", g.Common.ZERO_MINUS_VER(myBase.m_curators_version)));
 	    if (g.Common.SNEGOROD)
 	    {
-	    	if (g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+	    	if (g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
 	    	{
 	    		bw.write(String.format("%d\r\n", Common.ZERO_MINUS_VER(myBase.m_simple_discounts_version)));
 	    	} else
@@ -11826,7 +11892,7 @@ public class TextDatabase {
 		serializer.attribute(null, "curators_version", String.format("%d", g.Common.ZERO_MINUS_VER(myBase.m_curators_version)));
 		if (g.Common.SNEGOROD)
 		{
-			if (g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+			if (g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
 			{
 				serializer.attribute(null, "simple_discounts_version", String.format("%d", Common.ZERO_MINUS_VER(myBase.m_simple_discounts_version)));
 			} else
@@ -11911,7 +11977,7 @@ public class TextDatabase {
     	    cv.put("priceProcent", g.MyDatabase.m_order_editing.stuff_discount_procent);
         } else
         {
-            if (g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+            if (g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
             {
                 double priceProcent=0.0;
                 // TODO
@@ -11949,7 +12015,7 @@ public class TextDatabase {
         contentResolver.insert(MTradeContentProvider.RESTS_SALES_STUFF_CONTENT_URI,  cv);
         if (g.Common.MEGA)
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_MEGA_CONTENT_URI,  cv);
-        else if (g.Common.TITAN||g.Common.PHARAON||g.Common.INFOSTART||g.Common.FACTORY)
+        else if (g.Common.TITAN||g.Common.PHARAON||g.Common.ISTART||g.Common.FACTORY)
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_SIMPLE_CONTENT_URI,  cv);
         else
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_OTHER_CONTENT_URI,  cv);
@@ -12011,7 +12077,7 @@ public class TextDatabase {
         {
     	    cv.put("priceProcent", 0.0);
         } else
-        if (g.Common.TITAN||g.Common.INFOSTART||g.Common.FACTORY)
+        if (g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
         {
     	    cv.put("priceProcent", 0.0);
         } else
@@ -12024,7 +12090,7 @@ public class TextDatabase {
         contentResolver.insert(MTradeContentProvider.RESTS_SALES_STUFF_CONTENT_URI,  cv);
         if (g.Common.MEGA)
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_MEGA_CONTENT_URI,  cv);
-        else if (g.Common.TITAN||g.Common.PHARAON||g.Common.INFOSTART||g.Common.FACTORY)
+        else if (g.Common.TITAN||g.Common.PHARAON||g.Common.ISTART||g.Common.FACTORY)
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_SIMPLE_CONTENT_URI,  cv);
         else
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_OTHER_CONTENT_URI,  cv);

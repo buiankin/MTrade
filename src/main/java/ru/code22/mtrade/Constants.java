@@ -8,7 +8,7 @@ public final class Constants {
 	
     //public static final boolean MY_DEBUG = true;
 	public static final boolean MY_DEBUG = false;
-	public static final boolean MY_INFOSTART = false;
+	public static final boolean MY_ISTART = false;
 
 	public static final boolean FIREBASE_MESSAGING = false;
 

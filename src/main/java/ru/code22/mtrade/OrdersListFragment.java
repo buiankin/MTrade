@@ -187,7 +187,7 @@ public class OrdersListFragment extends Fragment implements LoaderManager.Loader
                 // Когда открыт список платежей, но платежей нет, то при клике
                 // срабатывает это событие, но это неправильно, поэтому делаем проверку
                 boolean bOrdersMode = true;
-                if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.INFOSTART || g.Common.FACTORY) {
+                if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.ISTART || g.Common.FACTORY) {
                     bOrdersMode = true;//getIsOrdersMode();
                 }
                 if (bOrdersMode) {
