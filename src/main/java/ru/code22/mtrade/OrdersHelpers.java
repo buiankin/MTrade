@@ -386,6 +386,10 @@ public class OrdersHelpers {
 				// заляп (потому, что клиент не всегда выбирается, а иногда создается)
 				rec.price_type_id=new MyID(MyWebExchange.dummyId);
 			}
+			if (g.Common.PRODLIDER)
+			{
+				rec.price_type_id=TextDatabase.getDefaultAgentPriceType(activity.getContentResolver());
+			}
 		}
 		// Долг контрагента
 	    cursor=activity.getContentResolver().query(MTradeContentProvider.SALDO_CONTENT_URI, new String[]{"saldo", "saldo_past", "saldo_past30"}, "client_id=?", new String[]{g.MyDatabase.m_order_editing.client_id.toString()}, null);

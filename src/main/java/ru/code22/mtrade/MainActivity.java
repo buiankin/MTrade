@@ -374,6 +374,8 @@ public class MainActivity extends AppCompatActivity
     //double m_settings_ticket_w;
     String m_settings_agent_id;
     int m_settings_gps_interval;
+    // Пусть так и лежит только в базе, считывать не будем
+    //String m_settings_agent_price_type_id;
 
     //
     boolean m_bRefreshPressed;
@@ -461,6 +463,9 @@ public class MainActivity extends AppCompatActivity
             if (m_settings_gps_interval < 0) {
                 g.Common.HAVE_GPS_SETTINGS = true;
             }
+            //int index_agent_price_type_id = cursor.getColumnIndex("agent_price_type_id");
+            //m_settings_agent_price_type_id = cursor.getString(index_agent_price_type_id);
+
         } else {
             // Формат данных не заполняем специально
             m_settings_DataFormat = "";
@@ -468,6 +473,7 @@ public class MainActivity extends AppCompatActivity
             //m_settings_ticket_w = 0.0;
             m_settings_agent_id = null;
             m_settings_gps_interval = 0;
+            //m_settings_agent_price_type_id = null;
         }
         cursor.close();
         if (m_settings_agent_id == null || m_settings_agent_id.replace(" ", "").isEmpty()) {
@@ -485,6 +491,7 @@ public class MainActivity extends AppCompatActivity
         //cv.put("ticket_w", m_settings_ticket_w);
         cv.put("agent_id", m_settings_agent_id);
         cv.put("gps_interval", m_settings_gps_interval);
+        //cv.put("agent_price_type_id", m_settings_agent_price_type_id);
         // если update не сработает, добавится строка через insert (так сделано в ContentProvider)
         getContentResolver().update(MTradeContentProvider.SETTINGS_CONTENT_URI, cv, "", null);
     }
@@ -7846,7 +7853,7 @@ public class MainActivity extends AppCompatActivity
 
                                 } else {
                                     // Не удалось отправить файл
-                                    textToLog.add(getString(R.string.message_file_not_sent));
+                                    textToLog.add(getString(R.string.message_file_not_sent_reply_code, ftpClient.getReplyCode() ));
                                     publishProgress(-2, textToLog.size());
                                 }
                                 inFile.close();

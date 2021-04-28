@@ -474,6 +474,7 @@
 	<string name="message_archive_error">Мұрағаттар жұмыс істеу кезінде қате</string>
 	<string name="message_file_error">Файл қате</string>
 	<string name="message_file_not_sent">Файлды жіберу мүмкін болмады</string>
+	<string name="message_file_not_sent_reply_code">Файлды жіберу мүмкін болмады, reply code: %d</string>
 	<string name="title_exchange">айырбастау</string>
 	<string name="ftp_message_connection_error">Байланыс қате</string>
 	<string name="ftp_message_io_error">IO қате</string>
@@ -550,5 +551,7 @@
     <string name="Weight">Weight</string>
     <string name="Price_kg">Price/kg</string>
     <string name="no_email"><![CDATA[<no email>]]></string>
+    <string name="message_settings_loaded">Settings loaded</string>
+    <string name="message_settings_not_changed">Settings not changed</string>
 
 </resources>
