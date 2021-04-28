@@ -548,10 +548,10 @@
 	<string name="Restart">Қайтадан қосу</string>
     <string name="list_columns_portrait">Бағандар тізімі (портрет)</string>
 	<string name="list_columnds_landscape">Бағандар тізімі (ландшафт)</string>
-    <string name="Weight">Weight</string>
-    <string name="Price_kg">Price/kg</string>
+    <string name="Weight">Салмақ</string>
+    <string name="Price_kg">Бағасы/кг</string>
     <string name="no_email"><![CDATA[<no email>]]></string>
-    <string name="message_settings_loaded">Settings loaded</string>
-    <string name="message_settings_not_changed">Settings not changed</string>
+    <string name="message_settings_loaded">Параметрлер жүктелді</string>
+    <string name="message_settings_not_changed">Параметрлер өзгертілмеген</string>
 
 </resources>

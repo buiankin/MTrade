@@ -550,7 +550,7 @@
     <string name="Weight">Масса</string>
 	<string name="Price_kg">Цена/кг</string>
     <string name="no_email"><![CDATA[<email не указан>]]></string>
-    <string name="message_settings_loaded">Settings loaded</string>
-    <string name="message_settings_not_changed">Settings not changed</string>
+    <string name="message_settings_loaded">Настройки загружены</string>
+    <string name="message_settings_not_changed">Настройки не изменились</string>
 
 </resources>
