@@ -193,21 +193,19 @@ public class MTradeContentProvider extends ContentProvider {
 	public static final String ORGANIZATION_DESCR_COLUMN = "organizations.descr as organization_descr";
 	public static final String PRICE_TYPE_DESCR_COLUMN = "pricetypes.descr as pricetype_descr";
 	public static final String NOMENCLATURE_DESCR_COLUMN = "IFNULL(nomenclature.descr, \"{\"||nomenclature_id||\"}\") as nomencl_descr";
-	//public static final String NOMENCLATURE_NODE_ID_COLUMN = "nomenclature.parent_id_0 as nomencl_node_id";
 	public static final String NOMENCLATURE_WEIGHT_COLUMN = "nomenclature.weight_k_1 as nomencl_weight_k_1";
 	public static final String NOMENCLATURE_ID_COLUMN = "nomenclature.id as nomenclature_id";
+    public static final String NOMENCLATURE_ID_SURFING_COLUMN = "ifnull(nomenclature.id, h.id) as nomenclature_id";
+    public static final String NOMENCLATURE_DESCR_SURFING_COLUMN = "ifnull(nomenclature.descr, h.groupDescr) as descr";
 	public static final String NOMENCLATURE_GROUP_COLUMN = "h.groupDescr as h_groupDescr";
 	
 	public static final String CONTRACT_DESCR_COLUMN = "IFNULL(distribsContracts.descr, \"{\"||contract_id||\"}\") as contract_descr";
 	
 	
-	//public static final String NOMENCLATURE_REST_COLUMN = "sum(quantity)-sum(quantity_reserve) as nom_quantity";
 	public static final String NOMENCLATURE_REST_STOCK_COLUMN = "restsS.quantity-restsS.quantity_reserve as nom_quantity";
 	public static final String NOMENCLATURE_SALES_COLUMN = "restsS.saledNow as nom_quantity_saled_now";
 	public static final String DUMMY_COLUMN = "0 as zero";
 	
-	//private static final String TAG = "MTradeContentProvider";
-	 
 	// БД
 	//private static final String DIR = "/sdcard";
     public static final String DB_NAME = "mdata.db";
@@ -219,9 +217,8 @@ public class MTradeContentProvider extends ContentProvider {
     private static final String REFUNDS_TABLE = "refunds";
     private static final String CLIENTS_TABLE = "clients";
     private static final String NOMENCLATURE_TABLE = "nomenclature";
-    // TODO
+
     private static final String NOMENCLATURE_LIST_TABLE =
-    		//"nomenclature left join restsV as rests on rests.nomenclature_id=nomenclature.id "+
     		"nomenclature left join rests_sales_stuff as restsS on restsS.nomenclature_id=nomenclature.id "+
     		"left join salesV as sales_client on sales_client.nomenclature_id=nomenclature.id or sales_client.nomenclature_id=nomenclature.parent_id "+
     		"left join pricesV as prices on prices.nomenclature_id=nomenclature.id "+
@@ -231,17 +228,20 @@ public class MTradeContentProvider extends ContentProvider {
     		"left join nomenclature_hierarchy h_parent on h_parent.id=nomenclature.parent_id " +
     		"left join discounts_stuff d_s on d_s.nomenclature_id=nomenclature.id " +
     		"left join discounts_stuff d_s_p on d_s_p.nomenclature_id=nomenclature.parent_id";
-    
-    /*
-    private static final String NOMENCLATURE_LIST_TABLE_MEGA = 
-    		"nomenclature left join rests_sales_stuff as restsS on restsS.nomenclature_id=nomenclature.id "+
-    		"left join salesV as sales_client on sales_client.nomenclature_id=nomenclature.id "+
-    		"left join nomenclature_hierarchy h on h.id=nomenclature.id "+
-    		"left join nomenclature_hierarchy h_parent on h_parent.id=nomenclature.parent_id " +
-    		"left join discounts_stuff d_s on d_s.nomenclature_id=nomenclature.id " +
-    		"left join discounts_stuff d_s_p on d_s_p.nomenclature_id=nomenclature.parent_id";
-    */
-    
+
+    // отличие от NOMENCLATURE_LIST_TABLE в том, что корневой элемент (он только в иерархии) должен присутствоать
+    private static final String NOMENCLATURE_SURFING_TABLE =
+            "nomenclature_hierarchy h "+
+            "left join nomenclature on nomenclature.id=h.id " +
+                    "left join rests_sales_stuff as restsS on restsS.nomenclature_id=nomenclature.id "+
+                    "left join salesV as sales_client on sales_client.nomenclature_id=nomenclature.id or sales_client.nomenclature_id=nomenclature.parent_id "+
+                    "left join pricesV as prices on prices.nomenclature_id=nomenclature.id "+
+                    // здесь хранятся данные как товаров, так и групп, но нам важно для групп только данные по группам, а по товарам и не нужно - в выборку они не включены
+                    "left join salesV_7 as sales7 on sales7.nomenclature_id=nomenclature.id "+
+                    "left join nomenclature_hierarchy h_parent on h_parent.id=nomenclature.parent_id " +
+                    "left join discounts_stuff d_s on d_s.nomenclature_id=nomenclature.id " +
+                    "left join discounts_stuff d_s_p on d_s_p.nomenclature_id=nomenclature.parent_id";
+
     
     private static final String RESTS_TABLE = "rests";
     private static final String SALDO_TABLE = "saldo";
@@ -381,22 +381,18 @@ public class MTradeContentProvider extends ContentProvider {
     private static final String MESSAGES_PATH = "messages";
     private static final String MESSAGES_LIST_PATH = "messagesList";
     private static final String NOMENCLATURE_LIST_PATH = "nomenclatureList";
-    //private static final String NOMENCLATURE_LIST_STOCK_PATH = "nomenclatureListStock";
+    private static final String NOMENCLATURE_SURFING_PATH = "nomenclatureList";
     private static final String SALES_PATH = "sales";
-    //private static final String RESTSV_PATH = "restsV";
     private static final String RESTS_SALES_STUFF_PATH = "rests_sales_stuff";
-    //private static final String DISCOUNTS_STUFF_PATH = "discounts_stuff";
     private static final String DISCOUNTS_STUFF_MEGA_PATH = "discounts_stuff_mega";
     private static final String DISCOUNTS_STUFF_SIMPLE_PATH = "discounts_stuff_simple";
     private static final String DISCOUNTS_STUFF_OTHER_PATH = "discounts_stuff_other";
-    //private static final String PRICESV_PATH = "pricesV";
     private static final String PRICESV_MEGA_PATH = "pricesVmega";
     private static final String PRICESV_OTHER_PATH = "pricesVother";
     private static final String CLIENTS_PRICE_PATH = "clients_price";
     private static final String CURATORS_PRICE_PATH = "curators_price";
     private static final String SETTINGS_PATH = "settings";
     private static final String SALES_LOADED_PATH = "salesloaded";
-    //private static final String SALES_LOADED_WITH_COMMON_GROUPS_PATH = "salesloadedWithCommonGroups";
     private static final String SALES_L2_PATH = "salesL2";
     
     private static final String VERSIONS_SALES_PATH = "salesversions";
@@ -524,17 +520,15 @@ public class MTradeContentProvider extends ContentProvider {
     	      + AUTHORITY + "/" + MESSAGES_LIST_PATH);
     public static final Uri NOMENCLATURE_LIST_CONTENT_URI = Uri.parse("content://"
     	      + AUTHORITY + "/" + NOMENCLATURE_LIST_PATH);
-    //public static final Uri NOMENCLATURE_LIST_STOCK_CONTENT_URI = Uri.parse("content://"
-  	//      + AUTHORITY + "/" + NOMENCLATURE_LIST_STOCK_PATH);
-    
+    public static final Uri NOMENCLATURE_SURFING_CONTENT_URI = Uri.parse("content://"
+            + AUTHORITY + "/" + NOMENCLATURE_SURFING_PATH);
+
     public static final Uri SIMPLE_DISCOUNTS_CONTENT_URI =  Uri.parse("content://"
   	      + AUTHORITY + "/" + SIMPLE_DISCOUNTS_PATH);
     
     public static final Uri SALES_CONTENT_URI = Uri.parse("content://"
   	      + AUTHORITY + "/" + SALES_PATH);
-    //public static final Uri RESTSV_CONTENT_URI = Uri.parse("content://"
-    //	      + AUTHORITY + "/" + RESTSV_PATH);
-    
+
     public static final Uri RESTS_SALES_STUFF_CONTENT_URI = Uri.parse("content://"
     	    	      + AUTHORITY + "/" + RESTS_SALES_STUFF_PATH);
     
@@ -698,113 +692,108 @@ public class MTradeContentProvider extends ContentProvider {
     private static final int URI_MESSAGES = 38;
     private static final int URI_MESSAGES_ID = 39;
     private static final int URI_NOMENCLATURE_LIST = 40;
-    //private static final int URI_NOMENCLATURE_LIST_STOCK = 40;
-    private static final int URI_SALES = 41;
-    //private static final int URI_RESTSV = 42;
-    private static final int URI_RESTS_SALES_STUFF = 42;
+    private static final int URI_NOMENCLATURE_SURFING = 41;
+    private static final int URI_SALES = 50;
+    private static final int URI_RESTS_SALES_STUFF = 51;
     
-    //private static final int URI_PRICESV = 43;
-    private static final int URI_CLIENTS_PRICE = 44;
-    private static final int URI_SETTINGS = 45;
-    private static final int URI_SALES_LOADED = 46;
-    private static final int URI_VERSIONS_SALES = 47;
-    private static final int URI_NOMENCLATURE_HIERARCHY = 48;
-    private static final int URI_CREATE_VIEWS = 49;
-    private static final int URI_CREATE_SALES_L = 50;
-    private static final int URI_MESSAGES_LIST = 51;
-    private static final int URI_ORDERS_SILENT = 52;
-    private static final int URI_ORDERS_SILENT_ID = 53;
+    private static final int URI_CLIENTS_PRICE = 52;
+    private static final int URI_SETTINGS = 53;
+    private static final int URI_SALES_LOADED = 54;
+    private static final int URI_VERSIONS_SALES = 55;
+    private static final int URI_NOMENCLATURE_HIERARCHY = 56;
+    private static final int URI_CREATE_VIEWS = 57;
+    private static final int URI_CREATE_SALES_L = 58;
+    private static final int URI_MESSAGES_LIST = 59;
+    private static final int URI_ORDERS_SILENT = 60;
+    private static final int URI_ORDERS_SILENT_ID = 61;
     
     //private static final int URI_DISCOUNTS_STUFF = 54;
     
-    private static final int URI_CURATORS_PRICE = 55;
+    private static final int URI_CURATORS_PRICE = 62;
     
-    private static final int URI_SIMPLE_DISCOUNTS = 56;
-    private static final int URI_SIMPLE_DISCOUNTS_ID = 57;
+    private static final int URI_SIMPLE_DISCOUNTS = 63;
+    private static final int URI_SIMPLE_DISCOUNTS_ID = 64;
     
-    private static final int URI_CASH_PAYMENTS = 58;
-    private static final int URI_CASH_PAYMENTS_ID = 59;
-    private static final int URI_CASH_PAYMENTS_JOURNAL = 60;
+    private static final int URI_CASH_PAYMENTS = 65;
+    private static final int URI_CASH_PAYMENTS_ID = 66;
+    private static final int URI_CASH_PAYMENTS_JOURNAL = 67;
     
-    private static final int URI_SALDO_EXTENDED = 61;
-    private static final int URI_SALDO_EXTENDED_ID = 62;
-    private static final int URI_SALDO_EXTENDED_JOURNAL = 63;
+    private static final int URI_SALDO_EXTENDED = 90;
+    private static final int URI_SALDO_EXTENDED_ID = 91;
+    private static final int URI_SALDO_EXTENDED_JOURNAL = 92;
     
-    private static final int URI_CURATORS_LIST = 64;
+    private static final int URI_CURATORS_LIST = 93;
     
-    private static final int URI_PLACES = 65;
-    private static final int URI_OCCUPIED_PLACES = 66;
-    private static final int URI_ORDERS_PLACES = 67;
-    private static final int URI_ORDERS_PLACES_LIST = 68;
+    private static final int URI_PLACES = 94;
+    private static final int URI_OCCUPIED_PLACES = 95;
+    private static final int URI_ORDERS_PLACES = 96;
+    private static final int URI_ORDERS_PLACES_LIST = 97;
     
-    private static final int URI_REFUNDS = 69;
-    private static final int URI_REFUNDS_ID = 70;
-    private static final int URI_DISTRIBS_ID = 71;
+    private static final int URI_REFUNDS = 100;
+    private static final int URI_REFUNDS_ID = 101;
+    private static final int URI_DISTRIBS_ID = 102;
     
-    private static final int URI_JOURNAL = 72;
-    private static final int URI_JOURNAL_ID = 73;
+    private static final int URI_JOURNAL = 103;
+    private static final int URI_JOURNAL_ID = 104;
     
-    private static final int URI_REFUNDS_LINES = 74;
-    private static final int URI_REFUNDS_LINES_COMPLEMENTED = 75;
+    private static final int URI_REFUNDS_LINES = 105;
+    private static final int URI_REFUNDS_LINES_COMPLEMENTED = 106;
     
-    private static final int URI_REFUNDS_SILENT = 76;
-    private static final int URI_REFUNDS_SILENT_ID = 77;
+    private static final int URI_REFUNDS_SILENT = 107;
+    private static final int URI_REFUNDS_SILENT_ID = 108;
     
-    //private static final int URI_SALES_LOADED_WITH_COMMON_GROUPS = 77;
-    private static final int URI_SALES_L2 = 78;
+    private static final int URI_SALES_L2 = 109;
     
-    private static final int URI_SERVERS_WHEN_WIFI = 79;
+    private static final int URI_SERVERS_WHEN_WIFI = 110;
     
-    private static final int URI_SORT = 80;
+    private static final int URI_SORT = 111;
     
-    private static final int URI_VICARIOUS_POWER = 81;
-    private static final int URI_VICARIOUS_POWER_ID = 82;
+    private static final int URI_VICARIOUS_POWER = 112;
+    private static final int URI_VICARIOUS_POWER_ID = 113;
     
-    private static final int URI_GPS_COORD = 83;
+    private static final int URI_GPS_COORD = 114;
     
-    private static final int URI_AGREEMENTS_WITH_SALDO_ONLY_LIST = 84;
+    private static final int URI_AGREEMENTS_WITH_SALDO_ONLY_LIST = 115;
     
     
-    private static final int URI_DISTRIBS_CONTRACTS = 85;
-    private static final int URI_DISTRIBS_CONTRACTS_LIST = 86;
-    private static final int URI_DISTRIBS_LINES = 87;
-    private static final int URI_DISTRIBS_LINES_COMPLEMENTED = 88;
-    private static final int URI_DISTRIBS = 89;
+    private static final int URI_DISTRIBS_CONTRACTS = 120;
+    private static final int URI_DISTRIBS_CONTRACTS_LIST = 121;
+    private static final int URI_DISTRIBS_LINES = 122;
+    private static final int URI_DISTRIBS_LINES_COMPLEMENTED = 123;
+    private static final int URI_DISTRIBS = 124;
     
-    private static final int URI_EQUIPMENT = 90;
-    private static final int URI_EQUIPMENT_RESTS = 91;
-    private static final int URI_EQUIPMENT_RESTS_LIST = 92;
+    private static final int URI_EQUIPMENT = 125;
+    private static final int URI_EQUIPMENT_RESTS = 126;
+    private static final int URI_EQUIPMENT_RESTS_LIST = 127;
     
-    private static final int URI_DISTR_POINTS_LIST = 93;
+    private static final int URI_DISTR_POINTS_LIST = 128;
     
-    //private static final int URI_PRICESV = 43;    
-    private static final int URI_PRICESV_MEGA = 94;
-    private static final int URI_PRICESV_OTHER = 95;
+    private static final int URI_PRICESV_MEGA = 129;
+    private static final int URI_PRICESV_OTHER = 130;
     
-    //private static final int URI_DISCOUNTS_STUFF = 54;
-    private static final int URI_DISCOUNTS_STUFF_MEGA = 96;
-    private static final int URI_DISCOUNTS_STUFF_SIMPLE = 97;
-    private static final int URI_DISCOUNTS_STUFF_OTHER = 98;
+    private static final int URI_DISCOUNTS_STUFF_MEGA = 131;
+    private static final int URI_DISCOUNTS_STUFF_SIMPLE = 132;
+    private static final int URI_DISCOUNTS_STUFF_OTHER = 133;
     
-    private static final int URI_MTRADE_LOG = 99;
-    private static final int URI_PERMISSIONS_REQUESTS = 100;
+    private static final int URI_MTRADE_LOG = 134;
+    private static final int URI_PERMISSIONS_REQUESTS = 135;
 
-    private static final int URI_AGREEMENTS30 = 101;
-    private static final int URI_AGREEMENTS30_ID = 102;
-    private static final int URI_AGREEMENTS30_LIST = 103;
-    private static final int URI_AGREEMENTS30_WITH_SALDO_ONLY_LIST = 104;
-    private static final int URI_PRICES_AGREEMENTS30 = 105;
+    private static final int URI_AGREEMENTS30 = 136;
+    private static final int URI_AGREEMENTS30_ID = 137;
+    private static final int URI_AGREEMENTS30_LIST = 138;
+    private static final int URI_AGREEMENTS30_WITH_SALDO_ONLY_LIST = 139;
+    private static final int URI_PRICES_AGREEMENTS30 = 140;
 
-    private static final int URI_ROUTES = 106;
-    private static final int URI_ROUTES_LINES = 107;
-    private static final int URI_ROUTES_DATES = 108;
-    private static final int URI_ROUTES_DATES_ID = 109;
-    private static final int URI_ROUTES_DATES_LIST = 110;
-    private static final int URI_ROUTES_DATES_LIST_ID = 111;
+    private static final int URI_ROUTES = 150;
+    private static final int URI_ROUTES_LINES = 151;
+    private static final int URI_ROUTES_DATES = 152;
+    private static final int URI_ROUTES_DATES_ID = 153;
+    private static final int URI_ROUTES_DATES_LIST = 154;
+    private static final int URI_ROUTES_DATES_LIST_ID = 155;
 
-    private static final int URI_REAL_ROUTES_DATES = 112;
-    private static final int URI_REAL_ROUTES_DATES_ID = 113;
-    private static final int URI_REAL_ROUTES_LINES = 114;
+    private static final int URI_REAL_ROUTES_DATES = 156;
+    private static final int URI_REAL_ROUTES_DATES_ID = 1157;
+    private static final int URI_REAL_ROUTES_LINES = 158;
 
     private static HashMap<String, String> ordersProjectionMap;
     private static HashMap<String, String> cashPaymentsProjectionMap;
@@ -846,7 +835,7 @@ public class MTradeContentProvider extends ContentProvider {
     private static HashMap<String, String> messagesProjectionMap;
     private static HashMap<String, String> messagesListProjectionMap;
     private static HashMap<String, String> nomenclatureListProjectionMap;
-    //private static HashMap<String, String> nomenclatureListProjectionMapMega;
+    private static HashMap<String, String> nomenclatureSurfingProjectionMap;
     private static HashMap<String, String> clientsPriceProjectionMap;
     private static HashMap<String, String> curatorsPriceProjectionMap;
     private static HashMap<String, String> simpleDiscountsProjectionMap;
@@ -1819,7 +1808,6 @@ public class MTradeContentProvider extends ContentProvider {
                         "accept_coord int," +
                         "UNIQUE ('real_route_id', 'lineno')"+
                         ");");
-
 
             }
 
@@ -2911,7 +2899,6 @@ public class MTradeContentProvider extends ContentProvider {
                 if (oldVersion<71) {
                     db.execSQL("alter table settings add column agent_price_type_id text null");
                 }
-
 
 		    	/*
 		    	if (oldVersion<43)
@@ -5728,6 +5715,12 @@ public class MTradeContentProvider extends ContentProvider {
             //    qb.setTables(NOMENCLATURE_LIST_STOCK_TABLE);
             //    qb.setProjectionMap(nomenclatureListStockProjectionMap);
             //    break;
+
+            case URI_NOMENCLATURE_SURFING:
+                qb.setTables(NOMENCLATURE_SURFING_TABLE);
+                qb.setProjectionMap(nomenclatureSurfingProjectionMap);
+                break;
+
             case URI_RESTS_ID:
                 bAppendIdToSelection=true;
             case URI_RESTS:
@@ -6628,9 +6621,8 @@ public class MTradeContentProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, MESSAGES_PATH + "/#", URI_MESSAGES_ID);
         sUriMatcher.addURI(AUTHORITY, MESSAGES_LIST_PATH, URI_MESSAGES_LIST);        
         sUriMatcher.addURI(AUTHORITY, NOMENCLATURE_LIST_PATH, URI_NOMENCLATURE_LIST);
-        //sUriMatcher.addURI(AUTHORITY, NOMENCLATURE_LIST_STOCK_PATH, URI_NOMENCLATURE_LIST_STOCK);
+        sUriMatcher.addURI(AUTHORITY, NOMENCLATURE_SURFING_PATH, URI_NOMENCLATURE_SURFING);
         sUriMatcher.addURI(AUTHORITY, SALES_PATH, URI_SALES);
-        //sUriMatcher.addURI(AUTHORITY, RESTSV_PATH, URI_RESTSV);
         sUriMatcher.addURI(AUTHORITY, RESTS_SALES_STUFF_PATH, URI_RESTS_SALES_STUFF);
         sUriMatcher.addURI(AUTHORITY, DISCOUNTS_STUFF_MEGA_PATH, URI_DISCOUNTS_STUFF_MEGA);
         sUriMatcher.addURI(AUTHORITY, DISCOUNTS_STUFF_SIMPLE_PATH, URI_DISCOUNTS_STUFF_SIMPLE);
@@ -6642,7 +6634,6 @@ public class MTradeContentProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, SIMPLE_DISCOUNTS_PATH, URI_SIMPLE_DISCOUNTS);
         sUriMatcher.addURI(AUTHORITY, SETTINGS_PATH, URI_SETTINGS);
         sUriMatcher.addURI(AUTHORITY, SALES_LOADED_PATH, URI_SALES_LOADED);
-        //sUriMatcher.addURI(AUTHORITY, SALES_LOADED_WITH_COMMON_GROUPS_PATH, URI_SALES_LOADED_WITH_COMMON_GROUPS);
         sUriMatcher.addURI(AUTHORITY, SALES_L2_PATH, URI_SALES_L2);
         sUriMatcher.addURI(AUTHORITY, VERSIONS_SALES_PATH, URI_VERSIONS_SALES);
         sUriMatcher.addURI(AUTHORITY, NOMENCLATURE_HIERARCHY_PATH, URI_NOMENCLATURE_HIERARCHY);
@@ -6892,36 +6883,61 @@ public class MTradeContentProvider extends ContentProvider {
         nomenclatureProjectionMap.put("image_height", "image_height");
         nomenclatureProjectionMap.put("image_file_size", "image_file_size");
 
-        nomenclatureListProjectionMap = new HashMap<String, String>();
         // Номенклатура
-        nomenclatureListProjectionMap.put("_id", "nomenclature._id");
-        nomenclatureListProjectionMap.put("nomenclature_id", NOMENCLATURE_ID_COLUMN);
-        nomenclatureListProjectionMap.put("isFolder", "isFolder");
-        nomenclatureListProjectionMap.put("parent_id", "parent_id");
-        nomenclatureListProjectionMap.put("h_groupDescr", NOMENCLATURE_GROUP_COLUMN);
-        nomenclatureListProjectionMap.put("groupDescr", "groupDescr");
-        nomenclatureListProjectionMap.put("descr", "descr");
-        nomenclatureListProjectionMap.put("quant_1", "quant_1");
-        nomenclatureListProjectionMap.put("quant_2", "quant_2");
-        nomenclatureListProjectionMap.put("edizm_1_id", "edizm_1_id");
-        nomenclatureListProjectionMap.put("edizm_2_id", "edizm_2_id");
-        nomenclatureListProjectionMap.put("quant_k_1", "quant_k_1");
-        nomenclatureListProjectionMap.put("quant_k_2", "quant_k_2");
-        nomenclatureListProjectionMap.put("required_sales", "required_sales");
-        nomenclatureListProjectionMap.put("image_file", "image_file");
-        nomenclatureListProjectionMap.put("image_file_checksum", "image_file_checksum");
-        nomenclatureListProjectionMap.put("discount", "discount");
-        nomenclatureListProjectionMap.put("flags", "flags");
-        nomenclatureListProjectionMap.put("nomenclature_color", "nomenclature_color");
+        nomenclatureListProjectionMap = new HashMap<String, String>();
+        // Номенклатура, в которой также есть корневой (элемент, с пустым Id, он находится только в hierarchy и там full join)
+        nomenclatureSurfingProjectionMap = new HashMap<String, String>();
 
-        nomenclatureListProjectionMap.put("image_width", "image_width");
-        nomenclatureListProjectionMap.put("image_height", "image_height");
+        int i;
+        for (i=0; i<2; i++) {
+            HashMap<String, String> tempNomenclatureListProjectionMap=(i==0?nomenclatureListProjectionMap:nomenclatureSurfingProjectionMap);
+            // Номенклатура
+            tempNomenclatureListProjectionMap.put("_id", "nomenclature._id");
+            tempNomenclatureListProjectionMap.put("nomenclature_id", i==0?NOMENCLATURE_ID_COLUMN:NOMENCLATURE_ID_SURFING_COLUMN);
+            tempNomenclatureListProjectionMap.put("isFolder", "isFolder");
+            tempNomenclatureListProjectionMap.put("parent_id", "parent_id");
+            tempNomenclatureListProjectionMap.put("h_groupDescr", NOMENCLATURE_GROUP_COLUMN);
+            tempNomenclatureListProjectionMap.put("groupDescr", "groupDescr");
+            tempNomenclatureListProjectionMap.put("descr", i==0?"descr":NOMENCLATURE_DESCR_SURFING_COLUMN);
+            tempNomenclatureListProjectionMap.put("quant_1", "quant_1");
+            tempNomenclatureListProjectionMap.put("quant_2", "quant_2");
+            tempNomenclatureListProjectionMap.put("edizm_1_id", "edizm_1_id");
+            tempNomenclatureListProjectionMap.put("edizm_2_id", "edizm_2_id");
+            tempNomenclatureListProjectionMap.put("quant_k_1", "quant_k_1");
+            tempNomenclatureListProjectionMap.put("quant_k_2", "quant_k_2");
+            tempNomenclatureListProjectionMap.put("required_sales", "required_sales");
+            tempNomenclatureListProjectionMap.put("image_file", "image_file");
+            tempNomenclatureListProjectionMap.put("image_file_checksum", "image_file_checksum");
+            tempNomenclatureListProjectionMap.put("discount", "discount");
+            tempNomenclatureListProjectionMap.put("flags", "flags");
+            tempNomenclatureListProjectionMap.put("nomenclature_color", "nomenclature_color");
 
-        nomenclatureListProjectionMap.put("quantity7_1", "quantity7_1");
-        nomenclatureListProjectionMap.put("quantity7_2", "quantity7_2");
-        nomenclatureListProjectionMap.put("quantity7_3", "quantity7_3");
-        nomenclatureListProjectionMap.put("quantity7_4", "quantity7_4");
-        
+            tempNomenclatureListProjectionMap.put("image_width", "image_width");
+            tempNomenclatureListProjectionMap.put("image_height", "image_height");
+
+            tempNomenclatureListProjectionMap.put("quantity7_1", "quantity7_1");
+            tempNomenclatureListProjectionMap.put("quantity7_2", "quantity7_2");
+            tempNomenclatureListProjectionMap.put("quantity7_3", "quantity7_3");
+            tempNomenclatureListProjectionMap.put("quantity7_4", "quantity7_4");
+
+            // Прайс
+            tempNomenclatureListProjectionMap.put("price", "price");
+            tempNomenclatureListProjectionMap.put("k", "k");
+            tempNomenclatureListProjectionMap.put("edIzm", "edIzm");
+            // Наценки по клиентам (в 7-ке справочник СкидкиПоКлиентам)
+            tempNomenclatureListProjectionMap.put("priceAdd", "ifnull(d_s.priceAdd, d_s_p.priceAdd) as priceAdd");
+            tempNomenclatureListProjectionMap.put("priceProcent", "ifnull(d_s.priceProcent, d_s_p.priceProcent) as priceProcent");
+            // Остатки
+            tempNomenclatureListProjectionMap.put("nom_quantity", NOMENCLATURE_REST_STOCK_COLUMN);
+            // Продажи
+            tempNomenclatureListProjectionMap.put("quantity_saled", "strQuantity as quantity_saled");
+            // Продажи текущие
+            tempNomenclatureListProjectionMap.put("nom_quantity_saled_now", "saledNow as nom_quantity_saled_now");
+            // Дополнительно
+            tempNomenclatureListProjectionMap.put("zero", DUMMY_COLUMN);
+        }
+
+
         //
         nomenclatureHierarchyProjectionMap = new HashMap<String, String>();
         nomenclatureHierarchyProjectionMap.put("id", "id");
@@ -6938,96 +6954,6 @@ public class MTradeContentProvider extends ContentProvider {
         nomenclatureHierarchyProjectionMap.put("level7_id", "level7_id");
         nomenclatureHierarchyProjectionMap.put("level8_id", "level8_id");
         
-        // Прайс
-        nomenclatureListProjectionMap.put("price", "price");
-        nomenclatureListProjectionMap.put("k", "k");
-        nomenclatureListProjectionMap.put("edIzm", "edIzm");
-        // Наценки по клиентам (в 7-ке справочник СкидкиПоКлиентам)
-        nomenclatureListProjectionMap.put("priceAdd", "ifnull(d_s.priceAdd, d_s_p.priceAdd) as priceAdd");
-        nomenclatureListProjectionMap.put("priceProcent", "ifnull(d_s.priceProcent, d_s_p.priceProcent) as priceProcent");
-        // Остатки
-        nomenclatureListProjectionMap.put("nom_quantity", NOMENCLATURE_REST_STOCK_COLUMN);
-        // Продажи
-        //nomenclatureListProjectionMap.put("quantity_saled", "quantity_saled");
-        nomenclatureListProjectionMap.put("quantity_saled", "strQuantity as quantity_saled");
-        // Продажи текущие
-        nomenclatureListProjectionMap.put("nom_quantity_saled_now", "saledNow as nom_quantity_saled_now");
-        // Дополнительно
-        nomenclatureListProjectionMap.put("zero", DUMMY_COLUMN);
-        
-        /*
-        nomenclatureListProjectionMapMega = new HashMap<String, String>();
-        // Номенклатура
-        nomenclatureListProjectionMapMega.put("_id", "nomenclature._id");
-        nomenclatureListProjectionMapMega.put("nomenclature_id", NOMENCLATURE_ID_COLUMN);
-        nomenclatureListProjectionMapMega.put("isFolder", "isFolder");
-        nomenclatureListProjectionMapMega.put("parent_id", "parent_id");
-        nomenclatureListProjectionMapMega.put("h_groupDescr", NOMENCLATURE_GROUP_COLUMN);
-        nomenclatureListProjectionMapMega.put("groupDescr", "groupDescr");
-        nomenclatureListProjectionMapMega.put("descr", "descr");
-        nomenclatureListProjectionMapMega.put("quant_1", "quant_1");
-        nomenclatureListProjectionMapMega.put("quant_2", "quant_2");
-        nomenclatureListProjectionMapMega.put("edizm_1_id", "edizm_1_id");
-        nomenclatureListProjectionMapMega.put("edizm_2_id", "edizm_2_id");
-        nomenclatureListProjectionMapMega.put("quant_k_1", "quant_k_1");
-        nomenclatureListProjectionMapMega.put("quant_k_2", "quant_k_2");
-        nomenclatureListProjectionMapMega.put("required_sales", "required_sales");
-        nomenclatureListProjectionMapMega.put("image_file", "image_file");
-        nomenclatureListProjectionMapMega.put("image_file_checksum", "image_file_checksum");
-        // Прайс
-        nomenclatureListProjectionMapMega.put("price", "price");
-        nomenclatureListProjectionMapMega.put("k", "k");
-        nomenclatureListProjectionMapMega.put("edIzm", "edIzm");
-        // Наценки по клиентам (в 7-ке справочник СкидкиПоКлиентам)
-        nomenclatureListProjectionMapMega.put("priceAdd", "ifnull(d_s.priceAdd, d_s_p.priceAdd) as priceAdd");
-        nomenclatureListProjectionMapMega.put("priceProcent", "ifnull(d_s.priceProcent, d_s_p.priceProcent) as priceProcent");
-        // Остатки
-        nomenclatureListProjectionMapMega.put("nom_quantity", NOMENCLATURE_REST_STOCK_COLUMN);
-        // Продажи
-        //nomenclatureListProjectionMap.put("quantity_saled", "quantity_saled");
-        nomenclatureListProjectionMapMega.put("quantity_saled", "strQuantity as quantity_saled");
-        // Продажи текущие
-        nomenclatureListProjectionMapMega.put("nom_quantity_saled_now", "saledNow as nom_quantity_saled_now");
-        // Дополнительно
-        nomenclatureListProjectionMapMega.put("zero", DUMMY_COLUMN);
-        */
-        
-        
-        /*
-        nomenclatureListStockProjectionMap = new HashMap<String, String>();
-        nomenclatureListStockProjectionMap.put("_id", "nomenclature._id");
-        nomenclatureListStockProjectionMap.put("isFolder", "isFolder");
-        nomenclatureListStockProjectionMap.put("parent_id", "parent_id");
-        nomenclatureListStockProjectionMap.put("stock_id", "stock_id");
-        nomenclatureListStockProjectionMap.put("descr", "descr");
-        nomenclatureListStockProjectionMap.put("nom_quantity", NOMENCLATURE_REST_STOCK_COLUMN);
-        nomenclatureListStockProjectionMap.put("quantity_saled", "quantity_saled");
-        nomenclatureListStockProjectionMap.put("zero", DUMMY_COLUMN);
-        */
-        
-        /*
-        nomenclatureListProjectionMap.put("id", "id");
-        nomenclatureListProjectionMap.put("isFolder", "isFolder");
-        nomenclatureListProjectionMap.put("parent_id", "parent_id");
-        nomenclatureListProjectionMap.put("code", "code");
-        nomenclatureListProjectionMap.put("descr", "descr");
-        nomenclatureListProjectionMap.put("descrFull", "descrFull");
-        nomenclatureListProjectionMap.put("quant_1", "quant_1");
-        nomenclatureListProjectionMap.put("quant_2", "quant_2");
-        nomenclatureListProjectionMap.put("edizm_1_id", "edizm_1_id");
-        nomenclatureListProjectionMap.put("edizm_2_id", "edizm_2_id");
-        nomenclatureListProjectionMap.put("quant_k_1", "quant_k_1");
-        nomenclatureListProjectionMap.put("quant_k_2", "quant_k_2");
-        nomenclatureListProjectionMap.put("opt_price", "opt_price");
-        nomenclatureListProjectionMap.put("m_opt_price", "m_opt_price");
-        nomenclatureListProjectionMap.put("rozn_price", "rozn_price");
-        nomenclatureListProjectionMap.put("incom_price", "incom_price");
-        nomenclatureListProjectionMap.put("IsInPrice", "IsInPrice");
-        nomenclatureListProjectionMap.put("flagWithoutDiscont", "flagWithoutDiscont");
-        nomenclatureListProjectionMap.put("weight_k_1", "weight_k_1");
-        nomenclatureListProjectionMap.put("weight_k_2", "weight_k_2");
-        */
-
         restsProjectionMap = new HashMap<String, String>();
         restsProjectionMap.put("stock_id", "stock_id");
         restsProjectionMap.put("nomenclature_id", "nomenclature_id");

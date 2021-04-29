@@ -385,10 +385,10 @@ public class OrdersListFragment extends Fragment implements LoaderManager.Loader
                 ArrayList<String> conditionArgs = new ArrayList<String>();
 
                 if (m_client_id != null&&!new MyDatabase.MyID(m_client_id).isEmpty()) {
-                    conditionString = g.Common.combineConditions(conditionString, conditionArgs, "client_id=?", new String[]{m_client_id});
+                    conditionString = Common.combineConditions(conditionString, conditionArgs, "client_id=?", new String[]{m_client_id});
                 }
                 //if (m_bNotClosed) {
-                //    conditionString = g.Common.combineConditions(conditionString, conditionArgs, E_ORDER_STATE.getNotClosedConditionWhere(), E_ORDER_STATE.getNotClosedSelectionArgs());
+                //    conditionString = Common.combineConditions(conditionString, conditionArgs, E_ORDER_STATE.getNotClosedConditionWhere(), E_ORDER_STATE.getNotClosedSelectionArgs());
                 //}
 
                 //private static boolean m_filter_orders=false;
@@ -402,10 +402,10 @@ public class OrdersListFragment extends Fragment implements LoaderManager.Loader
     			/*
     			if (m_filter_orders)
     			{
-    				conditionString=g.Common.combineConditions(conditionString, conditionArgs, "iddocdef=0", null);
+    				conditionString=Common.combineConditions(conditionString, conditionArgs, "iddocdef=0", null);
     			} else
     			{
-    				conditionString=g.Common.combineConditions(conditionString, conditionArgs, "iddocdef=1", null);
+    				conditionString=Common.combineConditions(conditionString, conditionArgs, "iddocdef=1", null);
     			}
     			*/
 
@@ -427,14 +427,14 @@ public class OrdersListFragment extends Fragment implements LoaderManager.Loader
                         delimiter = " or ";
                     }
                     if (sb.length() == 0) {
-                        conditionString = g.Common.combineConditions(conditionString, conditionArgs, "0=1", null);
+                        conditionString = Common.combineConditions(conditionString, conditionArgs, "0=1", new String[]{});
                     } else {
-                        conditionString = g.Common.combineConditions(conditionString, conditionArgs, sb.toString(), null);
+                        conditionString = Common.combineConditions(conditionString, conditionArgs, sb.toString(), new String[]{});
                     }
                 }
                 if (g.Common.PHARAON && m_filter_type == 1) {
                     // По дате обслуживания
-                    //conditionString=g.Common.combineConditions(conditionString, conditionArgs, "(shipping_date between ? and ?)", new String[]{m_date, m_date+"Z"});
+                    //conditionString=Common.combineConditions(conditionString, conditionArgs, "(shipping_date between ? and ?)", new String[]{m_date, m_date+"Z"});
                     switch (m_filter_date_type) {
                         case 0:
                             // все
@@ -450,18 +450,18 @@ public class OrdersListFragment extends Fragment implements LoaderManager.Loader
                     }
                 } else {
                     // По дате документа
-                    //conditionString=g.Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_date, m_date+"Z"});
+                    //conditionString=Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_date, m_date+"Z"});
                     switch (m_filter_date_type) {
                         case 0:
                             // все
                             break;
                         case 1:
                             // дата
-                            conditionString = g.Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_begin + "Z"});
+                            conditionString = Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_begin + "Z"});
                             break;
                         case 2:
                             // интервал
-                            conditionString = g.Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_end + "Z"});
+                            conditionString = Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_end + "Z"});
                             break;
                     }
                 }

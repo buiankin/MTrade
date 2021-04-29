@@ -393,7 +393,7 @@ public class OrdersHelpers {
 		}
 		// Долг контрагента
 	    cursor=activity.getContentResolver().query(MTradeContentProvider.SALDO_CONTENT_URI, new String[]{"saldo", "saldo_past", "saldo_past30"}, "client_id=?", new String[]{g.MyDatabase.m_order_editing.client_id.toString()}, null);
-	    if (cursor!=null &&cursor.moveToNext())
+	    if (cursor.moveToNext())
 	    {
 	    	int indexDebt = cursor.getColumnIndex("saldo");
 	    	int indexDebtPast = cursor.getColumnIndex("saldo_past");

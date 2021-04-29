@@ -3167,7 +3167,7 @@ public class MainActivity extends AppCompatActivity
 		    		String conditionString=null;
 		    		ArrayList<String> conditionArgs=new ArrayList<String>();
 
-		    		conditionString=g.Common.combineConditions(conditionString, conditionArgs, "not "+E_REFUND_STATE.getNotClosedConditionWhere(), E_REFUND_STATE.getNotClosedSelectionArgs());
+		    		conditionString=Common.combineConditions(conditionString, conditionArgs, "not "+E_REFUND_STATE.getNotClosedConditionWhere(), E_REFUND_STATE.getNotClosedSelectionArgs());
 
 		    		switch (m_filter_date_type)
 		    		{
@@ -3176,11 +3176,11 @@ public class MainActivity extends AppCompatActivity
 		    			break;
 		    		case 1:
 		    			// дата
-		    			conditionString=g.Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_begin+"Z"});
+		    			conditionString=Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_begin+"Z"});
 		    			break;
 		    		case 2:
 		    			// интервал
-		    			conditionString=g.Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_end+"Z"});
+		    			conditionString=Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_end+"Z"});
 		    			break;
 		    		}
 			    	getContentResolver().delete(MTradeContentProvider.REFUNDS_CONTENT_URI, conditionString, conditionArgs.toArray(new String[conditionArgs.size()]));
@@ -3227,7 +3227,7 @@ public class MainActivity extends AppCompatActivity
                                 String conditionString = null;
                                 ArrayList<String> conditionArgs = new ArrayList<String>();
 
-                                conditionString = g.Common.combineConditions(conditionString, conditionArgs, "not " + E_ORDER_STATE.getNotClosedConditionWhere(), E_ORDER_STATE.getNotClosedSelectionArgs());
+                                conditionString = Common.combineConditions(conditionString, conditionArgs, "not " + E_ORDER_STATE.getNotClosedConditionWhere(), E_ORDER_STATE.getNotClosedSelectionArgs());
                                 if (g.Common.PHARAON && m_filter_type == 1) {
                                     // По дате обслуживания
                                     switch (m_filter_date_type) {
@@ -3236,11 +3236,11 @@ public class MainActivity extends AppCompatActivity
                                             break;
                                         case 1:
                                             // дата
-                                            conditionString = g.Common.combineConditions(conditionString, conditionArgs, "(shipping_date between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_begin + "Z"});
+                                            conditionString = Common.combineConditions(conditionString, conditionArgs, "(shipping_date between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_begin + "Z"});
                                             break;
                                         case 2:
                                             // интервал
-                                            conditionString = g.Common.combineConditions(conditionString, conditionArgs, "(shipping_date between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_end + "Z"});
+                                            conditionString = Common.combineConditions(conditionString, conditionArgs, "(shipping_date between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_end + "Z"});
                                             break;
                                     }
                                 } else {
@@ -3251,11 +3251,11 @@ public class MainActivity extends AppCompatActivity
                                             break;
                                         case 1:
                                             // дата
-                                            conditionString = g.Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_begin + "Z"});
+                                            conditionString = Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_begin + "Z"});
                                             break;
                                         case 2:
                                             // интервал
-                                            conditionString = g.Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_end + "Z"});
+                                            conditionString = Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_end + "Z"});
                                             break;
                                     }
                                 }
@@ -3281,7 +3281,7 @@ public class MainActivity extends AppCompatActivity
                                     conditionString = null;
                                     conditionArgs = new ArrayList<String>();
 
-                                    conditionString = g.Common.combineConditions(conditionString, conditionArgs, "not " + E_REFUND_STATE.getNotClosedConditionWhere(), E_REFUND_STATE.getNotClosedSelectionArgs());
+                                    conditionString = Common.combineConditions(conditionString, conditionArgs, "not " + E_REFUND_STATE.getNotClosedConditionWhere(), E_REFUND_STATE.getNotClosedSelectionArgs());
 
                                     switch (m_filter_date_type) {
                                         case 0:
@@ -3289,11 +3289,11 @@ public class MainActivity extends AppCompatActivity
                                             break;
                                         case 1:
                                             // дата
-                                            conditionString = g.Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_begin + "Z"});
+                                            conditionString = Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_begin + "Z"});
                                             break;
                                         case 2:
                                             // интервал
-                                            conditionString = g.Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_end + "Z"});
+                                            conditionString = Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_end + "Z"});
                                             break;
                                     }
                                     getContentResolver().delete(MTradeContentProvider.REFUNDS_CONTENT_URI, conditionString, conditionArgs.toArray(new String[conditionArgs.size()]));
@@ -3302,7 +3302,7 @@ public class MainActivity extends AppCompatActivity
                                     conditionString = null;
                                     conditionArgs = new ArrayList<String>();
 
-                                    conditionString = g.Common.combineConditions(conditionString, conditionArgs, "not " + E_DISTRIBS_STATE.getDistribsNotClosedConditionWhere(), E_DISTRIBS_STATE.getDistribsNotClosedSelectionArgs());
+                                    conditionString = Common.combineConditions(conditionString, conditionArgs, "not " + E_DISTRIBS_STATE.getDistribsNotClosedConditionWhere(), E_DISTRIBS_STATE.getDistribsNotClosedSelectionArgs());
 
                                     switch (m_filter_date_type) {
                                         case 0:
@@ -3310,11 +3310,11 @@ public class MainActivity extends AppCompatActivity
                                             break;
                                         case 1:
                                             // дата
-                                            conditionString = g.Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_begin + "Z"});
+                                            conditionString = Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_begin + "Z"});
                                             break;
                                         case 2:
                                             // интервал
-                                            conditionString = g.Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_end + "Z"});
+                                            conditionString = Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_end + "Z"});
                                             break;
                                     }
                                     getContentResolver().delete(MTradeContentProvider.DISTRIBS_CONTENT_URI, conditionString, conditionArgs.toArray(new String[conditionArgs.size()]));
@@ -4525,44 +4525,44 @@ public class MainActivity extends AppCompatActivity
                     String conditionString = "editing_backup=0"; // чтобы текущий созданный документ в статистику не попал
                     ArrayList<String> conditionArgs = new ArrayList<String>();
 
-                    conditionString = g.Common.combineConditions(conditionString, conditionArgs, E_ORDER_STATE.getStatisticConditionWhere(), E_ORDER_STATE.getStatisticArgs());
+                    conditionString = Common.combineConditions(conditionString, conditionArgs, E_ORDER_STATE.getStatisticConditionWhere(), E_ORDER_STATE.getStatisticArgs());
 
                     if (m_client_id != null&&!m_client_id.isEmpty()) {
-                        conditionString = g.Common.combineConditions(conditionString, conditionArgs, "client_id=?", new String[]{m_client_id.m_id});
+                        conditionString = Common.combineConditions(conditionString, conditionArgs, "client_id=?", new String[]{m_client_id.m_id});
                     }
                     if (m_bNotClosed) {
-                        conditionString = g.Common.combineConditions(conditionString, conditionArgs, E_ORDER_STATE.getNotClosedConditionWhere(), E_ORDER_STATE.getNotClosedSelectionArgs());
+                        conditionString = Common.combineConditions(conditionString, conditionArgs, E_ORDER_STATE.getNotClosedConditionWhere(), E_ORDER_STATE.getNotClosedSelectionArgs());
                     }
 
                     if (g.Common.PHARAON) {
-                        //conditionString=g.Common.combineConditions(conditionString, conditionArgs, "(shipping_date between ? and ?)", new String[]{m_date, m_date+"Z"});
+                        //conditionString=Common.combineConditions(conditionString, conditionArgs, "(shipping_date between ? and ?)", new String[]{m_date, m_date+"Z"});
                         switch (m_filter_date_type) {
                             case 0:
                                 // все
                                 break;
                             case 1:
                                 // дата
-                                conditionString = g.Common.combineConditions(conditionString, conditionArgs, "(shipping_date between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_begin + "Z"});
+                                conditionString = Common.combineConditions(conditionString, conditionArgs, "(shipping_date between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_begin + "Z"});
                                 break;
                             case 2:
                                 // интервал
-                                conditionString = g.Common.combineConditions(conditionString, conditionArgs, "(shipping_date between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_end + "Z"});
+                                conditionString = Common.combineConditions(conditionString, conditionArgs, "(shipping_date between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_end + "Z"});
                                 break;
                         }
 
                     } else {
-                        //conditionString=g.Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_date, m_date+"Z"});
+                        //conditionString=Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_date, m_date+"Z"});
                         switch (m_filter_date_type) {
                             case 0:
                                 // все
                                 break;
                             case 1:
                                 // дата
-                                conditionString = g.Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_begin + "Z"});
+                                conditionString = Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_begin + "Z"});
                                 break;
                             case 2:
                                 // интервал
-                                conditionString = g.Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_end + "Z"});
+                                conditionString = Common.combineConditions(conditionString, conditionArgs, "(datedoc between ? and ?)", new String[]{m_filter_date_begin, m_filter_date_end + "Z"});
                                 break;
                         }
                     }

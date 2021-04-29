@@ -44,8 +44,6 @@ public class NomenclatureAdapter extends RecyclerViewCursorAdapter<NomenclatureA
      * Column projection for the query to pull Movies from the database.
      */
     public static final String[] NOMENCLATURE_LIST_COLUMNS = new String[] {
-            //MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
-            //MovieContract.MovieEntry.COLUMN_NAME
         // Номенклатура
         "_id", "isFolder", "h_groupDescr", "descr", "nomenclature_id", "quant_1", "quant_k_1", "quant_2", "quant_k_2", "required_sales", "image_file", "image_file_checksum", "nomenclature_color",
         // Прайс
@@ -131,13 +129,22 @@ public class NomenclatureAdapter extends RecyclerViewCursorAdapter<NomenclatureA
         switch (viewType)
         {
         case TYPE_NOMENCLATURE_GROUP: {
-            NomenclatureViewHolder viewHolder=new NomenclatureGroupViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.nomenclature_line_item_group, parent, false));
-            StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) viewHolder.itemView.getLayoutParams();
-            layoutParams.setFullSpan(true);
-            return viewHolder;
+            if (g.Common.isNomenclatureSurfing())
+            {
+                // TODO 29.04.2021 сделать другой тип, без цены и т.д.
+                NomenclatureViewHolder viewHolder=new NomenclatureItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.nomenclature_cardview, parent, false));
+                StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) viewHolder.itemView.getLayoutParams();
+                layoutParams.setFullSpan(false);
+                return viewHolder;
+            } else {
+                // Полоска только с названием
+                NomenclatureViewHolder viewHolder = new NomenclatureGroupViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.nomenclature_line_item_group, parent, false));
+                StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) viewHolder.itemView.getLayoutParams();
+                layoutParams.setFullSpan(true);
+                return viewHolder;
+            }
         }
         case TYPE_NOMENCLATURE_ITEM: {
-
             NomenclatureViewHolder viewHolder=new NomenclatureItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.nomenclature_cardview, parent, false));
             StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) viewHolder.itemView.getLayoutParams();
             layoutParams.setFullSpan(false);

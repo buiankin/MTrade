@@ -864,8 +864,8 @@ public class OrderActivity extends AppCompatActivity implements onSomeEventListe
 						// Заказы
 						conditionString = "editing_backup=0"; // чтобы текущий созданный документ в статистику не попал
 						conditionArgs = new ArrayList<>();
-						conditionString = g.Common.combineConditions(conditionString, conditionArgs, E_ORDER_STATE.getStatisticConditionWhere(), E_ORDER_STATE.getStatisticArgs());
-						conditionString = g.Common.combineConditions(conditionString, conditionArgs, "client_id=?", new String[]{client_id});
+						conditionString = Common.combineConditions(conditionString, conditionArgs, E_ORDER_STATE.getStatisticConditionWhere(), E_ORDER_STATE.getStatisticArgs());
+						conditionString = Common.combineConditions(conditionString, conditionArgs, "client_id=?", new String[]{client_id});
 
 						Cursor ordersCursor = getContentResolver().query(MTradeContentProvider.ORDERS_CONTENT_URI, new String[]{"numdoc", "datedoc", "sum_doc"}, conditionString, conditionArgs.toArray(new String[conditionArgs.size()]), null);
 						index_numdoc=ordersCursor.getColumnIndex("numdoc");
@@ -884,8 +884,8 @@ public class OrderActivity extends AppCompatActivity implements onSomeEventListe
 						// Платежи
 						conditionString = "";
 						conditionArgs = new ArrayList<>();
-						conditionString = g.Common.combineConditions(conditionString, conditionArgs, E_PAYMENT_STATE.getPaymentStatisticConditionWhere(), E_PAYMENT_STATE.getPaymentStatisticArgs());
-						conditionString = g.Common.combineConditions(conditionString, conditionArgs, "client_id=?", new String[]{client_id});
+						conditionString = Common.combineConditions(conditionString, conditionArgs, E_PAYMENT_STATE.getPaymentStatisticConditionWhere(), E_PAYMENT_STATE.getPaymentStatisticArgs());
+						conditionString = Common.combineConditions(conditionString, conditionArgs, "client_id=?", new String[]{client_id});
 
 						Cursor paymentsCursor = getContentResolver().query(MTradeContentProvider.CASH_PAYMENTS_CONTENT_URI, new String[]{"numdoc", "datedoc", "sum_doc"}, conditionString, conditionArgs.toArray(new String[conditionArgs.size()]), null);
 						index_numdoc=ordersCursor.getColumnIndex("numdoc");

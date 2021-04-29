@@ -101,6 +101,13 @@ public class Common {
         return true;
     }
 
+    public boolean isNomenclatureSurfing()
+	{
+		if (PRODLIDER&&!VK)
+			return true;
+		return false;
+	}
+
 	// убирает из строки лишние нули справа
 	static public String DoubleToStringFormat(double d, String formatString)
 	{
@@ -241,7 +248,6 @@ public class Common {
 	
 	static String combineConditions(String oldCondition, List<String> resultArgs, String newCondition, String[] newArgs)
 	{
-		//resultArgs.addAll(Arrays.asList(newArgs));
 		if (newArgs!=null)
 		{
 			resultArgs.addAll(Arrays.asList(newArgs));
@@ -260,6 +266,50 @@ public class Common {
 		}
 		return oldCondition+" and "+newCondition;
 	}
+
+	static String combineConditions(String oldCondition, List<String> resultArgs, String newCondition, List<String> newArgs)
+	{
+		if (newArgs!=null)
+		{
+			resultArgs.addAll(newArgs);
+		}
+		if (oldCondition==null||oldCondition.isEmpty())
+		{
+			if (newCondition==null||newCondition.isEmpty())
+			{
+				return "";
+			}
+			return newCondition;
+		}
+		if (newCondition==null||newCondition.isEmpty())
+		{
+			return oldCondition;
+		}
+		return oldCondition+" and "+newCondition;
+	}
+
+	static String combineOrders(String oldOrders, List<String> resultArgs, String newOrders, List<String> newArgs)
+	{
+		if (newArgs!=null)
+		{
+			resultArgs.addAll(newArgs);
+		}
+		if (oldOrders==null||oldOrders.isEmpty())
+		{
+			if (newOrders==null||newOrders.isEmpty())
+			{
+				return "";
+			}
+			return newOrders;
+		}
+		if (newOrders==null||newOrders.isEmpty())
+		{
+			return oldOrders;
+		}
+		return oldOrders+", "+newOrders;
+	}
+
+
 	
 	
 	private static final Pattern DIR_SEPORATOR = Pattern.compile("/");
@@ -714,10 +764,10 @@ public class Common {
 	}
 
 	public static void ftpEnterMode(FTPClient ftpClient, boolean passiveMode) {
-		if (passiveMode)
+		//if (passiveMode)
 			ftpClient.enterLocalPassiveMode();
-		else
-			ftpClient.enterLocalActiveMode();
+		//else
+		//	ftpClient.enterLocalActiveMode();
 	}
 
 
