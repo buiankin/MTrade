@@ -34,6 +34,8 @@ import android.util.TypedValue;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import org.apache.commons.net.ftp.FTPClient;
+
 public class Common {
 
 	static final String LOG_TAG = "mtradeLogs";
@@ -710,5 +712,14 @@ public class Common {
 			dialog = null;
 		}
 	}
+
+	public static void ftpEnterMode(FTPClient ftpClient, boolean passiveMode) {
+		if (passiveMode)
+			ftpClient.enterLocalPassiveMode();
+		else
+			ftpClient.enterLocalActiveMode();
+	}
+
+
 
 }

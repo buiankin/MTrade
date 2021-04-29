@@ -175,6 +175,7 @@ import com.google.android.play.core.install.model.InstallStatus;
 import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.idescout.sql.SqlScoutServer;
 import com.nostra13.universalimageloader.utils.L;
 //import android.annotation.SuppressLint;
 //import android.support.v4.app.Fragment;
@@ -185,6 +186,8 @@ public class MainActivity extends AppCompatActivity
 
     private AppUpdateManager appUpdateManager;
     private InstallStateUpdatedListener installStateUpdatedListener;
+
+    private SqlScoutServer sqlScoutServer;
 
     //private static final int IDD_RECEIVE_PROGRESS = 0;
     private static final int IDD_REINDEX_CREATED = 1;
@@ -734,6 +737,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // http://www.idescout.com/wiki/index.php/Main/ConnectToAndroidDbs
+        sqlScoutServer = SqlScoutServer.create(this, getPackageName());
+
         MySingleton g = MySingleton.getInstance();
 
         mParamsToCreateDocsWhenRequestPermissions = null;
@@ -1330,6 +1336,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        sqlScoutServer.resume();
         // TODO Auto-generated method stub
         MySingleton g = MySingleton.getInstance();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -1369,7 +1376,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onPause() {
+        super.onPause(); sqlScoutServer.pause();
+    }
+
+    @Override
     protected void onDestroy() {
+        sqlScoutServer.destroy();
         MySingleton g = MySingleton.getInstance();
         if (g.MyDatabase.m_seance_closed) {
             ContentValues cv = new ContentValues();
@@ -6705,7 +6718,7 @@ public class MainActivity extends AppCompatActivity
                             String zipFileName = null;
 
                             publishProgress(FTP_STATE_RECEIVE_ARCH, 0);
-                            ftpClient.enterLocalPassiveMode();
+                            Common.ftpEnterMode(ftpClient, !g.Common.VK);
                             fileList = ftpClient.listFiles();//"*.zip");
                             for (FTPFile ftpFile : fileList) {
                                 if (ftpFile.getName().equalsIgnoreCase("arch.zip")) {
@@ -6729,7 +6742,7 @@ public class MainActivity extends AppCompatActivity
 
                                 bNothingReceived = false;
                                 OutputStream outFile = new FileOutputStream(zipFile);
-                                ftpClient.enterLocalPassiveMode();
+                                Common.ftpEnterMode(ftpClient, !g.Common.VK);
                                 ftpClient.setCopyStreamListener(streamListener);
                                 ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
                                 //ftpClient.retrieveFile(m_FTP_server_directory+"/arch.zip", outFile);
@@ -7266,7 +7279,7 @@ public class MainActivity extends AppCompatActivity
                                             }
                                             publishProgress(FTP_STATE_RECEIVE_ARCH, 0);
                                             OutputStream outFile = new FileOutputStream(historyZipFile);
-                                            ftpClient.enterLocalPassiveMode();
+                                            Common.ftpEnterMode(ftpClient, !g.Common.VK);
                                             ftpClient.setCopyStreamListener(streamListener);
                                             ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
                                             if (ftpClient.retrieveFile(history_file_name, outFile)) {
@@ -7359,7 +7372,7 @@ public class MainActivity extends AppCompatActivity
 		    					zipFile=new File(Environment.getDataDirectory(), "/data/"+ getBaseContext().getPackageName()+"/arch.zip");
 		    				}
 	    	        		OutputStream outFile=new FileOutputStream(zipFile);
-	    	        		ftpClient.enterLocalPassiveMode();
+	    	        		Common.ftpEnterMove(ftpClient, !g.Common.VK);
 	    	            	ftpClient.setCopyStreamListener(streamListener);
 	    	        		ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
 	    	        		//ftpClient.retrieveFile(m_FTP_server_directory+"/arch.zip", outFile);
@@ -7690,7 +7703,7 @@ public class MainActivity extends AppCompatActivity
                                                 if (!tempFile.isDirectory()) {
                                                     InputStream inFile = new FileInputStream(tempFile);
                                                     file_length = tempFile.length();
-                                                    ftpClient.enterLocalPassiveMode();
+                                                    Common.ftpEnterMove(ftpClient, !g.Common.VK);
                                                     ftpClient.setCopyStreamListener(streamListener);
                                                     ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
                                                     if (ftpClient.storeFile(tempFile.getName(), inFile)) {
@@ -7715,7 +7728,7 @@ public class MainActivity extends AppCompatActivity
                                             if (!tempFile.isDirectory()) {
                                                 InputStream inFile = new FileInputStream(tempFile);
                                                 file_length = tempFile.length();
-                                                ftpClient.enterLocalPassiveMode();
+                                                Common.ftpEnterMove(ftpClient, !g.Common.VK);
                                                 ftpClient.setCopyStreamListener(streamListener);
                                                 ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
                                                 if (ftpClient.storeFile(tempFile.getName(), inFile)) {
@@ -7740,7 +7753,7 @@ public class MainActivity extends AppCompatActivity
                                         if (!tempFile.isDirectory()) {
                                             InputStream inFile = new FileInputStream(tempFile);
                                             file_length = tempFile.length();
-                                            ftpClient.enterLocalPassiveMode();
+                                            Common.ftpEnterMode(ftpClient, !g.Common.VK);
                                             ftpClient.setCopyStreamListener(streamListener);
                                             ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
                                             if (ftpClient.storeFile(tempFile.getName(), inFile)) {
@@ -7761,7 +7774,7 @@ public class MainActivity extends AppCompatActivity
                                 // архив
                                 InputStream inFile = new FileInputStream(zipFile);
                                 file_length = zipFile.length();
-                                ftpClient.enterLocalPassiveMode();
+                                Common.ftpEnterMode(ftpClient, !g.Common.VK);
                                 ftpClient.setCopyStreamListener(streamListener);
                                 ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
                                 //ftpClient.storeFile(m_FTP_server_directory+"/eoutf.zip", inFile);
@@ -7948,7 +7961,7 @@ public class MainActivity extends AppCompatActivity
                                         publishProgress(FTP_STATE_RECEIVE_IMAGE, 0);
 
                                         OutputStream outFile = new FileOutputStream(imageFile);
-                                        ftpClient.enterLocalPassiveMode();
+                                        Common.ftpEnterMode(ftpClient, !g.Common.VK);
                                         ftpClient.setCopyStreamListener(streamListener);
                                         ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
                                         if (ftpClient.retrieveFile(ftpName, outFile)) {

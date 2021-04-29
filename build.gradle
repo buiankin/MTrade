@@ -28,7 +28,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        android.ndkVersion '20.0.5594570'
+        android.ndkVersion '21.0.6113669'
     }
     buildTypes {
         release {
