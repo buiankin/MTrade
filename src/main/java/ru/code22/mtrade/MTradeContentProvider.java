@@ -230,7 +230,8 @@ public class MTradeContentProvider extends ContentProvider {
     		"left join discounts_stuff d_s_p on d_s_p.nomenclature_id=nomenclature.parent_id";
 
     // отличие от NOMENCLATURE_LIST_TABLE в том, что корневой элемент (он только в иерархии) должен присутствоать
-    private static final String NOMENCLATURE_SURFING_TABLE =
+    private static final String NOMENCLATURE_SURFING_TABLE = NOMENCLATURE_LIST_TABLE;
+            /*
             "nomenclature_hierarchy h "+
             "left join nomenclature on nomenclature.id=h.id " +
                     "left join rests_sales_stuff as restsS on restsS.nomenclature_id=nomenclature.id "+
@@ -241,7 +242,7 @@ public class MTradeContentProvider extends ContentProvider {
                     "left join nomenclature_hierarchy h_parent on h_parent.id=nomenclature.parent_id " +
                     "left join discounts_stuff d_s on d_s.nomenclature_id=nomenclature.id " +
                     "left join discounts_stuff d_s_p on d_s_p.nomenclature_id=nomenclature.parent_id";
-
+            */
     
     private static final String RESTS_TABLE = "rests";
     private static final String SALDO_TABLE = "saldo";
@@ -5717,8 +5718,12 @@ public class MTradeContentProvider extends ContentProvider {
             //    break;
 
             case URI_NOMENCLATURE_SURFING:
+
                 qb.setTables(NOMENCLATURE_SURFING_TABLE);
                 qb.setProjectionMap(nomenclatureSurfingProjectionMap);
+                // Хорошие примеры, как можно сделать union в запросе
+                // https://coderoad.ru/27280721/Использование-метода-SQLiteQueryBuilder-buildUnionSubQuery
+                // https://www.codota.com/code/java/methods/android.database.sqlite.SQLiteQueryBuilder/buildUnionSubQuery
                 break;
 
             case URI_RESTS_ID:
