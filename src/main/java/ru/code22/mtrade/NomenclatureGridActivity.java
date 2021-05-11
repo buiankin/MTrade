@@ -312,7 +312,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                 cursorList.moveToPosition(position);
                 int nom_isFolder=cursorList.getColumnIndex("isFolder");
                 // количество вводим только для элементов
-                if (cursorList.getInt(nom_isFolder)!=1)
+                if (cursorList.getInt(nom_isFolder)==2)
                 {
                     int nom_quantityIndex=cursorList.getColumnIndex("nom_quantity");
                     intent.putExtra("rest", cursorList.getDouble(nom_quantityIndex));
@@ -326,9 +326,24 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                     {
                         int indexNomenclatureId=cursorList.getColumnIndex("nomenclature_id");
                         String nomenclature_id=cursorList.getString(indexNomenclatureId);
-                        if (m_nomenclatureSurfing==null)
-                            m_nomenclatureSurfing=new ArrayList<>();
-                        m_nomenclatureSurfing.add(nomenclature_id);
+                        if (m_nomenclatureSurfing==null) {
+                            m_nomenclatureSurfing = new ArrayList<>();
+                            // Сразу добавляем корневой элемент
+                            m_nomenclatureSurfing.add(Constants.emptyID);
+                            m_nomenclatureSurfing.add(nomenclature_id);
+                        } else if (m_nomenclatureSurfing.contains(nomenclature_id)) {
+                            // Удалим все элементы ниже текущего
+                            int idx=m_nomenclatureSurfing.indexOf(nomenclature_id);
+                            while (m_nomenclatureSurfing.size()>idx+1)
+                                m_nomenclatureSurfing.remove(idx);
+                            // если ткнули в корень, то его тоже отображать не нужно
+                            if (idx==0)
+                                m_nomenclatureSurfing.remove(0);
+                        } else {
+                            if (m_nomenclatureSurfing.size()==0)
+                                m_nomenclatureSurfing.add(Constants.emptyID);
+                            m_nomenclatureSurfing.add(nomenclature_id);
+                        }
 
                         LoaderManager.getInstance(NomenclatureGridActivity.this).restartLoader(NOMENCLATURE_LOADER_ID, null, NomenclatureGridActivity.this);
                     }
@@ -768,43 +783,48 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                 String orderString=null;
                 ArrayList<String> orderArgs = new ArrayList<>();
 
-                if (m_nomenclatureSurfing!=null&&m_nomenclatureSurfing.size()>0)
-                {
-                    ArrayList<String> surfingWhereArgs=new ArrayList<>();
-                    ArrayList<String> surfingOrdersArgs=new ArrayList<>();
+                if (g.Common.isNomenclatureSurfing()) {
+                    if (m_nomenclatureSurfing != null && m_nomenclatureSurfing.size() > 0) {
+                        ArrayList<String> surfingWhereArgs = new ArrayList<>();
+                        ArrayList<String> surfingOrdersArgs = new ArrayList<>();
 
-                    StringBuilder sbWhere=new StringBuilder();
-                    StringBuilder sbOrder=new StringBuilder();
+                        StringBuilder sbWhere = new StringBuilder();
+                        StringBuilder sbOrder = new StringBuilder();
 
-                    int idx=0;
-                    for (String s: m_nomenclatureSurfing)
+                        int idx = 0;
+                        for (String s : m_nomenclatureSurfing) {
+                            // Отбор
+                            if (idx == 0)
+                                sbWhere.append("nomenclature.id in(");
+                            else
+                                sbWhere.append(",");
+                            sbWhere.append("?");
+                            surfingWhereArgs.add(s);
+                            // Сортировка
+                            if (idx == 0)
+                                sbOrder.append("case nomenclature.id");
+                            sbOrder.append(String.format(" when ? then %d", idx));
+                            surfingOrdersArgs.add(s);
+                            idx++;
+                        }
+                        sbWhere.append(")");
+                        sbOrder.append(String.format(" else %d end", idx)); // это уже элементы, у них своя сортировка
+
+                        // и для элементов текущего уровня еще условие
+                        sbWhere.append(" or parent_id=?");
+                        surfingWhereArgs.add(m_nomenclatureSurfing.get(m_nomenclatureSurfing.size() - 1));
+
+                        String surfingWhereString = sbWhere.toString();
+                        String surfingOrderString = sbOrder.toString();
+
+                        conditionString = Common.combineConditions(conditionString, conditionArgs, surfingWhereString, surfingWhereArgs);
+                        orderString=Common.combineOrders(orderString, orderArgs, surfingOrderString, surfingOrdersArgs);
+                    } else
                     {
-                        // Отбор
-                        if (idx==0)
-                            sbWhere.append("nomenclature.id in(");
-                        else
-                            sbWhere.append(",");
-                        sbWhere.append("?");
-                        surfingWhereArgs.add(s);
-                        // Сортировка
-                        if (idx==0)
-                            sbOrder.append("case nomenclature.id");
-                        sbOrder.append(String.format(" when ? then %d", idx));
-                        surfingOrdersArgs.add(s);
-                        idx++;
+                        // В начале сам корневой элемент не нужен, поэтому вторая часть условия
+                        conditionString = Common.combineConditions(conditionString, conditionArgs, "parent_id=? and nomenclature.id<>?", new String[]{Constants.emptyID, Constants.emptyID});
+                        //orderString = Common.combineOrders(orderString, orderArgs, "case when nomenclature.id=? then 0 else 1 end", Arrays.asList(new String[]{Constants.emptyID}));
                     }
-                    sbWhere.append(")");
-                    sbOrder.append(String.format(" else %d end", idx)); // это уже элементы, у них своя сортировка
-
-                    // и для элементов текущего уровня еще условие
-                    sbWhere.append(" or parent_id=?");
-                    surfingWhereArgs.add(m_nomenclatureSurfing.get(m_nomenclatureSurfing.size()-1));
-
-                    String surfingWhereString=sbWhere.toString();
-                    String surfingOrderString=sbOrder.toString();
-
-                    conditionString=Common.combineConditions(conditionString, conditionArgs, surfingWhereString, surfingWhereArgs);
-                    Common.combineOrders(orderString, orderArgs, surfingOrderString, surfingOrdersArgs);
                 }
 
                 boolean bInStock=(m_bInStock&&!m_mode.equals("REFUND"));
@@ -816,11 +836,17 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                                 NomenclatureAdapter.NOMENCLATURE_LIST_COLUMNS, "isFolder<>3"+(bInStock?" and (isFolder=1 or nom_quantity>0)":"")+(m_filter.isEmpty()?"":" and descr_lower like '%"+m_filter+"%'"), null, "ifnull(h.ord_idx, h_parent.ord_idx), isFolder, order_for_sorting, descr");
                     } else
                     {
-                        conditionString=Common.combineConditions(conditionString, conditionArgs, "isFolder<>3"+(bInStock?" and (isFolder=1 or nom_quantity>0)":"")+(m_filter.isEmpty()?"":" and descr_lower like '%"+m_filter+"%'"), new String[]{});
                         if (g.Common.isNomenclatureSurfing()) {
+                            //conditionString=Common.combineConditions(conditionString, conditionArgs, +(bInStock?" and (isFolder=1 or nom_quantity>0)":"")+(m_filter.isEmpty()?"":" and descr_lower like '%"+m_filter+"%'"), new String[]{});
+                            if (bInStock)
+                                conditionString=Common.combineConditions(conditionString, conditionArgs, "isFolder=1 or isFolder=3 or nom_quantity>0", new String[]{});
+                            if (!m_filter.isEmpty())
+                                conditionString=Common.combineConditions(conditionString, conditionArgs,"descr_lower like '%"+m_filter+"%'", new String[]{});
+                            // дальше как обычно
                             return new CursorLoader(this, MTradeContentProvider.NOMENCLATURE_SURFING_CONTENT_URI,
                                     NomenclatureAdapter.NOMENCLATURE_LIST_COLUMNS, conditionString, conditionArgs.toArray(new String[conditionArgs.size()]), "ifnull(h.ord_idx, h_parent.ord_idx), isFolder, descr");
                         }
+                        conditionString=Common.combineConditions(conditionString, conditionArgs, "isFolder<>3"+(bInStock?" and (isFolder=1 or nom_quantity>0)":"")+(m_filter.isEmpty()?"":" and descr_lower like '%"+m_filter+"%'"), new String[]{});
                         return new CursorLoader(this, MTradeContentProvider.NOMENCLATURE_LIST_CONTENT_URI,
                                 NomenclatureAdapter.NOMENCLATURE_LIST_COLUMNS, conditionString, conditionArgs.toArray(new String[conditionArgs.size()]), "ifnull(h.ord_idx, h_parent.ord_idx), isFolder, descr");
 
@@ -859,12 +885,19 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                             NomenclatureAdapter.NOMENCLATURE_LIST_COLUMNS, "isFolder<>3 and parent_id IN ("+sb.toString()+")"+(bInStock?" and (isFolder=1 or nom_quantity>0)":"")+(m_filter.isEmpty()?"":" and descr_lower like '%"+m_filter+"%'"), args2, "ifnull(h.ord_idx, h_parent.ord_idx), isFolder, order_for_sorting, descr");
                 } else
                 {
-                    conditionString=Common.combineConditions(conditionString, conditionArgs, "isFolder<>3 and parent_id IN ("+sb.toString()+")"+(bInStock?" and (isFolder=1 or nom_quantity>0)":"")+(m_filter.isEmpty()?"":" and descr_lower like '%"+m_filter+"%'"), args2);
                     if (g.Common.isNomenclatureSurfing())
                     {
+                        //conditionString=Common.combineConditions(conditionString, conditionArgs, "parent_id IN ("+sb.toString()+")"+(bInStock?" and (isFolder=1 or isFolder=3 or nom_quantity>0)":"")+(m_filter.isEmpty()?"":" and descr_lower like '%"+m_filter+"%'"), args2);
+                        // parentId здесь не проверяем потому, что мы уже в conditionString перечислили иерархию
+                        if (bInStock)
+                            conditionString=Common.combineConditions(conditionString, conditionArgs, "isFolder=1 or isFolder=3 or nom_quantity>0", new String[]{});
+                        if (!m_filter.isEmpty())
+                            conditionString=Common.combineConditions(conditionString, conditionArgs,"descr_lower like '%"+m_filter+"%'", args2);
+                        // дальше как обычно
                         return new CursorLoader(this, MTradeContentProvider.NOMENCLATURE_SURFING_CONTENT_URI,
                                 NomenclatureAdapter.NOMENCLATURE_LIST_COLUMNS, conditionString, conditionArgs.toArray(new String[conditionArgs.size()]), "ifnull(h.ord_idx, h_parent.ord_idx), isFolder, descr");
                     }
+                    conditionString=Common.combineConditions(conditionString, conditionArgs, "isFolder<>3 and parent_id IN ("+sb.toString()+")"+(bInStock?" and (isFolder=1 or nom_quantity>0)":"")+(m_filter.isEmpty()?"":" and descr_lower like '%"+m_filter+"%'"), args2);
                     return new CursorLoader(this, MTradeContentProvider.NOMENCLATURE_LIST_CONTENT_URI,
                             NomenclatureAdapter.NOMENCLATURE_LIST_COLUMNS, conditionString, conditionArgs.toArray(new String[conditionArgs.size()]), "ifnull(h.ord_idx, h_parent.ord_idx), isFolder, descr");
                 }
