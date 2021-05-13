@@ -311,8 +311,9 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                 }
                 cursorList.moveToPosition(position);
                 int nom_isFolder=cursorList.getColumnIndex("isFolder");
+                int isFolder=cursorList.getInt(nom_isFolder);
                 // количество вводим только для элементов
-                if (cursorList.getInt(nom_isFolder)==2)
+                if (isFolder!=1&&isFolder!=3)
                 {
                     int nom_quantityIndex=cursorList.getColumnIndex("nom_quantity");
                     intent.putExtra("rest", cursorList.getDouble(nom_quantityIndex));
@@ -335,15 +336,13 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                             // Удалим все элементы ниже текущего
                             int idx=m_nomenclatureSurfing.indexOf(nomenclature_id);
                             while (m_nomenclatureSurfing.size()>idx+1)
-                                m_nomenclatureSurfing.remove(idx);
-                            // если ткнули в корень, то его тоже отображать не нужно
-                            if (idx==0)
-                                m_nomenclatureSurfing.remove(0);
+                                m_nomenclatureSurfing.remove(idx+1);
                         } else {
-                            if (m_nomenclatureSurfing.size()==0)
-                                m_nomenclatureSurfing.add(Constants.emptyID);
+                            m_nomenclatureSurfing.add(Constants.emptyID);
                             m_nomenclatureSurfing.add(nomenclature_id);
                         }
+                        // Для отображения открытых папок
+                        mAdapter.setNomenclatureSurfing(m_nomenclatureSurfing);
 
                         LoaderManager.getInstance(NomenclatureGridActivity.this).restartLoader(NOMENCLATURE_LOADER_ID, null, NomenclatureGridActivity.this);
                     }
@@ -355,8 +354,6 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
             public void onItemLongClick(int position, View v) {
             }
         });
-
-
 
         setNomenclatureSpinnerData(Constants.emptyID);
 
@@ -400,10 +397,30 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                             m_group_ids.add(m_list2.get(i).id);
                         }
                     }
-                    // TODO
-                    //LoaderManager.getInstance(NomenclatureGridActivity.this).restartLoader(LOADER_ID, null, NomenclatureActivity.this);
+                    // m_group_id - это сам элемент
+                    // m_group_ids - это подчиненные элементы
+                    if (g.Common.isNomenclatureSurfing()) {
+                        // Нас интересуют все предки этого элемента
+                        m_nomenclatureSurfing=new ArrayList<>();
+                        m_nomenclatureSurfing.add(Constants.emptyID);
+                        if (m_group_id!=null) {
+                            Cursor cursor = getContentResolver().query(MTradeContentProvider.NOMENCLATURE_HIERARCHY_CONTENT_URI, null, "id=?", new String[]{m_group_id.toString()}, null);
+                            if (cursor.moveToNext())
+                            {
+                                int level_idx=cursor.getColumnIndex("level");
+                                int level=cursor.getInt(level_idx);
+                                int i;
+                                for (i=1; i<=level; i++)
+                                {
+                                    int levelId_idx=cursor.getColumnIndex(String.format("level%d_id", i));
+                                    String currentId=cursor.getString(levelId_idx);
+                                    m_nomenclatureSurfing.add(currentId);
+                                }
+                            }
+                            cursor.close();
+                        }
+                    }
                     LoaderManager.getInstance(NomenclatureGridActivity.this).restartLoader(NOMENCLATURE_LOADER_ID, null, NomenclatureGridActivity.this);
-
                 }
 
                 @Override
@@ -784,47 +801,54 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                 ArrayList<String> orderArgs = new ArrayList<>();
 
                 if (g.Common.isNomenclatureSurfing()) {
-                    if (m_nomenclatureSurfing != null && m_nomenclatureSurfing.size() > 0) {
-                        ArrayList<String> surfingWhereArgs = new ArrayList<>();
-                        ArrayList<String> surfingOrdersArgs = new ArrayList<>();
+                    if (m_nomenclatureSurfing == null || m_nomenclatureSurfing.size() == 0) {
 
-                        StringBuilder sbWhere = new StringBuilder();
-                        StringBuilder sbOrder = new StringBuilder();
+                        m_nomenclatureSurfing=new ArrayList<>();
+                        m_nomenclatureSurfing.add(Constants.emptyID);
+                    }
 
-                        int idx = 0;
-                        for (String s : m_nomenclatureSurfing) {
-                            // Отбор
-                            if (idx == 0)
-                                sbWhere.append("nomenclature.id in(");
-                            else
-                                sbWhere.append(",");
-                            sbWhere.append("?");
-                            surfingWhereArgs.add(s);
-                            // Сортировка
-                            if (idx == 0)
-                                sbOrder.append("case nomenclature.id");
-                            sbOrder.append(String.format(" when ? then %d", idx));
-                            surfingOrdersArgs.add(s);
-                            idx++;
-                        }
-                        sbWhere.append(")");
-                        sbOrder.append(String.format(" else %d end", idx)); // это уже элементы, у них своя сортировка
+                    ArrayList<String> surfingWhereArgs = new ArrayList<>();
+                    ArrayList<String> surfingOrdersArgs = new ArrayList<>();
 
-                        // и для элементов текущего уровня еще условие
-                        sbWhere.append(" or parent_id=?");
-                        surfingWhereArgs.add(m_nomenclatureSurfing.get(m_nomenclatureSurfing.size() - 1));
+                    StringBuilder sbWhere = new StringBuilder();
+                    StringBuilder sbOrder = new StringBuilder();
 
-                        String surfingWhereString = sbWhere.toString();
-                        String surfingOrderString = sbOrder.toString();
+                    int idx = 0;
+                    for (String s : m_nomenclatureSurfing) {
+                        // Отбор
+                        if (idx == 0)
+                            sbWhere.append("nomenclature.id in(");
+                        else
+                            sbWhere.append(",");
+                        sbWhere.append("?");
+                        surfingWhereArgs.add(s);
+                        // Сортировка
+                        if (idx == 0)
+                            sbOrder.append("case nomenclature.id");
+                        sbOrder.append(String.format(" when ? then %d", idx));
+                        surfingOrdersArgs.add(s);
+                        idx++;
+                    }
+                    sbWhere.append(")");
+                    sbOrder.append(String.format(" else %d end", idx)); // это уже элементы, у них своя сортировка
 
-                        conditionString = Common.combineConditions(conditionString, conditionArgs, surfingWhereString, surfingWhereArgs);
-                        orderString=Common.combineOrders(orderString, orderArgs, surfingOrderString, surfingOrdersArgs);
+                    // и для элементов текущего уровня еще условие
+                    sbWhere.append(" or parent_id=?");
+                    surfingWhereArgs.add(m_nomenclatureSurfing.get(m_nomenclatureSurfing.size() - 1));
+
+                    String surfingWhereString = sbWhere.toString();
+                    String surfingOrderString = sbOrder.toString();
+
+                    conditionString = Common.combineConditions(conditionString, conditionArgs, surfingWhereString, surfingWhereArgs);
+                    orderString=Common.combineOrders(orderString, orderArgs, surfingOrderString, surfingOrdersArgs);
+                    /*
                     } else
                     {
                         // В начале сам корневой элемент не нужен, поэтому вторая часть условия
                         conditionString = Common.combineConditions(conditionString, conditionArgs, "parent_id=? and nomenclature.id<>?", new String[]{Constants.emptyID, Constants.emptyID});
                         //orderString = Common.combineOrders(orderString, orderArgs, "case when nomenclature.id=? then 0 else 1 end", Arrays.asList(new String[]{Constants.emptyID}));
                     }
+                     */
                 }
 
                 boolean bInStock=(m_bInStock&&!m_mode.equals("REFUND"));

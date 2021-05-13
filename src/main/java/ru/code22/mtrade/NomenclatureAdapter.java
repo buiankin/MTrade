@@ -20,6 +20,7 @@ import com.androidessence.recyclerviewcursoradapter.RecyclerViewCursorViewHolder
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.cursoradapter.widget.CursorAdapter;
@@ -33,12 +34,16 @@ public class NomenclatureAdapter extends RecyclerViewCursorAdapter<NomenclatureA
 
     public static final int TYPE_NOMENCLATURE_GROUP = 1;
     public static final int TYPE_NOMENCLATURE_ITEM = 2;
+    public static final int TYPE_NOMENCLATURE_GROUP_OPENED = 3;
 
     private MySingleton g;
 
     boolean m_bInStock;
     boolean m_bPacks;
     String m_mode;
+
+    // Для того, чтобы определять (и отображать) открытые папки
+    ArrayList<String> m_nomenclatureSurfing;
 
     /**
      * Column projection for the query to pull Movies from the database.
@@ -106,6 +111,7 @@ public class NomenclatureAdapter extends RecyclerViewCursorAdapter<NomenclatureA
         m_bPacks=bPacks;
         setupCursorAdapter(null, 0, R.layout.nomenclature_cardview, false);
         g = MySingleton.getInstance();
+        m_nomenclatureSurfing = null;
     }
 
     public void setParameters(boolean bInStock, boolean bPacks) {
@@ -113,12 +119,26 @@ public class NomenclatureAdapter extends RecyclerViewCursorAdapter<NomenclatureA
         m_bPacks=bPacks;
     }
 
+    public void setNomenclatureSurfing(ArrayList<String> items)
+    {
+        m_nomenclatureSurfing = new ArrayList<String>();
+        for (String item: items)
+        {
+            m_nomenclatureSurfing.add(item);
+        }
+
+    }
+
     @Override
     public int getItemViewType(int position) {
         Cursor cursor=mCursorAdapter.getCursor();
         cursor.moveToPosition(position);
-        if (cursor.getInt(IS_FOLDER_INDEX)==1)
+        int isFolder=cursor.getInt(IS_FOLDER_INDEX);
+        if (isFolder==1||isFolder==3) {
+            if (m_nomenclatureSurfing!=null&&m_nomenclatureSurfing.contains(cursor.getString(NOMENCLATURE_ID_INDEX)))
+                return TYPE_NOMENCLATURE_GROUP_OPENED;
             return TYPE_NOMENCLATURE_GROUP;
+        }
         return TYPE_NOMENCLATURE_ITEM;
     }
 
@@ -128,13 +148,18 @@ public class NomenclatureAdapter extends RecyclerViewCursorAdapter<NomenclatureA
         //return new NomenclatureViewHolder(mCursorAdapter.newView(mContext, mCursorAdapter.getCursor(), parent));
         switch (viewType)
         {
+        case TYPE_NOMENCLATURE_GROUP_OPENED: {
+            NomenclatureViewHolder viewHolder = new NomenclatureGroupSurfingViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.nomenclature_line_item_group_surfing, parent, false));
+            StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) viewHolder.itemView.getLayoutParams();
+            layoutParams.setFullSpan(true);
+            return viewHolder;
+        }
         case TYPE_NOMENCLATURE_GROUP: {
             if (g.Common.isNomenclatureSurfing())
             {
-                // TODO 29.04.2021 сделать другой тип, без цены и т.д.
-                NomenclatureViewHolder viewHolder=new NomenclatureItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.nomenclature_cardview, parent, false));
+                NomenclatureViewHolder viewHolder = new NomenclatureGroupSurfingViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.nomenclature_line_item_group_surfing, parent, false));
                 StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) viewHolder.itemView.getLayoutParams();
-                layoutParams.setFullSpan(false);
+                layoutParams.setFullSpan(true);
                 return viewHolder;
             } else {
                 // Полоска только с названием
@@ -169,6 +194,55 @@ public class NomenclatureAdapter extends RecyclerViewCursorAdapter<NomenclatureA
         // Bind this view
         mCursorAdapter.bindView(null, mContext, mCursorAdapter.getCursor());
     }
+
+    public class NomenclatureGroupSurfingViewHolder extends NomenclatureViewHolder
+    {
+        public final ImageView mImageView;
+        public final TextView mNomenclatureGroup;
+        public final TextView mNomenclatureGroupSales;
+
+        public NomenclatureGroupSurfingViewHolder(View view) {
+            super(view);
+            mImageView=(ImageView) view.findViewById(R.id.cardimage);
+            mNomenclatureGroup=(TextView)view.findViewById(R.id.tvNomenclatureGroup);
+            mNomenclatureGroupSales=(TextView)view.findViewById(R.id.tvNomenclatureGroupSales);
+        }
+
+        @Override
+        public void bindCursor(Cursor cursor) {
+            super.bindCursor(cursor);
+            mNomenclatureGroup.setText(cursor.getString(GROUP_DESCR_INDEX));
+
+            double quantity7_1 = cursor.getDouble(QUANTITY7_1_INDEX);
+            double quantity7_2 = cursor.getDouble(QUANTITY7_2_INDEX);
+            double quantity7_3 = cursor.getDouble(QUANTITY7_3_INDEX);
+            double quantity7_4 = cursor.getDouble(QUANTITY7_4_INDEX);
+
+            if (quantity7_1 > 0.001 || quantity7_2 > 0.001 || quantity7_3 > 0.001 || quantity7_4 > 0.001) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(Common.DoubleToStringFormat(quantity7_1, "%.3f"));
+                sb.append("/");
+                sb.append(Common.DoubleToStringFormat(quantity7_2, "%.3f"));
+                sb.append("/");
+                sb.append(Common.DoubleToStringFormat(quantity7_3, "%.3f"));
+                sb.append("/");
+                sb.append(Common.DoubleToStringFormat(quantity7_4, "%.3f"));
+                mNomenclatureGroupSales.setText(sb.toString());
+                mNomenclatureGroupSales.setVisibility(View.VISIBLE);
+            } else
+                mNomenclatureGroupSales.setVisibility(View.GONE);
+            int isFolder = cursor.getInt(IS_FOLDER_INDEX);
+            // На самом деле тут должна быть только группа
+            if (isFolder == 1 || isFolder == 3) {
+                if (m_nomenclatureSurfing != null && m_nomenclatureSurfing.contains(cursor.getString(NOMENCLATURE_ID_INDEX)))
+                    mImageView.setImageResource(R.drawable.folder32_opened);
+                else
+                    mImageView.setImageResource(R.drawable.folder32);
+            } else
+                mImageView.setImageResource(R.drawable.visitingcard);
+        }
+    }
+
 
     public class NomenclatureGroupViewHolder extends NomenclatureViewHolder
     {
