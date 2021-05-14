@@ -419,7 +419,11 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                             }
                             cursor.close();
                         }
+                        // Для отображения открытых папок
+                        mAdapter.setNomenclatureSurfing(m_nomenclatureSurfing);
+                        mRecyclerView.scrollToPosition(0);
                     }
+
                     LoaderManager.getInstance(NomenclatureGridActivity.this).restartLoader(NOMENCLATURE_LOADER_ID, null, NomenclatureGridActivity.this);
                 }
 
@@ -1217,6 +1221,22 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
         }
     }
 
+    private boolean checkGoNode()
+    {
+        // если используется новая иерархия номенклатуры, сначала переходим в корень, а уже потом закрываем
+        MySingleton g=MySingleton.getInstance();
+        if (g.Common.isNomenclatureSurfing()) {
+            if (m_nomenclatureSurfing == null||m_nomenclatureSurfing.size()<=1)
+                return false;
+            m_nomenclatureSurfing = new ArrayList<>();
+            mAdapter.setNomenclatureSurfing(m_nomenclatureSurfing);
+            LoaderManager.getInstance(NomenclatureGridActivity.this).restartLoader(NOMENCLATURE_LOADER_ID, null, NomenclatureGridActivity.this);
+            mRecyclerView.scrollToPosition(0);
+            return true;
+        }
+        return false;
+    }
+
     private void onCloseActivity()
     {
         if (m_bQuantityChanged)
@@ -1256,7 +1276,8 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            onCloseActivity();
+            if (!checkGoNode())
+                onCloseActivity();
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -1265,7 +1286,8 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
     // Alternative variant for API 5 and higher
     @Override
     public void onBackPressed() {
-        onCloseActivity();
+        if (!checkGoNode())
+    	    onCloseActivity();
     }
 
     @Override
