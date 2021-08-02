@@ -175,7 +175,6 @@ import com.google.android.play.core.install.model.InstallStatus;
 import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.idescout.sql.SqlScoutServer;
 import com.nostra13.universalimageloader.utils.L;
 //import android.annotation.SuppressLint;
 //import android.support.v4.app.Fragment;
@@ -186,8 +185,6 @@ public class MainActivity extends AppCompatActivity
 
     private AppUpdateManager appUpdateManager;
     private InstallStateUpdatedListener installStateUpdatedListener;
-
-    private SqlScoutServer sqlScoutServer;
 
     //private static final int IDD_RECEIVE_PROGRESS = 0;
     private static final int IDD_REINDEX_CREATED = 1;
@@ -737,8 +734,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // http://www.idescout.com/wiki/index.php/Main/ConnectToAndroidDbs
-        sqlScoutServer = SqlScoutServer.create(this, getPackageName());
 
         MySingleton g = MySingleton.getInstance();
 
@@ -1336,7 +1331,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        sqlScoutServer.resume();
         // TODO Auto-generated method stub
         MySingleton g = MySingleton.getInstance();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -1376,13 +1370,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onPause() {
-        super.onPause(); sqlScoutServer.pause();
-    }
-
-    @Override
     protected void onDestroy() {
-        sqlScoutServer.destroy();
         MySingleton g = MySingleton.getInstance();
         if (g.MyDatabase.m_seance_closed) {
             ContentValues cv = new ContentValues();
