@@ -103,8 +103,10 @@ public class Common {
 
     public boolean isNomenclatureSurfing()
 	{
+		/*
 		if (PRODLIDER&&!VK)
 			return true;
+		 */
 		return false;
 	}
 

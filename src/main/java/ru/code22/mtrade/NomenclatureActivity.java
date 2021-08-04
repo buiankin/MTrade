@@ -99,9 +99,9 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
     ListView lvNomenclatureGroup;
     Spinner sNomenclatureGroup;
 
-    class Tree {String _id; String id; String parent_id; String descr; int level;};
+    //class Tree {String _id; String id; String parent_id; String descr; int level;};
     List<String> m_list_groups;
-    ArrayList<Tree> m_list2;
+    ArrayList<MyNomenclatureGroupAdapter.Tree> m_list2;
     MyDatabase.MyID m_group_id;
     ArrayList<String> m_group_ids;
     boolean m_b_onlyCurrentLevel;
@@ -118,150 +118,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 	String m_backup_distr_point_id;
     
     
-    // http://startandroid.ru/ru/uroki/vse-uroki-spiskom/113-urok-54-kastomizatsija-spiska-sozdaem-svoj-adapter
-    // http://wowjava.wordpress.com/2011/03/26/dynamic-listview-in-android/
-    
-    // 26.03.2014
-    // http://stackoverflow.com/questions/9392511/how-to-handle-oncheckedchangelistener-for-a-radiogroup-in-a-custom-listview-adap
-    
-    public class MyNomenclatureGroupAdapter extends BaseAdapter {
-    	
-    	Context context;
-    	LayoutInflater inflater;
-    	//ArrayList<Product> objects;
-    	//RadioButton checkedButton=null;
-    	
-    	/*
-    	class ViewHolder {
-    	    TextView t = null;
-    	    RadioGroup group;
 
-    	    ViewHolder(View v) {
-    	        t = (TextView) v.findViewById(R.id.textView1);
-    	        group = (RadioGroup) v.findViewById(R.id.group_me);
-    	    }
-    	}
-    	*/    	
-    	
-    	/*
-    	static class ViewHolder {
-    		//protected TextView text;
-    		//protected CheckBox checkbox,checkbox1;
-    		protected RadioGroup mgroup;
-    		}
-    	*/    	
-    	
-    	public MyNomenclatureGroupAdapter(Context context) {
-    		this.context=context;
-    		inflater = (LayoutInflater) context
-    		        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		}
-    	
-		@Override
-		public int getCount() {
-			return m_list_groups.size();
-		}
-
-		@Override
-		public Object getItem(int idx) {
-			return m_list_groups.get(idx);
-		}
-
-		@Override
-		public long getItemId(int idx) {
-			return idx;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			// используем созданные, но не используемые view
-		    View view = convertView;
-		    if (view == null) {
-		      view = inflater.inflate(R.layout.radio_list_item, parent, false);
-		    }
-
-		    //Product p = getProduct(position);
-
-		    // заполняем View в пункте списка данными из товаров: наименование, цена
-		    // и картинка
-		    //((TextView) view.findViewById(R.id.tvDescr)).setText(p.name);
-		    //((TextView) view.findViewById(R.id.tvPrice)).setText(p.price + "");
-		    //((ImageView) view.findViewById(R.id.ivImage)).setImageResource(p.image);
-
-		    //CheckBox cbBuy = (CheckBox) view.findViewById(R.id.cbBox);
-		    // присваиваем чекбоксу обработчик
-		    //cbBuy.setOnCheckedChangeListener(myCheckChangList);
-		    // пишем позицию
-		    //cbBuy.setTag(position);
-		    // заполняем данными из товаров: в корзине или нет
-		    //cbBuy.setChecked(p.box);
-		    
-		    RadioButton rbHierarchy = (RadioButton)view.findViewById(R.id.rbHierarchy);
-		    rbHierarchy.setText(m_list_groups.get(position));
-		    rbHierarchy.setOnCheckedChangeListener(null);
-		    rbHierarchy.setTag(position);
-		    
-		    String id=m_list2.get(position).id;
-		    if (id==null&&m_group_id==null&&position==0)
-		    {
-		    	rbHierarchy.setChecked(true);
-		    	//checkedButton=rbHierarchy;
-		    } else
-		    if (id!=null&&m_group_id!=null&&id.equals(m_group_id.m_id))
-		    {	
-		    	rbHierarchy.setChecked(true);
-		    } else
-		    {
-		    	rbHierarchy.setChecked(false);
-		    }
-		    rbHierarchy.setOnCheckedChangeListener(myCheckChangList);
-		    return view;	
-		}
-		
-		// обработчик для чекбоксов
-		  OnCheckedChangeListener myCheckChangList = new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-				if (!arg1)
-					return;
-			    // меняем данные товара (в корзине или нет)
-			    //getProduct((Integer) buttonView.getTag()).box = isChecked;
-				/*
-				if (checkedButton!=null&&checkedButton!=(RadioButton)arg0)
-				{
-					checkedButton.setChecked(false);
-				}
-				checkedButton=(RadioButton)arg0;
-				*/
-				RadioButton checkedButton=(RadioButton)arg0;
-				int position=(Integer)checkedButton.getTag();
-				if (m_list2.get(position).id==null)
-				{
-					m_group_id=null;
-					m_group_ids=null;
-				} else
-				{
-					m_group_id=new MyID(m_list2.get(position).id);
-					m_group_ids=new ArrayList<String>();
-					int i;
-					int level=m_list2.get(position).level;
-					m_group_ids.add(m_list2.get(position).id);
-					for (i=position+1;i<m_list2.size();i++)
-					{
-						if (m_list2.get(i).level<=level)
-							break;
-						m_group_ids.add(m_list2.get(i).id);
-					}
-				}
-				//notifyDataSetInvalidated();
-				notifyDataSetChanged();
-				LoaderManager.getInstance(NomenclatureActivity.this).restartLoader(LOADER_ID, null, NomenclatureActivity.this);
-			}
-		  };		
-    	
-    }
-    
     public class MySimpleCursorAdapter extends SimpleCursorAdapter
     	implements Filterable {
     	
@@ -621,8 +478,6 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 		String[] fromColumns = {"h_groupDescr", "descr", "price", "nom_quantity", "zero", "quantity_saled", "nom_quantity_saled_now", "zero", "zero", "zero"};
         int[] toViews = {R.id.tvNomenclatureGroup, R.id.tvNomenclatureLineDescr, R.id.tvNomenclatureLinePrice, R.id.tvNomenclatureLineRests, R.id.tvNomenclatureLineSales, R.id.tvNomenclatureLineSalesHistoryPeriod, R.id.tvNomenclatureLineSalesNowPeriod, R.id.ibtnNomenclatureLine, R.id.ibtnNomenclatureGroup, R.id.tvNomenclatureGroupSales};
         
-        mGroupAdapter = new MyNomenclatureGroupAdapter(this);
-
         if (g.Common.TANDEM) {
             mAdapter = new MySimpleCursorAdapter(this,
                     R.layout.nomenclature_line_item_ta, null,
@@ -1190,8 +1045,17 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 		LoaderManager.getInstance(this).initLoader(LOADER_ID, null, this);
         
         setNomenclatureSpinnerData(Constants.emptyID);
-        
-        if (lvNomenclatureGroup!=null)
+
+		mGroupAdapter = new MyNomenclatureGroupAdapter(this);
+		mGroupAdapter.setMyListGroups(m_list_groups, m_list2, m_group_id, m_group_ids);
+		mGroupAdapter.setOnRedrawListListener(new MyNomenclatureGroupAdapter.RedrawListLisnener() {
+			@Override
+			public void onRestartLoader() {
+				LoaderManager.getInstance(NomenclatureActivity.this).restartLoader(LOADER_ID, null, NomenclatureActivity.this);
+			}
+		});
+
+		if (lvNomenclatureGroup!=null)
         {
         	lvNomenclatureGroup.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         	lvNomenclatureGroup.setAdapter(mGroupAdapter);
@@ -1417,7 +1281,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 		MySingleton g=MySingleton.getInstance();
 		// TODO здесь можно взять данные из hierarchy table 
         Spinner spinner = (Spinner) findViewById(R.id.spinnerGroupNomenclature);
-        ListView lvHierarchy = (ListView) findViewById(R.id.lvNomenclatureGroup);
+        //ListView lvHierarchy = (ListView) findViewById(R.id.lvNomenclatureGroup);
         
         m_list_groups = new ArrayList<String>();
         ContentResolver contentResolver=getContentResolver();        
@@ -1428,7 +1292,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 	    	"parent_id",
 	        "descr"
 	    };
-	    m_list2 = new ArrayList<Tree>(); 
+	    m_list2 = new ArrayList<MyNomenclatureGroupAdapter.Tree>();
 	    
 	    
 	    Cursor cursor;
@@ -1445,13 +1309,13 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 	    	int indexId = cursor.getColumnIndex("id");
 	    	int indexParentId = cursor.getColumnIndex("parent_id");
 	    	int index_Id = cursor.getColumnIndex("_id");
-    		Tree t = new Tree();
+			MyNomenclatureGroupAdapter.Tree t = new MyNomenclatureGroupAdapter.Tree();
     		t.descr=getResources().getString(R.string.catalogue_all);
     		t.id=null;
     		t.parent_id=null;
     		t.level=0;
     		m_list2.add(t);
-    		t = new Tree();
+    		t = new MyNomenclatureGroupAdapter.Tree();
     		t.descr=getResources().getString(R.string.catalogue_node);
     		t.id="     0   ";
     		t.parent_id="";
@@ -1460,7 +1324,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
     		// Сначала просто заполняем список
 	    	while (cursor.moveToNext())
 	    	{
-	    		t = new Tree();
+	    		t = new MyNomenclatureGroupAdapter.Tree();
 		    	t.descr=cursor.getString(indexDescr);
 		    	t.id=cursor.getString(indexId);
 		    	t.parent_id=cursor.getString(indexParentId);

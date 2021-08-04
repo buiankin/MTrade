@@ -33,6 +33,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -50,12 +54,14 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 public class NomenclatureGridActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    static final int QUANTITY_REQUEST = 1;
+    //static final int QUANTITY_REQUEST = 1;
 
     static final int NOMENCLATURE_RESULT_DOCUMENT_CHANGED=1;
 
     private NomenclatureAdapter mAdapter;
+    MyNomenclatureGroupAdapter mGroupAdapter;
 
+    ListView lvNomenclatureGroup;
     Spinner sNomenclatureGroup;
     RecyclerView mRecyclerView;
 
@@ -63,9 +69,8 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
 
     boolean m_bQuantityChanged;
 
-    class Tree {String _id; String id; String parent_id; String descr; int level;};
     List<String> m_list_groups;
-    ArrayList<Tree> m_list2;
+    ArrayList<MyNomenclatureGroupAdapter.Tree> m_list2;
     MyDatabase.MyID m_group_id;
     ArrayList<String> m_group_ids;
     boolean m_b_onlyCurrentLevel;
@@ -83,6 +88,8 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
 
     // Для варианта Common.isHierarchyNomenclatureInTable
     ArrayList<String> m_nomenclatureSurfing;
+
+    ActivityResultLauncher<Intent> launchQuantityRequest;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -223,6 +230,11 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
 
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
 
+        lvNomenclatureGroup = (ListView)findViewById(R.id.lvNomenclatureGroup);
+        if (lvNomenclatureGroup!=null)
+        {
+            lvNomenclatureGroup.setEmptyView(findViewById(R.id.emptyGroup));
+        }
 
         sNomenclatureGroup=(Spinner)findViewById(R.id.spinnerGroupNomenclature);
 
@@ -319,7 +331,8 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                     intent.putExtra("rest", cursorList.getDouble(nom_quantityIndex));
                     intent.putExtra("MODE", m_mode);
 
-                    startActivityForResult(intent, QUANTITY_REQUEST);
+                    //startActivityForResult(intent, QUANTITY_REQUEST);
+                    launchQuantityRequest.launch(intent);
                 } else
                 {
                     // 29.04.2021 если это группа, показываем только ее (и если способ редактирования такой)
@@ -338,7 +351,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                             while (m_nomenclatureSurfing.size()>idx+1)
                                 m_nomenclatureSurfing.remove(idx+1);
                         } else {
-                            m_nomenclatureSurfing.add(Constants.emptyID);
+                            //m_nomenclatureSurfing.add(Constants.emptyID);
                             m_nomenclatureSurfing.add(nomenclature_id);
                         }
                         // Для отображения открытых папок
@@ -356,6 +369,20 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
         });
 
         setNomenclatureSpinnerData(Constants.emptyID);
+
+        mGroupAdapter = new MyNomenclatureGroupAdapter(this);
+        mGroupAdapter.setMyListGroups(m_list_groups, m_list2, m_group_id, m_group_ids);
+        mGroupAdapter.setOnRedrawListListener(new MyNomenclatureGroupAdapter.RedrawListLisnener() {
+            @Override
+            public void onRestartLoader() {
+                LoaderManager.getInstance(NomenclatureGridActivity.this).restartLoader(NOMENCLATURE_LOADER_ID, null, NomenclatureGridActivity.this);
+            }
+        });
+
+        if (lvNomenclatureGroup!=null) {
+            lvNomenclatureGroup.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+            lvNomenclatureGroup.setAdapter(mGroupAdapter);
+        }
 
         // устанавливаем обработчик нажатия
         if (sNomenclatureGroup!=null)
@@ -483,6 +510,246 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
             buttonNomenclaturePacks.setVisibility(View.GONE);
         }
 
+
+        launchQuantityRequest = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+
+                        /*
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Intent data = result.getData();
+                            // your operation....
+                        }
+                         */
+
+                        if (result.getResultCode()==QuantityActivity.QUANTITY_RESULT_OK)
+                        {
+                            Intent data = result.getData();
+                            m_bQuantityChanged=true;
+                            if (data!=null)
+                            {
+                                if (m_mode.equals("REFUND"))
+                                {
+                                    MyDatabase.RefundLineRecord line=new MyDatabase.RefundLineRecord();
+                                    long _id=data.getLongExtra("_id", 0);
+                                    double quantity=data.getDoubleExtra("quantity", 0.0);
+                                    double k=data.getDoubleExtra("k", 1.0);
+                                    String ed=data.getStringExtra("ed");
+                                    String comment_in_line=data.getStringExtra("comment_in_line");
+
+                                    Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, _id);
+                                    Cursor nomenclatureCursor=getContentResolver().query(singleUri, new String[]{"id", "descr", "weight_k_1", "flags"}, null, null, null);
+                                    if (nomenclatureCursor!=null&&nomenclatureCursor.moveToNext())
+                                    {
+                                        int descrIndex = nomenclatureCursor.getColumnIndex("descr");
+                                        int flagsIndex = nomenclatureCursor.getColumnIndex("flags");
+                                        int idIndex = nomenclatureCursor.getColumnIndex("id");
+                                        int weight_k_1_Index = nomenclatureCursor.getColumnIndex("weight_k_1");
+                                        line.nomenclature_id=new MyDatabase.MyID(nomenclatureCursor.getString(idIndex));
+                                        line.stuff_nomenclature=nomenclatureCursor.getString(descrIndex);
+                                        line.stuff_nomenclature_flags=nomenclatureCursor.getInt(flagsIndex);
+                                        line.stuff_weight_k_1=nomenclatureCursor.getDouble(weight_k_1_Index);
+                                        line.quantity=quantity;
+                                        line.quantity_requested=quantity;
+                                        line.k=k;
+                                        line.ed=ed;
+                                        line.comment_in_line=comment_in_line;
+
+                                        // Проверим, есть ли эта номенклатура в документе
+                                        boolean bNomenclatureFound=false;
+                                        int line_no=0;
+                                        while (line_no<g.MyDatabase.m_refund_editing.lines.size())
+                                        {
+                                            if (g.MyDatabase.m_refund_editing.lines.get(line_no).nomenclature_id.equals(line.nomenclature_id))
+                                            {
+                                                if (bNomenclatureFound)
+                                                {
+                                                    g.MyDatabase.m_refund_editing.lines.remove(line_no);
+                                                    continue;
+                                                }
+                                                else
+                                                {
+                                                    g.MyDatabase.m_refund_editing.lines.set(line_no, line);
+                                                    bNomenclatureFound=true;
+
+                                                    if (g.MyDatabase.m_refund_editing.state==E_REFUND_STATE.E_REFUND_STATE_BACKUP_NOT_SAVED)
+                                                    {
+                                                        // Аналогично OrderActivity
+                                                        ContentValues cv=new ContentValues();
+                                                        cv.put("client_id", ""); // в данном случае это не важно
+                                                        cv.put("quantity", quantity);
+                                                        cv.put("quantity_requested", quantity);
+                                                        cv.put("k", k);
+                                                        cv.put("ed", ed);
+                                                        cv.put("comment_in_line", comment_in_line);
+
+                                                        int cnt=getContentResolver().update(MTradeContentProvider.REFUNDS_LINES_CONTENT_URI, cv, "refund_id=? and nomenclature_id=?", new String[]{String.valueOf(g.MyDatabase.m_refund_editing_id), line.nomenclature_id.toString()});
+                                                    }
+                                                }
+                                            }
+                                            line_no++;
+                                        }
+
+                                        if (!bNomenclatureFound)
+                                        {
+                                            g.MyDatabase.m_refund_editing.lines.add(line);
+
+                                            if (g.MyDatabase.m_refund_editing.state==E_REFUND_STATE.E_REFUND_STATE_BACKUP_NOT_SAVED)
+                                            {
+                                                ContentValues cv=new ContentValues();
+                                                cv.put("nomenclature_id", line.nomenclature_id.toString());
+                                                cv.put("refund_id", String.valueOf(g.MyDatabase.m_refund_editing_id));
+                                                cv.put("client_id", ""); // в данном случае это не важно
+                                                cv.put("quantity", quantity);
+                                                cv.put("quantity_requested", quantity);
+                                                cv.put("k", k);
+                                                cv.put("ed", ed);
+                                                cv.put("comment_in_line", comment_in_line);
+
+                                                getContentResolver().insert(MTradeContentProvider.REFUNDS_LINES_CONTENT_URI, cv);
+                                            }
+
+                                        }
+                                        //g.MyDatabase.m_linesAdapter.notifyDataSetChanged();
+                                        //setModified();
+
+                                        // В списке у нас указываются продажи, поэтому строку надо перерисовать
+                                        Uri singleUriList = ContentUris.withAppendedId(MTradeContentProvider.NOMENCLATURE_LIST_CONTENT_URI, _id);
+                                        getContentResolver().notifyChange(singleUriList, null);
+
+                                    }
+
+                                } else
+                                {
+                                    //long id=data.getLongExtra("id", 0);
+                                    MyDatabase.OrderLineRecord line=new MyDatabase.OrderLineRecord();
+                                    long _id=data.getLongExtra("_id", 0);
+                                    double quantity=data.getDoubleExtra("quantity", 0.0);
+                                    double k=data.getDoubleExtra("k", 1.0);
+                                    double price=data.getDoubleExtra("price", 0.0);
+                                    double price_k=data.getDoubleExtra("price_k", 1.0);
+                                    String ed=data.getStringExtra("ed");
+                                    String shipping_time=data.getStringExtra("shipping_time");
+                                    String comment_in_line=data.getStringExtra("comment_in_line");
+
+                                    Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, _id);
+                                    Cursor nomenclatureCursor=getContentResolver().query(singleUri, new String[]{"id", "descr", "weight_k_1", "flags"}, null, null, null);
+                                    if (nomenclatureCursor!=null&&nomenclatureCursor.moveToNext())
+                                    {
+                                        int descrIndex = nomenclatureCursor.getColumnIndex("descr");
+                                        int flagsIndex = nomenclatureCursor.getColumnIndex("flags");
+                                        int idIndex = nomenclatureCursor.getColumnIndex("id");
+                                        int weight_k_1_Index = nomenclatureCursor.getColumnIndex("weight_k_1");
+                                        line.nomenclature_id=new MyDatabase.MyID(nomenclatureCursor.getString(idIndex));
+                                        line.stuff_nomenclature=nomenclatureCursor.getString(descrIndex);
+                                        line.stuff_nomenclature_flags=nomenclatureCursor.getInt(flagsIndex);
+                                        line.stuff_weight_k_1=nomenclatureCursor.getDouble(weight_k_1_Index);
+                                        line.quantity=quantity;
+                                        line.quantity_requested=quantity;
+                                        line.discount=0.0;
+                                        line.k=k;
+                                        line.ed=ed;
+                                        if (price_k>-0.0001&&price_k<0.0001)
+                                        {
+                                            price_k=1.0;
+                                        }
+                                        if (price_k-k>-0.0001&&price_k-k<0.0001)
+                                        {
+                                            line.price=price;
+                                        } else
+                                        {
+                                            line.price=Math.floor(price*k/price_k*100.0+0.00001)/100.0;
+                                        }
+                                        line.total=Math.floor(line.price*line.quantity*100.0+0.00001)/100.0;
+                                        line.shipping_time=shipping_time;
+                                        line.comment_in_line=comment_in_line;
+                                        line.lineno=g.MyDatabase.m_order_editing.getMaxLineno()+1;
+
+                                        // Проверим, есть ли эта номенклатура в документе
+                                        boolean bNomenclatureFound=false;
+                                        int line_no=0;
+                                        while (line_no<g.MyDatabase.m_order_editing.lines.size())
+                                        {
+                                            if (g.MyDatabase.m_order_editing.lines.get(line_no).nomenclature_id.equals(line.nomenclature_id))
+                                            {
+                                                if (bNomenclatureFound)
+                                                {
+                                                    if (g.Common.NEW_BACKUP_FORMAT)
+                                                    {
+                                                        // если документ не был изменен и ни разу не сохранился, то эти изменения не будут записаны
+                                                        // когда m_order_new_editing_id=0
+                                                        TextDatabase.DeleteOrderLine(getContentResolver(), g.MyDatabase.m_order_new_editing_id, line.lineno);
+                                                    }
+                                                    g.MyDatabase.m_order_editing.lines.remove(line_no);
+                                                    continue;
+                                                }
+                                                else
+                                                {
+                                                    // Используем старый номер строки
+                                                    line.lineno=g.MyDatabase.m_order_editing.lines.get(line_no).lineno;
+                                                    g.MyDatabase.m_order_editing.lines.set(line_no, line);
+                                                    bNomenclatureFound=true;
+                                                    if (g.Common.NEW_BACKUP_FORMAT)
+                                                    {
+                                                        if (g.MyDatabase.m_order_new_editing_id==0)
+                                                        {
+                                                            // Что-то поменяли в документе впервые, записываем документ
+                                                            g.MyDatabase.m_order_editing.old_id=g.MyDatabase.m_order_editing_id;
+                                                            // editing_backup (последний параметр)
+                                                            // 0-документ в нормальном состоянии
+                                                            // 1-новый документ, записать не успели
+                                                            // 2-документ начали редактировать, но не записали и не отменили изменения
+                                                            g.MyDatabase.m_order_new_editing_id=TextDatabase.SaveOrderSQL(getContentResolver(), g.MyDatabase.m_order_editing, 0, g.MyDatabase.m_order_editing_id==0?1:2);
+                                                        } else
+                                                        {
+                                                            TextDatabase.UpdateOrderLine(getContentResolver(), g.MyDatabase.m_order_new_editing_id, g.MyDatabase.m_order_editing, line);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            line_no++;
+                                        }
+
+                                        if (!bNomenclatureFound)
+                                        {
+                                            g.MyDatabase.m_order_editing.lines.add(line);
+                                            if (g.Common.NEW_BACKUP_FORMAT)
+                                            {
+                                                if (g.MyDatabase.m_order_new_editing_id==0)
+                                                {
+                                                    // Что-то поменяли в документе впервые, записываем документ
+                                                    g.MyDatabase.m_order_editing.old_id=g.MyDatabase.m_order_editing_id;
+                                                    // editing_backup (последний параметр)
+                                                    // 0-документ в нормальном состоянии
+                                                    // 1-новый документ, записать не успели
+                                                    // 2-документ начали редактировать, но не записали и не отменили изменения
+                                                    g.MyDatabase.m_order_new_editing_id=TextDatabase.SaveOrderSQL(getContentResolver(), g.MyDatabase.m_order_editing, 0, g.MyDatabase.m_order_editing_id==0?1:2);
+                                                } else
+                                                {
+                                                    TextDatabase.UpdateOrderLine(getContentResolver(), g.MyDatabase.m_order_new_editing_id, g.MyDatabase.m_order_editing, line);
+                                                }
+                                            }
+
+                                        }
+                                        //g.MyDatabase.m_linesAdapter.notifyDataSetChanged();
+                                        //setModified();
+
+                                        // В списке у нас указываются продажи, поэтому строку надо перерисовать
+                                        Uri singleUriList = ContentUris.withAppendedId(MTradeContentProvider.NOMENCLATURE_LIST_CONTENT_URI, _id);
+                                        getContentResolver().notifyChange(singleUriList, null);
+
+                                    }
+                                }
+                            }
+                        }
+
+
+
+                    }
+                });
+
 	}
 
     @Override
@@ -536,7 +803,6 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
         }
 
 
-
         return true;
     }
 
@@ -545,7 +811,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
         MySingleton g=MySingleton.getInstance();
         // TODO здесь можно взять данные из hierarchy table
         Spinner spinner = (Spinner) findViewById(R.id.spinnerGroupNomenclature);
-        ListView lvHierarchy = (ListView) findViewById(R.id.lvNomenclatureGroup);
+        //ListView lvHierarchy = (ListView) findViewById(R.id.lvNomenclatureGroup);
 
         m_list_groups = new ArrayList<String>();
         ContentResolver contentResolver=getContentResolver();
@@ -556,7 +822,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                         "parent_id",
                         "descr"
                 };
-        m_list2 = new ArrayList<Tree>();
+        m_list2 = new ArrayList<MyNomenclatureGroupAdapter.Tree>();
 
 
         Cursor cursor;
@@ -573,13 +839,13 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
             int indexId = cursor.getColumnIndex("id");
             int indexParentId = cursor.getColumnIndex("parent_id");
             int index_Id = cursor.getColumnIndex("_id");
-            Tree t = new Tree();
+            MyNomenclatureGroupAdapter.Tree t = new MyNomenclatureGroupAdapter.Tree();
             t.descr=getResources().getString(R.string.catalogue_all);
             t.id=null;
             t.parent_id=null;
             t.level=0;
             m_list2.add(t);
-            t = new Tree();
+            t = new MyNomenclatureGroupAdapter.Tree();
             t.descr=getResources().getString(R.string.catalogue_node);
             t.id="     0   ";
             t.parent_id="";
@@ -588,7 +854,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
             // Сначала просто заполняем список
             while (cursor.moveToNext())
             {
-                t = new Tree();
+                t = new MyNomenclatureGroupAdapter.Tree();
                 t.descr=cursor.getString(indexDescr);
                 t.id=cursor.getString(indexId);
                 t.parent_id=cursor.getString(indexParentId);
@@ -957,6 +1223,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
         }
     }
 
+    /*
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         MySingleton g=MySingleton.getInstance();
@@ -1147,22 +1414,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                                                 {
                                                     TextDatabase.UpdateOrderLine(getContentResolver(), g.MyDatabase.m_order_new_editing_id, g.MyDatabase.m_order_editing, line);
                                                 }
-                                            }/* else
-										if (g.MyDatabase.m_order_editing.state==E_ORDER_STATE.E_ORDER_STATE_BACKUP_NOT_SAVED)
-										{
-											// Аналогично OrderActivity
-											ContentValues cv=new ContentValues();
-											cv.put("client_id", ""); // в данном случае это не важно
-											cv.put("quantity", quantity);
-											cv.put("quantity_requested", quantity);
-											cv.put("k", k);
-											cv.put("ed", ed);
-											cv.put("price", price);
-											cv.put("shipping_time", shipping_time);
-											cv.put("comment_in_line", comment_in_line);
-
-											int cnt=getContentResolver().update(MTradeContentProvider.ORDERS_LINES_CONTENT_URI, cv, "order_id=? and nomenclature_id=?", new String[]{String.valueOf(g.MyDatabase.m_order_editing_id), line.nomenclature_id.toString()});
-										}*/
+                                            }
                                         }
                                     }
                                     line_no++;
@@ -1186,24 +1438,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                                         {
                                             TextDatabase.UpdateOrderLine(getContentResolver(), g.MyDatabase.m_order_new_editing_id, g.MyDatabase.m_order_editing, line);
                                         }
-                                    }/* else
-								if (g.MyDatabase.m_order_editing.state==E_ORDER_STATE.E_ORDER_STATE_BACKUP_NOT_SAVED)
-								{
-									ContentValues cv=new ContentValues();
-									cv.put("nomenclature_id", line.nomenclature_id.toString());
-									cv.put("order_id", String.valueOf(g.MyDatabase.m_order_editing_id));
-									cv.put("client_id", ""); // в данном случае это не важно
-									cv.put("quantity", quantity);
-									cv.put("quantity_requested", quantity);
-									cv.put("k", k);
-									cv.put("ed", ed);
-									cv.put("price", price);
-									cv.put("shipping_time", shipping_time);
-									cv.put("comment_in_line", comment_in_line);
-
-									getContentResolver().insert(MTradeContentProvider.ORDERS_LINES_CONTENT_URI, cv);
-								}
-								*/
+                                    }
 
                                 }
                                 //g.MyDatabase.m_linesAdapter.notifyDataSetChanged();
@@ -1220,6 +1455,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                 break;
         }
     }
+    */
 
     private boolean checkGoNode()
     {
@@ -1229,6 +1465,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
             if (m_nomenclatureSurfing == null||m_nomenclatureSurfing.size()<=1)
                 return false;
             m_nomenclatureSurfing = new ArrayList<>();
+            m_nomenclatureSurfing.add(Constants.emptyID);
             mAdapter.setNomenclatureSurfing(m_nomenclatureSurfing);
             LoaderManager.getInstance(NomenclatureGridActivity.this).restartLoader(NOMENCLATURE_LOADER_ID, null, NomenclatureGridActivity.this);
             mRecyclerView.scrollToPosition(0);
