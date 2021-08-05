@@ -10,6 +10,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -24,6 +25,10 @@ import androidx.loader.content.Loader;
 import ru.code22.mtrade.MyDatabase.MyID;
 import ru.code22.mtrade.MyDatabase.OrderLineRecord;
 import ru.code22.mtrade.MyDatabase.RefundLineRecord;
+import ru.code22.mtrade.bean.Dir;
+import ru.code22.mtrade.viewbinder.DirectoryNodeBinder;
+import ru.code22.mtrade.viewbinder.FileNodeBinder;
+
 import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -40,6 +45,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import androidx.core.view.MenuItemCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -56,11 +64,15 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Filterable;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
+import com.recyclertreeview_lib.TreeNode;
+import com.recyclertreeview_lib.TreeViewAdapter;
 
 public class NomenclatureActivity extends AppCompatActivity
 implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListener {
@@ -96,7 +108,10 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
     	"zero"};
     
     ListView lvNomenclature;
-    ListView lvNomenclatureGroup;
+    //ListView lvNomenclatureGroup;
+	RecyclerView rvNomenclatureGroup;
+	private TreeViewAdapter adapter;
+
     Spinner sNomenclatureGroup;
 
     //class Tree {String _id; String id; String parent_id; String descr; int level;};
@@ -338,7 +353,70 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 		}
 		outState.putBoolean("QuantityChanged", m_bQuantityChanged);
 	}
-	
+
+	private void initData() {
+		List<TreeNode> nodes = new ArrayList<>();
+		TreeNode<Dir> app = new TreeNode<>(new Dir("app"));
+		nodes.add(app);
+		app.addChild(
+				new TreeNode<>(new Dir("manifests"))
+						.addChild(new TreeNode<>(new ru.code22.mtrade.bean.File("AndroidManifest.xml")))
+		);
+		app.addChild(
+				new TreeNode<>(new Dir("java")).addChild(
+						new TreeNode<>(new Dir("tellh")).addChild(
+								new TreeNode<>(new Dir("com")).addChild(
+										new TreeNode<>(new Dir("recyclertreeview"))
+												.addChild(new TreeNode<>(new ru.code22.mtrade.bean.File("Dir")))
+												.addChild(new TreeNode<>(new ru.code22.mtrade.bean.File("DirectoryNodeBinder")))
+												.addChild(new TreeNode<>(new ru.code22.mtrade.bean.File("File")))
+												.addChild(new TreeNode<>(new ru.code22.mtrade.bean.File("FileNodeBinder")))
+												.addChild(new TreeNode<>(new ru.code22.mtrade.bean.File("TreeViewBinder")))
+								)
+						)
+				)
+		);
+		TreeNode<Dir> res = new TreeNode<>(new Dir("res"));
+		nodes.add(res);
+		res.addChild(
+				new TreeNode<>(new Dir("layout")).lock() // lock this TreeNode
+						.addChild(new TreeNode<>(new ru.code22.mtrade.bean.File("activity_main.xml")))
+						.addChild(new TreeNode<>(new ru.code22.mtrade.bean.File("item_dir.xml")))
+						.addChild(new TreeNode<>(new ru.code22.mtrade.bean.File("item_file.xml")))
+		);
+		res.addChild(
+				new TreeNode<>(new Dir("mipmap"))
+						.addChild(new TreeNode<>(new ru.code22.mtrade.bean.File("ic_launcher.png")))
+		);
+
+		rvNomenclatureGroup.setLayoutManager(new LinearLayoutManager(this));
+		adapter = new TreeViewAdapter(nodes, Arrays.asList(new FileNodeBinder(), new DirectoryNodeBinder()));
+		// whether collapse child nodes when their parent node was close.
+//        adapter.ifCollapseChildWhileCollapseParent(true);
+		adapter.setOnTreeNodeListener(new TreeViewAdapter.OnTreeNodeListener() {
+			@Override
+			public boolean onClick(TreeNode node, RecyclerView.ViewHolder holder) {
+				if (!node.isLeaf()) {
+					//Update and toggle the node.
+					onToggle(!node.isExpand(), holder);
+//                    if (!node.isExpand())
+//                        adapter.collapseBrotherNode(node);
+				}
+				return false;
+			}
+
+			@Override
+			public void onToggle(boolean isExpand, RecyclerView.ViewHolder holder) {
+				DirectoryNodeBinder.ViewHolder dirViewHolder = (DirectoryNodeBinder.ViewHolder) holder;
+				final ImageView ivArrow = dirViewHolder.getIvArrow();
+				int rotateDegree = isExpand ? 90 : -90;
+				ivArrow.animate().rotationBy(rotateDegree)
+						.start();
+			}
+		});
+		rvNomenclatureGroup.setAdapter(adapter);
+	}
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -466,13 +544,17 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 		
 		lvNomenclature = (ListView)findViewById(R.id.lvNomenclature);
 		lvNomenclature.setEmptyView(findViewById(android.R.id.empty));
-		
+
+		/*
 		lvNomenclatureGroup = (ListView)findViewById(R.id.lvNomenclatureGroup);
 		if (lvNomenclatureGroup!=null)
 		{
 			lvNomenclatureGroup.setEmptyView(findViewById(R.id.emptyGroup));
 		}
-		
+		 */
+		rvNomenclatureGroup = (RecyclerView)findViewById(R.id.rvNomenclatureGroup);
+		initData();
+
 		sNomenclatureGroup=(Spinner)findViewById(R.id.spinnerGroupNomenclature);
 		
 		String[] fromColumns = {"h_groupDescr", "descr", "price", "nom_quantity", "zero", "quantity_saled", "nom_quantity_saled_now", "zero", "zero", "zero"};
@@ -1055,42 +1137,13 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 			}
 		});
 
+		/*
 		if (lvNomenclatureGroup!=null)
         {
         	lvNomenclatureGroup.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         	lvNomenclatureGroup.setAdapter(mGroupAdapter);
-        	/*
-        	lvNomenclatureGroup.setOnItemClickListener(new OnItemClickListener()
-            {
-    			@Override
-    			public void onItemClick(AdapterView<?> adapter, View view, int position,
-    					long _id) {
-					if (m_list2.get(position).id==null)
-					{
-						m_group_id=null;
-						m_group_ids=null;
-					} else
-					{
-						m_group_id=new MyID(m_list2.get(position).id);
-						m_group_ids=new ArrayList<String>();
-						int i;
-						int level=m_list2.get(position).level;
-						m_group_ids.add(m_list2.get(position).id);
-						for (i=position+1;i<m_list2.size();i++)
-						{
-							if (m_list2.get(i).level<=level)
-								break;
-							m_group_ids.add(m_list2.get(i).id);
-						}
-					}
-					getSupportLoaderManager().restartLoader(LOADER_ID, null, NomenclatureActivity.this);
-					
-				}
-
-        	});
-        	*/
-        	
         }
+		 */
         
         // устанавливаем обработчик нажатия
         if (sNomenclatureGroup!=null)
@@ -1281,8 +1334,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 		MySingleton g=MySingleton.getInstance();
 		// TODO здесь можно взять данные из hierarchy table 
         Spinner spinner = (Spinner) findViewById(R.id.spinnerGroupNomenclature);
-        //ListView lvHierarchy = (ListView) findViewById(R.id.lvNomenclatureGroup);
-        
+
         m_list_groups = new ArrayList<String>();
         ContentResolver contentResolver=getContentResolver();        
 	    String[] projection =
