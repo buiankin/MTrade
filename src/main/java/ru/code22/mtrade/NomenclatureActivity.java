@@ -26,8 +26,10 @@ import ru.code22.mtrade.MyDatabase.MyID;
 import ru.code22.mtrade.MyDatabase.OrderLineRecord;
 import ru.code22.mtrade.MyDatabase.RefundLineRecord;
 import ru.code22.mtrade.bean.Dir;
+import ru.code22.mtrade.bean.NomenclatureGroup;
 import ru.code22.mtrade.viewbinder.DirectoryNodeBinder;
 import ru.code22.mtrade.viewbinder.FileNodeBinder;
+import ru.code22.mtrade.viewbinder.NomenclatureGroupNodeBinder;
 
 import android.app.SearchManager;
 import android.content.ContentResolver;
@@ -354,8 +356,58 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 		outState.putBoolean("QuantityChanged", m_bQuantityChanged);
 	}
 
+
+	void fillTreeRecursive(List<TreeNode> nodes, List<MyNomenclatureGroupAdapter.Tree> data, String parent_id)
+	{
+		if (parent_id==null)
+		{
+			// Сделаем так, что если запрашивается корень, выводим все элементы, для которых нет в массиве родителей
+			// (это универсальный способ для случая, если пустой элемент есть в списке или его нет -
+			// если он есть, он будет единственным в этой выборке)
+			for (MyNomenclatureGroupAdapter.Tree item: data) {
+				boolean bFoundParent = false;
+				if (MyID.isEmptyString(item.id))
+					bFoundParent = true;
+				else
+					for (MyNomenclatureGroupAdapter.Tree item2 : data) {
+						if (item != item2 && item.parent_id.equals(item2.id)) {
+							bFoundParent = true;
+							break;
+						}
+					}
+				if (!bFoundParent) {
+					TreeNode<NomenclatureGroup> treeItem = new TreeNode<>(new NomenclatureGroup(item.descr));
+					nodes.add(treeItem);
+					fillTreeRecursive(treeItem, data, item.id);
+				}
+			}
+		}
+
+	}
+
 	private void initData() {
 		List<TreeNode> nodes = new ArrayList<>();
+
+		Cursor cursor;
+		if (g.Common.PHARAON)
+		{
+			cursor=contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "order_for_sorting, descr");
+		} else
+		{
+			cursor=contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "descr");
+		}
+		int indexDescr = cursor.getColumnIndex("descr");
+		int indexId = cursor.getColumnIndex("id");
+		int indexParentId = cursor.getColumnIndex("parent_id");
+		int index_Id = cursor.getColumnIndex("_id");
+
+
+		for (String s : m_list_groups) {
+			TreeNode<NomenclatureGroup> app = new TreeNode<>(new NomenclatureGroup(s));
+			nodes.add(app);
+		}
+
+		/*
 		TreeNode<Dir> app = new TreeNode<>(new Dir("app"));
 		nodes.add(app);
 		app.addChild(
@@ -388,9 +440,11 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 				new TreeNode<>(new Dir("mipmap"))
 						.addChild(new TreeNode<>(new ru.code22.mtrade.bean.File("ic_launcher.png")))
 		);
+		 */
 
 		rvNomenclatureGroup.setLayoutManager(new LinearLayoutManager(this));
-		adapter = new TreeViewAdapter(nodes, Arrays.asList(new FileNodeBinder(), new DirectoryNodeBinder()));
+		//adapter = new TreeViewAdapter(nodes, Arrays.asList(new FileNodeBinder(), new DirectoryNodeBinder()));
+		adapter = new TreeViewAdapter(nodes, Arrays.asList(new NomenclatureGroupNodeBinder()));
 		// whether collapse child nodes when their parent node was close.
 //        adapter.ifCollapseChildWhileCollapseParent(true);
 		adapter.setOnTreeNodeListener(new TreeViewAdapter.OnTreeNodeListener() {
@@ -552,8 +606,6 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 			lvNomenclatureGroup.setEmptyView(findViewById(R.id.emptyGroup));
 		}
 		 */
-		rvNomenclatureGroup = (RecyclerView)findViewById(R.id.rvNomenclatureGroup);
-		initData();
 
 		sNomenclatureGroup=(Spinner)findViewById(R.id.spinnerGroupNomenclature);
 		
@@ -1137,6 +1189,9 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 			}
 		});
 
+		rvNomenclatureGroup = (RecyclerView)findViewById(R.id.rvNomenclatureGroup);
+		initData();
+
 		/*
 		if (lvNomenclatureGroup!=null)
         {
@@ -1355,82 +1410,81 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 	    {
 	    	cursor=contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "descr");
 	    }
-	    if (cursor!=null)
-	    {
-	    	int indexDescr = cursor.getColumnIndex("descr");
-	    	int indexId = cursor.getColumnIndex("id");
-	    	int indexParentId = cursor.getColumnIndex("parent_id");
-	    	int index_Id = cursor.getColumnIndex("_id");
-			MyNomenclatureGroupAdapter.Tree t = new MyNomenclatureGroupAdapter.Tree();
-    		t.descr=getResources().getString(R.string.catalogue_all);
-    		t.id=null;
-    		t.parent_id=null;
-    		t.level=0;
-    		m_list2.add(t);
-    		t = new MyNomenclatureGroupAdapter.Tree();
-    		t.descr=getResources().getString(R.string.catalogue_node);
-    		t.id="     0   ";
-    		t.parent_id="";
-    		t.level=0;
-    		m_list2.add(t);
-    		// Сначала просто заполняем список
-	    	while (cursor.moveToNext())
-	    	{
-	    		t = new MyNomenclatureGroupAdapter.Tree();
-		    	t.descr=cursor.getString(indexDescr);
-		    	t.id=cursor.getString(indexId);
-		    	t.parent_id=cursor.getString(indexParentId);
-		    	t._id=cursor.getString(index_Id);
-		    	t.level=0;
-		    	m_list2.add(t);
-	    	}
-	    	// А потом сортируем его
-	    	int i;
-	    	// с единицы потому, что в нуле у нас записан null
-	    	for (i=1; i<m_list2.size(); i++)
-	    	{
-	    		int offset=i+1;
-	    		int j;
-	    		for (j=i+1; j<m_list2.size(); j++)
-	    		{
-	    			if (m_list2.get(j).parent_id.equals(m_list2.get(i).id))
-	    			{
-	    				m_list2.get(j).level=m_list2.get(i).level+1;
-	    				//Collections.swap(m_list2, offset, j);
-	    				m_list2.add(offset, m_list2.get(j));
-	    				m_list2.remove(j+1);
-	    				offset++;
-	    			}
-	    		}
-	    	}
-	    	for (i=0; i<m_list2.size(); i++)
-	    	{
-	    		String spaces="";
-	    		int j;
-	    		/*
-	    		for (j=1; j<m_list2.get(i).level; j++)
-	    		{
-	    			spaces+=" ";
-	    		}
-	    		if (m_list2.get(i).level>0)
-	    			spaces+="> ";
-	    		*/
-	    		for (j=0; j<m_list2.get(i).level; j++)
-	    		{
-	    			spaces+=">";
-	    		}
-	    		if (m_list2.get(i).level>0)
-	    			spaces+=" ";
-	    		m_list_groups.add(spaces+m_list2.get(i).descr);
-	    	}
-	    }
-        
+		int indexDescr = cursor.getColumnIndex("descr");
+		int indexId = cursor.getColumnIndex("id");
+		int indexParentId = cursor.getColumnIndex("parent_id");
+		int index_Id = cursor.getColumnIndex("_id");
+		MyNomenclatureGroupAdapter.Tree t = new MyNomenclatureGroupAdapter.Tree();
+		t.descr=getResources().getString(R.string.catalogue_all);
+		t.id=null;
+		t.parent_id=null;
+		t.level=0;
+		m_list2.add(t);
+		t = new MyNomenclatureGroupAdapter.Tree();
+		t.descr=getResources().getString(R.string.catalogue_node);
+		t.id="     0   ";
+		t.parent_id="";
+		t.level=0;
+		m_list2.add(t);
+		// Сначала просто заполняем список
+		while (cursor.moveToNext())
+		{
+			t = new MyNomenclatureGroupAdapter.Tree();
+			t.descr=cursor.getString(indexDescr);
+			t.id=cursor.getString(indexId);
+			t.parent_id=cursor.getString(indexParentId);
+			t._id=cursor.getString(index_Id);
+			t.level=0;
+			m_list2.add(t);
+		}
+		// А потом сортируем его
+		int i;
+		// с единицы потому, что в нуле у нас записан null
+		for (i=1; i<m_list2.size(); i++)
+		{
+			int offset=i+1;
+			int j;
+			for (j=i+1; j<m_list2.size(); j++)
+			{
+				if (m_list2.get(j).parent_id.equals(m_list2.get(i).id))
+				{
+					m_list2.get(j).level=m_list2.get(i).level+1;
+					//Collections.swap(m_list2, offset, j);
+					m_list2.add(offset, m_list2.get(j));
+					m_list2.remove(j+1);
+					offset++;
+				}
+			}
+		}
+		for (i=0; i<m_list2.size(); i++)
+		{
+			String spaces="";
+			int j;
+			/*
+			for (j=1; j<m_list2.get(i).level; j++)
+			{
+				spaces+=" ";
+			}
+			if (m_list2.get(i).level>0)
+				spaces+="> ";
+			*/
+			for (j=0; j<m_list2.get(i).level; j++)
+			{
+				spaces+=">";
+			}
+			if (m_list2.get(i).level>0)
+				spaces+=" ";
+			m_list_groups.add(spaces+m_list2.get(i).descr);
+		}
+
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, m_list_groups);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (spinner!=null)
         {
         	spinner.setAdapter(dataAdapter);
         }
+
+        cursor.close();
         
         
 	}
