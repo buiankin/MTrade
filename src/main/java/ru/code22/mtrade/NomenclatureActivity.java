@@ -378,7 +378,8 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 				if (!bFoundParent) {
 					TreeNode<NomenclatureGroup> treeItem = new TreeNode<>(new NomenclatureGroup(item.descr));
 					nodes.add(treeItem);
-					fillTreeRecursive(treeItem, data, item.id);
+					// TODO
+					//fillTreeRecursive(treeItem, data, item.id);
 				}
 			}
 		}
@@ -386,9 +387,21 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 	}
 
 	private void initData() {
+        MySingleton g=MySingleton.getInstance();
+
 		List<TreeNode> nodes = new ArrayList<>();
 
-		Cursor cursor;
+        String[] projection =
+                {
+                        "_id",
+                        "id",
+                        "parent_id",
+                        "descr"
+                };
+
+        ContentResolver contentResolver=getContentResolver();
+
+        Cursor cursor;
 		if (g.Common.PHARAON)
 		{
 			cursor=contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "order_for_sorting, descr");
