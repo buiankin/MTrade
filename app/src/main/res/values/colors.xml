@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="dolg_past">#FF0000</color>
+    <color name="greydivider">#707070</color>
+    <dimen name="twodp">2dp</dimen>
+    <color name="GRAY">#404040</color>
+    <color name="ORANGE">#FF7400</color>
+    <color name="DARK_ORANGE">#FF5722</color>
+    <color name="DARK_GREEN">#006400</color>
+    <color name="MY_GREEN">#008200</color>
+
+    <color name="myColorBlue">#3F51B5</color>
+
+    <!-- Magic print-->
+    <color name="grey_light">#E0E0E0</color>
+
+    <!-- SnackBar при обновлении с маркета -->
+    <color name="action_color">#FF0000</color>
+
+</resources>

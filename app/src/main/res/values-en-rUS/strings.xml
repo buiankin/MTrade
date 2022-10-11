@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="search_hint">Search hint!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_exit">Exit</string>
+    <string name="action_backup">Backup to SD card</string>
+    <string name="action_create_order">Create order</string>
+    <string name="action_create_refund">Create refund</string>
+    <string name="action_create_distribs">Create distibution</string>
+    <string name="action_create_payment">Create payment</string>
+    <string name="action_copy_order">Copy order</string>
+    <string name="action_copy_refund">Copy refund</string>
+    <string name="action_copy_order_to_refund">Copy order to refund</string>
+    <string name="action_copy_payment">Copy payment</string>
+    <string name="action_delete_order">Delete order</string>
+    <string name="action_cancel_order">Cancel order</string>
+    <string name="action_delete_payment">Delete payment</string>
+    <string name="action_cancel_payment">Cancel payment</string>
+    <string name="action_delete_refund">Delete refund</string>
+    <string name="action_delete_distribs">Delete distribution</string>
+    <string name="action_cancel_refund">Cancel refund</string>
+    <string name="action_cancel_distribs">Cancel distribs</string>
+    <string name="action_delete_closed_orders">Delete closed orders</string>
+    <string name="action_delete_closed_documents">Delete closed documents</string>
+    <string name="action_delete_closed_payments">Delete closed payments</string>
+    <string name="action_show_stats">Show stats</string>
+    <string name="action_show_payments_stats">Show payments stats</string>
+    <string name="action_data_filter">Filter</string>
+    <string name="action_sort_orders">Sort</string>
+    <string name="action_create_message">Create message</string>
+    <string name="action_create_photo_message">Create photo message</string>
+    <string name="action_delete_message">Delete message</string>
+    <string name="action_delete_readed_messages">Delete readed messages</string>
+    <string name="action_select_agreement">Select agreement</string>
+    <string name="action_select_agreement_with_sum">Select agreement with sum</string>
+    <string name="action_save">Save</string>
+    <string name="action_close">Close</string>
+    <string name="action_search">Search</string>
+    <string name="action_print_list">Print list</string>
+    <string name="action_print_ko">Print KO</string>
+    <string name="action_print_both">Print both</string>
+    <string name="tab_routes">Routes</string>
+    <string name="tab_orders">Orders</string>
+    <string name="tab_payments">Payments</string>
+    <string name="tab_exchange">Exchange</string>
+    <string name="tab_messages">Messages</string>
+    <string name="connect">1. Send changes</string>
+    <string name="refresh">2. Query all</string>
+    <string name="receive">3. Receive</string>
+    <string name="query_docs">Query docsuments</string>
+    <string name="nomenclature_photos">4. Nom. photos</string>
+    <string name="exchange_not_executed">Exchange not executed</string>
+    <string name="exchange_ws">Exchange</string>
+    <string name="exchange_ws_all">Query all</string>
+    <string name="numdoc_new">NEW</string>
+    <string name="title_filter">Filter</string>
+    <string name="title_query_documents">Query documents</string>
+    <string name="title_activity_order">Order</string>
+    <string name="title_activity_order_changed">Order*</string>
+    <string name="title_activity_refund">Refund</string>
+    <string name="title_activity_refund_changed">Refund*</string>
+    <string name="title_activity_distribs">Distribution</string>
+    <string name="title_activity_distribs_changed">Distribution*</string>
+    <string name="title_activity_clients_list">Clients list</string>
+    <string name="title_activity_agreements_list">Agreements list</string>
+    <string name="title_activity_agreements30_list">Conventions list</string>
+    <string name="title_activity_discounts_list">Discounts list</string>
+    <string name="title_activity_agents">Agents list</string>
+    <string name="title_activity_curators">Curators list</string>
+    <string name="title_activity_contracts">Contracts list</string>
+    <string name="title_activity_routes_with_dates">Routes with dates</string>
+    <string name="title_activity_payment">Payment</string>
+    <string name="title_activity_payment_changed">Payment*</string>
+    <string name="title_activity_places">Places</string>
+    <string name="title_activity_vicarious_powers">Vicarious powers list</string>
+    <string name="title_service_operation">Service operation</string>
+    <string name="service_operation_state_service_operation">Preparing service operations</string>
+    <string name="service_operation_state_recovering_orders">Recovering orders</string>
+    <string name="service_operation_state_reindexing">Reindexing</string>
+    <string name="label_order">Order</string>
+	<string name="label_refund">Refund</string>
+	<string name="label_distribs">Distributions</string>
+    <string name="label_distribs_short">Distributions</string>
+	<string name="label_distribs_time">Time</string>    
+    <string name="label_date">Date</string>
+    <string name="label_shipping_date">Shipping date</string>
+    <string name="label_client">Client</string>
+    <string name="label_client_address">Clients address</string>
+    <string name="label_comment">Comment</string>
+    <string name="label_comment_payment">Comment payment</string>
+    <string name="label_comment_manager">Manger</string>
+    <string name="label_comment_theme">Theme</string>
+    <string name="label_convention">Convention</string>
+    <string name="label_agreement">Agreement</string>
+    <string name="label_trade_point">Trade point</string>
+    <string name="label_result">Result</string>
+    <string name="label_organization">Organization</string>
+    <string name="catalogue_all_clients">&lt;All clients&gt;</string>
+    <string name="catalogue_all">&lt;All&gt;</string>
+    <string name="catalogue_node">&lt;Node&gt;</string>
+    <string name="item_not_set">&lt;Not set&gt;</string>
+    <string name="client_not_set">&lt;Client not set&gt;</string>
+    <string name="agent_not_set">&lt;Agent not set&gt;</string>
+    <string name="agreement_not_set">&lt;Agreement not set&gt;</string>
+    <string name="agreement30_not_set">&lt;Convention not set&gt;</string>
+    <string name="organization_not_set">&lt;Organization not set&gt;</string>
+    <string name="trade_point_not_set">&lt;Trade point not set></string>
+    <string name="curator_not_set">&lt;Curator not set&gt;</string>
+    <string name="manager_not_set">&lt;Manager not set&gt;</string>
+    <string name="vicarious_power_not_set">&lt;Vicarious power not set></string>
+    <string name="without_discount">Without discount</string>
+    <string name="check_box_dont_send">Not ready, don\'t send</string>
+    
+    <string name="check_box_orders">Orders</string>
+    <string name="check_box_refunds">Refunds</string>
+    <string name="check_box_distribs">Distibutions</string>
+    
+    <string name="label_price_type">Price type</string>
+    <string name="label_stock">Stock</string>
+    <string name="label_account">Account</string>
+    <string name="label_debt_by_client">By client</string>
+    <string name="label_debt_by_agreement">By agreement</string>
+    <string name="label_debt">Debt</string>
+    <string name="label_debt_past">Debt past</string>
+    <string name="label_debt_past30">Debt past+30</string>
+    <string name="label_state">State</string>
+    <string name="label_curator">Curator</string>
+    <string name="label_manager">Manager</string>
+    <string name="label_vicarious_power">Vicarious power</string>
+    <string-array name="tabs_order">
+        <item>Header</item>
+        <item>Goods</item>
+        <item>Advanced</item>
+    </string-array>
+    <string-array name="tabs_order_landscape">
+        <item>Header+Goods</item>
+        <item>Advanced</item>
+    </string-array>
+    <string-array name="tabs_refund">
+        <item>Header</item>
+        <item>Goods</item>
+        <item>Advanced</item>
+    </string-array>
+    <string-array name="tabs_refund_landscape">
+        <item>Header+Goods</item>
+        <item>Advanced</item>
+    </string-array>
+    <string-array name="tabs_distribs">
+        <item>Header</item>
+        <item>Distributions</item>
+        <item>Advanced</item>
+    </string-array>
+    <string-array name="tabs_distribs_landscape">
+        <item>Header+Distributions</item>
+        <item>Advanced</item>
+    </string-array>
+    <string-array name="tabs_payment">
+        <item>Header</item>
+        <item>Advanced</item>
+    </string-array>
+    <string-array name="shipping_type">
+        <item>Automobile</item>
+        <item>Pickup</item>
+    </string-array>
+    <string-array name="shipping_time">
+        <item>Any time</item>
+        <item>Interval</item>
+    </string-array>
+    <string-array name="filter_time_type">
+        <item>Any time</item>
+        <item>Date</item>
+        <item>Interval</item>
+    </string-array>
+    
+    <string-array name="documents_period_type">
+        <item>Date of document</item>
+        <item>Date of service</item>
+    </string-array>
+    
+    <string name="message_sort_orders">Sort orders</string>
+    <string-array name="sort_types_array">
+        <item>By documents date</item>
+    </string-array>
+    <string-array name="sort_types_array_ph">
+        <item>By documents date</item>
+        <item>By service date</item>
+    </string-array>
+
+    <string name="label_totals">Totals</string>
+    <string name="button_print">Print</string>
+    <string name="button_nomenclature_list">Nomenclature list</string>
+    <string name="button_nomenclature_grid">Grid</string>
+    <string name="button_distribs_list">Distributions list</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="ok">OK</string>
+    <string name="clear">Clear</string>
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="title_activity_nomenclature">Nomenclature list</string>
+    <string name="title_activity_trade_point">Trade points list</string>
+    <string name="list_is_empty">List is empty</string>
+    <string name="list_payments_is_empty">Payments list is empty</string>
+    <string name="label_latitude">Latitude</string>
+    <string name="label_longitude">Longitude</string>
+    <string name="label_date_coord">Date coord</string>
+    <string name="check_box_receive_coord">Receive coordinates</string>
+    <string name="toggle_button_orders_not_closed">Not closed</string>
+    <string name="toggle_button_orders_all">All</string>
+    <string name="toggle_button_nomenclature_in_stock">In stock</string>
+    <string name="toggle_button_nomenclature_packs">Packs</string>
+    <string name="message_delete_closed_orders">Delete closed orders?</string>
+    <string name="message_delete_closed_payments">Delete closed payments?</string>
+    <string name="message_delete_closed_documents">Delete closed documents?</string>
+    <string name="message_delete_readed_messages">Delete readed messages?</string>
+    <string name="message_send_images">Send images?</string>
+    <string name="message_query_all_warning">Use \'Connect\' button instead \'Refresh\', except data corruption!</string>
+    
+	<string name="message_changes_loaded">Changes loaded</string>
+	<string name="message_exchange_error">Exchange error</string>
+	<string name="message_exchange_state_stopping">Stopping process</string>
+	<string name="message_exchange_state_executing">Executing</string>
+	<string name="message_exchange_state_completed">Completed</string>
+	<string name="message_archive_error">Archive error</string>
+	<string name="message_file_error">File error</string>
+	<string name="message_file_not_sent">File not sent</string>
+    <string name="message_file_not_sent_reply_code">File not sent, reply code: %d</string>
+	<string name="message_cannot_authorize_on_server">Can\'t authorize on server</string>
+	<string name="message_cannot_enter_ftp_user_directory">Can\'t enter FTP user directory</string>
+
+    <string name="title_exchange">Exchange</string>
+	<string name="ftp_message_connection_error">Connection error</string>
+	<string name="ftp_message_io_error">IO error</string>
+	<string name="ftp_message_error">Error</string>
+	<string name="ftp_message_interrupted">Interrupted</string>
+	<string name="ftp_state_connecting_to_server">Connecting to FTP server&#8230;</string>
+	<string name="ftp_state_load_in_base">Loading in base&#8230;</string>
+	<string name="ftp_state_success">Success</string>
+	<string name="ftp_message_success_no_data">Success, no data to load</string>
+	<string name="ftp_state_finished_error">Completed with errors</string>
+	<string name="ftp_state_send_eoutf">Sending exchange file</string>
+	<string name="ftp_state_aborted">Aborted</string>
+	<string name="ftp_state_receive_arch">Receiving exchange file</string>
+	<string name="ftp_state_receive_image">Receiving nomenclature images</string>
+	
+	<string name="message_clients_loaded">Clients loaded</string>
+	<string name="message_agreements_loaded">Agreements loaded</string>
+    <string name="message_agreements30_loaded">Conventions loaded</string>
+	<string name="message_nomenclature_loaded">Nomenclature loaded</string>
+	<string name="message_rests_loaded">Rests loaded</string>
+    <string name="message_stocks_loaded">Stocks loaded</string>
+	<string name="message_debts_loaded">Debts loaded</string>
+	<string name="message_debts_by_docs_loaded">Debts by docs loaded</string>
+	<string name="message_price_types_loaded">Price types loaded</string>
+	<string name="message_discounts_loaded">Discounts loaded</string>
+	<string name="message_prices_loaded">Prices loaded</string>
+    <string name="message_prices_by_agreements30_loaded">Prices by conventions loaded</string>
+	<string name="message_contracts_for_distribs_loaded">Contracts for distribs loaded</string>
+	<string name="message_agents_loaded">Agents loaded</string>
+	<string name="message_curators_loaded">Curators loaded</string>
+	<string name="message_distr_points_loaded">Distr points loaded</string>
+	<string name="message_organizations_loaded">Organizations loaded</string>
+	<string name="message_clients_prices_loaded">Clients prices loaded</string>
+	<string name="message_curators_prices_loaded">Curators prices loaded</string>
+    <string name="message_routes_loaded">Routes loaded</string>
+    <string name="message_routes_dates_loaded">Routes dates loaded</string>
+	<string name="message_messages_loaded">Messages loaded</string>
+	<string name="message_sales_history_header_loaded">Sales history header loaded</string>
+	<string name="message_orders_updates_loaded">Orders updates loaded</string>
+	<string name="message_distribs_updates_loaded">Distribs updates loaded</string>
+	<string name="message_shipping_notifications_updates_loaded">Shipping notifications updates loaded</string>
+	<string name="message_payments_updates_loaded">Payments updates loaded</string>
+	<string name="message_refunds_updates_loaded">Refunds updates loaded</string>
+    <string name="message_vists_updates_loaded">Visits updates loaded</string>
+	<string name="message_vicarious_powers_updates_loaded">Vicarious powers updates loaded</string>
+	<string name="message_gps_updates_loaded">GPS updates loaded</string>
+	<string name="message_equipment_updates_loaded">Equipment updates loaded</string>
+	<string name="message_equipment_rests_updates_loaded">Equipment rests updates loaded</string>
+    
+    <string name="title_activity_message">Message</string>
+    <string name="title_activity_message_changed">Message*</string>
+    <string name="label_abonent">Abonent</string>
+    <string name="title_activity_photo">Photo</string>
+    <string name="order_modiffied">Order modiffied</string>
+    <string name="payment_modiffied">Payment modiffied</string>
+    <string name="refund_modiffied">Refund modiffied</string>
+    <string name="distribs_modiffied">Distributions modiffied</string>
+    <string name="save_it_before_closing">Save it before closing?</string>
+    <string name="message_modiffied">Message modiffied</string>
+    <string name="save_message_before_closing">Save it before closing?</string>
+    <string name="message_delete_current_order">Delete current order?</string>
+    <string name="message_cancel_current_order">Cancel current order?</string>
+    <string name="message_delete_current_payment">Delete current payment?</string>
+    <string name="message_delete_current_refund">Delete current refund?</string>
+    <string name="message_cancel_current_refund">Cancel current refund?</string>
+    <string name="message_delete_current_distribs">Delete current distributions?</string>
+    <string name="message_cancel_current_distribs">Cancel current distributions?</string>
+    <string name="message_delete_current_message">Delete current message?</string>
+    <string name="order_state_created">Created</string>
+    <string name="order_state_sent">Sent</string>
+    <string name="order_state_query_cancel">Query cancel</string>
+    <string name="order_state_loaded">Loaded</string>
+    <string name="order_state_acknowledged">Acknowledged</string>
+    <string name="order_state_completed">Completed</string>
+    <string name="order_state_canceled">Calceled</string>
+    <string name="order_state_waiting_agreement">Waiting agreement</string>
+    <string name="order_state_backup_not_saved">Restored(Stall)</string>
+    <string name="order_state_unknown">Unknown</string>
+    <string name="refund_state_created">Created</string>
+    <string name="refund_state_sent">Sent</string>
+    <string name="refund_state_query_cancel">Query cancel</string>
+    <string name="refund_state_loaded">Loaded</string>
+    <string name="refund_state_acknowledged">Acknowledged</string>
+    <string name="refund_state_completed">Completed</string>
+    <string name="refund_state_canceled">Calceled</string>
+    <string name="refund_state_waiting_agreement">Waiting agreement</string>
+    <string name="refund_state_backup_not_saved">Restored(Stall)</string>
+    <string name="refund_state_unknown">Unknown</string>
+    <string name="payment_state_created">Created</string>
+    <string name="payment_state_sent">Sent</string>
+    <string name="payment_state_query_cancel">Query cancel</string>
+    <string name="payment_state_loaded">Loaded</string>
+    <string name="payment_state_acknowledged">Acknowledged</string>
+    <string name="payment_state_completed">Completed</string>
+    <string name="payment_state_canceled">Calceled</string>
+    <string name="payment_state_unknown">Unknown</string>
+    <string name="action_delete_line">Delete line</string>
+    <string name="action_change_quantity">Change quantity</string>
+    <string name="action_change_price">Change price</string>
+    <string name="action_move_up">Move up</string>
+    <string name="action_move_down">Move down</string>
+    <string name="action_clear">Clear</string>
+    <string name="title_activity_quantity">Quantity input</string>
+    <string name="question_delete_lines">Delete lines?</string>
+    <string name="label_price">Price</string>
+    <string name="label_rests">Rests</string>
+    <string name="label_sum">Sum</string>
+    <string name="quantity_not_set">Quantity not set</string>
+    <string name="ask_close_without_changing">Close input without changes?</string>
+    <string name="ask_remove_nomenclature_from_order">Remove editing line from order?</string>
+    <string name="order_cant_be_saved">Order can\'t be saved!</string>
+    <string name="payment_cant_be_saved">Payment can\'t be saved!</string>
+    <string name="refund_cant_be_saved">Refund can\'t be saved!</string>
+    <string name="distribs_cant_be_saved">Distribs can\'t be saved!</string>
+    <string name="message_cant_be_saved">Message can\'t be saved!</string>
+    <string name="title_activity_pref">Preferences</string>
+    <string name="title_payment_pref">Payment preferences</string>
+    <string name="title_nomenclature_pref">Nomenclature preferences</string>
+    
+    <string name="preferences_server_address_summary">Server address</string>
+    <string name="start_date_for_occupied_places">Start date for occupied places</string>
+    <string name="preferences_server_address_for_wifi_connection_summary">Server address for WiFi connection</string>
+    <string name="preferences_ftp_server_address_title">Address of FTP server</string>
+    <string name="preferences_ftp_server_address_for_wifi_connection_title">Address of FTP server for WiFi connection</string>
+    <string name="preferences_web_server_address_title">Address of WEB server</string>
+    <string name="data_format_summary">Data format</string>
+    <string name="data_format_title">Data format</string>
+    <string name="data_format_dialog_title">Data format</string>
+
+    <string-array name="data_format_entries">
+        <item>Demo</item>
+        <item>Format 1</item>
+        <item>Format 2</item>
+        <item>Format 3</item>
+        <item>Format 4</item>
+        <item>Format 5(TN)</item>
+        <item>Format 6(PH)</item>
+        <item>Format 7(TA)</item>
+        <item>Format 8(IS)</item>
+        <item>Format 9(FB)</item>
+        <item>Format 10(VK)</item>
+    </string-array>
+    <string-array name="data_format_values">
+        <item>DM</item>
+        <item>MG</item>
+        <item>SG</item>
+        <item>PL</item>
+        <item>PT</item>
+        <item>TN</item>
+        <item>PH</item>
+        <item>TA</item>
+        <item>IS</item>
+        <item>FB</item>
+        <item>VK</item>
+    </string-array>
+
+    <string name="currency_summary">Currency</string>
+    <string name="currency_title">Currency</string>
+    <string name="currency_dialog_title">Currency</string>
+
+    <string-array name="currency_entries">
+        <item>RUR</item>
+        <item>UAH</item>
+        <item>KZT</item>
+        <item>USD</item>
+    </string-array>
+
+    <string name="currency_rur">RUR</string>
+    <string name="currency_uah">UAH</string>
+    <string name="currency_kzt">KZT</string>
+    <string translatable="false" name="currency_usd">$</string>
+    <string name="currency_default">$</string>
+
+
+    <string name="currency_format_rur" formatted="false">%s RUR</string>
+    <string name="currency_format_uah" formatted="false">%s UAH</string>
+    <string name="currency_format_kzt" formatted="false">%s KZT</string>
+    <string translatable="false" name="currency_format_usd" formatted="false">$%s</string>
+    <string name="currency_format_default" formatted="false">$%s</string>
+
+    <string name="app_theme">App theme</string>
+    <string name="app_theme_title">App theme</string>
+    <string name="app_theme_dialog_title">App theme</string>
+
+    <string-array name="app_theme_entries">
+        <item>Dark</item>
+        <item>Light</item>
+    </string-array>
+    <string-array name="app_theme_values">
+        <item>DARK</item>
+        <item>LIGHT</item>
+    </string-array>
+
+    <string name="quantity_button_place">Button place</string>
+    <string name="quantity_button_place_title">Button place</string>
+    <string name="quantity_button_place_dialog_title">Button place</string>
+
+    <string-array name="quantity_button_place_entries">
+        <item>Bottom</item>
+        <item>Right</item>
+    </string-array>
+    <string-array name="quantity_button_place_values">
+        <item>BOTTOM</item>
+        <item>RIGHT</item>
+    </string-array>
+
+    <string name="payment_agreement_select_style">Agreement select style</string>
+    <string name="payment_agreement_select_style_title">Agreement select style</string>
+    <string name="payment_agreement_select_style_dialog_title">Agreement select style</string>
+
+    <string-array name="payment_agreement_select_style_entries">
+        <item>Default</item>
+        <item>Old-style</item>
+    </string-array>
+    <string-array name="payment_agreement_select_style_values">
+        <item>DEFAULT</item>
+        <item>OLDSTYLE</item>
+    </string-array>
+
+    <string name="preferences_server_user_title">User name</string>
+    <string name="preferences_server_user_summary">User name for FTP server</string>
+    <string name="preferences_server_password_title">Password</string>
+    <string name="preferences_server_password_summary">Password for FTP server</string>
+    <string name="preferences_server_directory_title">Directory</string>
+    <string name="preferences_server_directory_summary">FTP user home directory(if required)</string>
+    <string name="label_message_text">Message text</string>
+    <string name="label_min_quantity">Min.quantity</string>
+    <string name="label_multiplicity">Multiplicity</string>
+    <string name="label_message_type">Message type</string>
+    <string name="label_date_begin">Date begin</string>
+    <string name="label_date_end">Date end</string>
+    <string name="label_shipping_type">Shipping</string>
+    <string name="label_order_time">Order time</string>
+    <string name="label_shipping_time">Time</string>
+    <string name="label_shipping_begin_time">From</string>
+    <string name="label_shipping_end_time">to</string>
+    <string name="title_activity_image">Image</string>
+    <string name="preferences_work_date_title">Work date</string>
+    <string name="error_during_backup_to_sd">Error during backup to SD!</string>
+    <string name="error_no_sd_card_access">SD card not available!</string>
+    <string name="error_files_cnt" formatted="false">, file read error count: %d, errors in data count: %d</string>
+    <string name="error_no_orders_to_restore">No orders to restore</string>
+    <string name="message_orders_restored_from_files">Orders restored from text files</string>
+    <string name="message_decrease_resolution">Decrease resolution in android camera settings to 2 megapix!</string>
+    <string name="error_raised_exception">Raised exception</string>
+    <string name="error_file_not_found" formatted="false">File %s can\'t be found!</string>
+    <string name="error_cant_read_file" formatted="false">File %s can\'t be read!</string>
+    <string name="message_settings_restored">Settings restored from mtrade.ini</string>
+    <string name="message_database_demo_filled">Data format changed, database filled with demo data!</string>
+    <string name="message_database_cleared">Data format changed, database initiated!</string>
+    <string name="message_database_created_prevent_reindex">Database created! It will re-index</string>
+    <string name="message_database_updated_prevent_reindex">Database upated! It will re-index</string>
+    <string name="message_query_reindex">The previous session was not correctly completed! Perform re-indexing, search for lost orders and continue?</string>
+    <string name="field_client">client</string>
+    <string name="field_agreement">agreement</string>
+    <string name="field_distr_point">distr point</string>
+    <string name="field_manager">manager</string>
+    <string name="field_sum">sum</string>
+    <string name="field_stock">stock</string>
+    <string name="field_price_type">price type</string>
+    <string name="error_client_blocked">Client blocked!</string>
+    <string name="message_required_field_not_filled">Required fields are empty: </string>
+    <string name="error_shipping_interval">Shipping time interval: end time can\'t be less then start time</string>
+    <string name="error_service_time_not_set">Service time not set</string>
+    <string name="message_price_recalc_sum" formatted="false">Price recalc, order sum %s</string>
+    <string name="orders_statistics" formatted="false">Total %d orders, sum %s weight %s</string>
+    <string name="payments_statistics" formatted="false">Total %d payments, sum %s</string>
+    <string name="message_type_incoming">incom.</string>
+    <string name="message_type_outgoing">outg.</string>
+    <string name="hint_empty_log">Log is empty</string>
+    <string name="default_weight">kg.</string>
+    <string name="weight">weight</string>
+    <string name="hint_price">price</string>
+    <string name="label_discount">Discount</string>
+    <string name="radio_create_client">Create client</string>
+    <string name="radio_existing_client">Existing client</string>
+    <string name="label_card_num">Card num</string>
+    <string name="label_client_lastname">Lastname</string>
+    <string name="label_client_firstname">Firstname</string>
+    <string name="label_client_surname">Surname</string>
+    <string name="label_client_phone">Phone</string>
+    <string name="label_place">Place</string>
+    <string name="label_count">Count</string>
+    <string name="label_kredit">Kredit</string>
+    <string name="hint_zero">0</string>
+    <string name="hint_date_not_set">Date not set</string>
+    <string name="hint_time_not_set">Time not set</string>
+
+    <string name="label_equipment">Equipment</string>
+    <string name="label_tare">Tare</string>
+    
+    <string name="label_no_image">&lt;No image&gt;</string>
+    <string name="label_image_ok">Image OK</string>
+    <string name="label_make_photo1">Make photo 1</string>
+    <string name="label_make_photo2">Make photo 2</string>
+    
+    <string name="settings_only_current_level">Show only current level</string>
+
+    <string name="info_message_about_request_permission_fine_location">Permission for fine location required</string>
+    <string name="error_no_permissions_to_sd">No permissions to write to SD card"</string>
+    <string name="error_required_permissions_expected">Required permissions expected. In Android Settings->Applications->MTade->Permissions, \"write to sd\" must be enabled</string>
+    <string name="need_gps_permissions">GPS permissions required</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="client_blocked_select_anyway">The client is blocked, do you choose him anyway?</string>
+    <string name="space_from_space">" from "</string>
+    <string name="much">Much</string>
+    <string name="route_not_set"><![CDATA[<Route not set>]]></string>
+    <string name="query_start_visit" formatted="false">Start visit to %s?</string>
+    <string name="query_end_visit" formatted="false">End visit to %s?</string>
+    <string name="query_cancel_visit" formatted="false">Cancel visit to %s?</string>
+    <string name="action_cancel_visit">Cancel visit</string>
+    <string name="action_end_visit">End visit</string>
+    <string name="action_refresh_route">Refresh route</string>
+    <string name="no_clients_for_trade_point">No clients for trade point</string>
+    <string name="select_client_to_create_order">Select client to create order</string>
+    <string name="select_client_to_create_refund">Select client to create refund</string>
+    <string name="select_client_to_create_payment">Select client to create payment</string>
+    <string name="select_client_to_create_distribs">Select client to create distribs</string>
+    <string name="title_payment_statistics">Payment statistics</string>
+    <string name="route_cant_be_refreshed">Route can\'t be refreshed</string>
+    <string name="route_refreshed_successfully">Route refreshed successfully</string>
+    <string name="only_not_worked_out">Only not worked out</string>
+    <string name="service_operation_state_moving_old_files">Moving old files</string>
+    <string name="update_downloaded">Update downloaded</string>
+    <string name="Restart">Restart</string>
+    <string name="list_columns_portrait">List columns (portrait)</string>
+    <string name="list_columnds_landscape">List columns (lansdcape)</string>
+    <string name="Weight">Weight</string>
+    <string name="Price_kg">Price/kg</string>
+    <string name="no_email"><![CDATA[<no email>]]></string>
+    <string name="message_settings_loaded">Settings loaded</string>
+    <string name="message_settings_not_changed">Settings not changed</string>
+
+
+</resources>

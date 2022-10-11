@@ -1,0 +1,538 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	<string name="search_hint">Пошук</string>
+	<string name="action_settings">Налаштування</string>
+	<string name="action_backup">Скопіювати на SD</string>
+	<string name="action_create_order">Створити замовлення</string>
+	<string name="action_create_refund">Створити повернення</string>
+	<string name="action_create_distribs">Створити дистрибуції</string>
+	<string name="action_create_payment">Створити платіж</string>
+	<string name="action_copy_order">Копіювати замовлення</string>
+	<string name="action_copy_order_to_refund">Копіювати замовлення в повернення</string>
+	<string name="action_copy_payment">Копіювати платіж</string>
+	<string name="action_delete_order">Видалити замовлення</string>
+	<string name="action_delete_payment">Видалити платіж</string>
+	<string name="action_delete_refund">Видалити повернення</string>
+	<string name="action_delete_distribs">Видалити дистрибуцію</string>
+	<string name="action_cancel_order">Скасувати замовлення</string>
+	<string name="action_cancel_payment">Скасувати платіж</string>
+	<string name="action_cancel_refund">Скасувати повернення</string>
+	<string name="action_delete_closed_documents">Видалити відпрацьовані документи</string>
+	<string name="action_delete_closed_payments">Видалити відпрацьовані платежі</string>
+	<string name="action_show_stats">Показати статистику</string>
+	<string name="action_show_payments_stats">Показати статистику</string>
+	<string name="action_data_filter">Відбір</string>
+	<string name="action_sort_orders">Сортувати</string>
+	<string name="action_create_message">створити повідомлення</string>
+	<string name="action_create_photo_message">Створити фото повідомлення</string>
+	<string name="action_delete_message">видалити повідомлення</string>
+	<string name="action_delete_readed_messages">Видалити прочитані повідомлення</string>
+	<string name="action_select_agreement">вибрати договір</string>
+	<string name="action_select_agreement_with_sum">Вибрати договір із сумою</string>
+	<string name="action_save">Зберегти</string>
+	<string name="action_close">Закрити</string>
+	<string name="action_search">Пошук</string>
+	<string name="action_print_list">Друкувати банкетний лист</string>
+	<string name="action_print_ko">Друкувати КО</string>
+	<string name="action_print_both">Друкувати обидва</string>
+	<string name="tab_orders">Замовлення</string>
+	<string name="tab_exchange">Обмін</string>
+	<string name="tab_messages">Повідомлення</string>
+    <string name="connect">1. Відправити зміни</string>
+	<string name="refresh">2. Запросити всі</string>
+	<string name="query_docs">Запросити документи</string>
+	<string name="receive">3. Отримати відповідь</string>
+	<string name="nomenclature_photos">4. Фото товарів</string>
+	<string name="exchange_ws">Виконати обмін</string>
+	<string name="exchange_ws_all">Запросити всі</string>
+	<string name="numdoc_new">НОВИЙ</string>
+	<string name="title_filter">Фільтр</string>
+	<string name="title_query_documents">Запит документів</string>
+	<string name="title_activity_order">Замовлення</string>
+	<string name="title_activity_order_changed">Замовлення*</string>
+	<string name="title_activity_refund">Повернення</string>
+	<string name="title_activity_refund_changed">Повернення*</string>
+	<string name="title_activity_distribs">Дистриб\'юція</string>
+	<string name="title_activity_distribs_changed">Дистрибуція*</string>
+	<string name="title_activity_clients_list">Список клієнтів</string>
+	<string name="title_activity_agreements_list">список договорів</string>
+	<string name="title_activity_discounts_list">список знижок</string>
+	<string name="title_activity_agents">список агентів</string>
+	<string name="title_activity_curators">список кураторів</string>
+	<string name="title_activity_contracts">список контрактів</string>
+	<string name="title_activity_payment">платіж</string>
+	<string name="title_activity_payment_changed">платіж *</string>
+	<string name="title_activity_places">Столи</string>
+	<string name="title_activity_vicarious_powers">Довіреності</string>
+	<string name="title_service_operation">Сервісна операція</string>
+	<string name="service_operation_state_service_operation">Підготовка сервісних операцій</string>
+	<string name="service_operation_state_recovering_orders">Відновлення замовлень</string>
+	<string name="service_operation_state_reindexing">Реіндексація</string>
+	<string name="label_order">Замовлення</string>
+	<string name="label_refund">Повернення</string>
+	<string name="label_distribs">Дистрибуції</string>
+	<string name="label_distribs_time">Час</string>
+	<string name="label_date">Дата</string>
+	<string name="label_shipping_date">Дата відвантаження</string>
+	<string name="label_client">Клієнт</string>
+	<string name="label_client_address">Адреса клієнта</string>
+	<string name="label_comment">Коментар</string>
+	<string name="label_comment_payment">Коментар платежу</string>
+	<string name="label_comment_manager">Менеджер</string>
+	<string name="label_comment_theme">Тема</string>
+	<string name="label_agreement">Договір</string>
+	<string name="label_trade_point">Торгова точка</string>
+	<string name="label_result">Результат</string>
+	<string name="label_organization">Організація</string>
+	<string name="catalogue_all_clients">&lt;Все клієнти&gt;</string>
+	<string name="catalogue_all">&lt;Все&gt;</string>
+	<string name="catalogue_node">&lt;Корінь&gt;</string>
+	<string name="item_not_set">&lt;Не вибрано&gt;</string>
+	<string name="client_not_set">&lt;Клієнт не обрана&gt;</string>
+	<string name="agent_not_set">&lt;Агент не обрана&gt;</string>
+	<string name="agreement_not_set">&lt;Договір не обраний&gt;</string>
+	<string name="organization_not_set">&lt;Організація не обрана&gt;</string>
+	<string name="trade_point_not_set">&lt;Торгова точка не вибрана&gt;</string>
+	<string name="curator_not_set">&lt;Куратор не обрана&gt;</string>
+	<string name="manager_not_set">&lt;Менеджер не обраний&gt;</string>
+	<string name="vicarious_power_not_set">&lt;Довіреність не вибрана&gt;</string>
+	<string name="without_discount">без знижки</string>
+	<string name="check_box_dont_send">Не готовий, не відправляти</string>
+	<string name="check_box_orders">Замовлення</string>
+	<string name="check_box_refunds">Повернення</string>
+	<string name="check_box_distribs">Дистрибуції</string>
+	<string name="label_price_type">Тип ціни</string>
+	<string name="label_stock">Склад</string>
+	<string name="label_account">Облік</string>
+	<string name="label_debt_by_client">За клієнту</string>
+	<string name="label_debt_by_agreement">За договором</string>
+	<string name="label_debt">Борг</string>
+	<string name="label_debt_past">Борг прострочив.</string>
+	<string name="label_debt_past30">Борг прострочив. + 30</string>
+	<string name="label_state">Стан</string>
+	<string name="label_curator">Куратор</string>
+	<string name="label_manager">Менеджер</string>
+	<string name="label_vicarious_power">Доручення</string>
+	<string-array name="tabs_order">
+		<item>Шапка</item>
+		<item>Товари</item>
+		<item>Додатково</item>
+	</string-array>
+	<string-array name="tabs_order_landscape">
+		<item>Шапка+Товари</item>
+		<item>Додатково</item>
+	</string-array>
+	<string-array name="tabs_refund">
+		<item>Шапка</item>
+		<item>Товари</item>
+		<item>Додатково</item>
+	</string-array>
+	<string-array name="tabs_refund_landscape">
+		<item>Шапка+Товары</item>
+		<item>Додатково</item>
+	</string-array>
+	<string-array name="tabs_distribs">
+		<item>Шапка</item>
+		<item>Дистрибуції</item>
+		<item>Додатково</item>
+	</string-array>
+	<string-array name="tabs_distribs_landscape">
+		<item>Шапка+Дистрибьюции</item>
+		<item>Додатково</item>
+	</string-array>
+	<string-array name="shipping_type">
+		<item>Автотранспорт</item>
+		<item>Самовивіз</item>
+	</string-array>
+	<string-array name="shipping_time">
+		<item>В любое время</item>
+		<item>Iнтервал</item>
+	</string-array>
+	<string-array name="filter_time_type">
+		<item>Будь-який час</item>
+		<item>День</item>
+		<item>Перiод</item>
+	</string-array>
+	<string-array name="documents_period_type">
+		<item>Дата документа</item>
+		<item>Дата обслуговування</item>
+	</string-array>
+	<string name="message_sort_orders">Сортувати замовлення</string>
+	<string-array name="sort_types_array">
+		<item>За датою документа</item>
+	</string-array>
+	<string-array name="sort_types_array_ph">
+		<item>За датою документа</item>
+		<item>За датою обслуговування</item>
+	</string-array>
+    <string name="label_totals">Всього</string>
+	<string name="button_print">Печатка</string>
+	<string name="button_nomenclature_list">Список номенклатури</string>
+	<string name="button_nomenclature_grid">Таблиця</string>
+	<string name="button_distribs_list">Список дистрибуції</string>
+	<string name="no">Нi</string>
+	<string name="yes">Так</string>
+	<string name="ok">OK</string>
+	<string name="clear">Очистити</string>
+	<string name="cancel">Відміна</string>
+	<string name="close">Закрити</string>
+    <string name="title_activity_nomenclature">Список номенклатури</string>
+	<string name="title_activity_trade_point">Список торгових точок</string>
+	<string name="list_is_empty">Список порожній</string>
+	<string name="list_payments_is_empty">Список платежів порожній</string>
+	<string name="label_latitude">Широта</string>
+	<string name="label_longitude">Довгота</string>
+	<string name="label_date_coord">Дата координат</string>
+	<string name="check_box_receive_coord">Отримувати координати</string>
+	<string name="toggle_button_orders_not_closed">Чи не виконані</string>
+	<string name="toggle_button_orders_all">Усе</string>
+	<string name="toggle_button_nomenclature_in_stock">На складі</string>
+	<string name="toggle_button_nomenclature_packs">упаковки</string>
+	<string name="message_delete_closed_orders">Видалити відпрацьовані замовлення?</string>
+	<string name="message_delete_closed_payments">Видалити відпрацьовані платежі?</string>
+	<string name="message_delete_closed_documents">Видалити відпрацьовані документи?</string>
+	<string name="message_delete_readed_messages">Видалити прочитані повідомлення?</string>
+	<string name="message_send_images">Надіслати зображення?</string>
+	<string name="message_query_all_warning">Використовуйте режим \'Запросити всі \' тільки в разі рассинхронизации довідників! Користуйтеся кнопкою \'Відправити зміни \', це менше навантажує сервер, телефон і економить трафік!</string>
+	<string name="message_changes_loaded">Завантажені зміни</string>
+	<string name="message_exchange_error">Помилка при обміні</string>
+	<string name="message_cannot_authorize_on_server">Чи не вдалося авторизуватися на сервері</string>
+	<string name="message_cannot_enter_ftp_user_directory">Неможливо зайти в домашній каталог користувача FTP</string>
+	<string name="message_clients_loaded">Завантажені клієнти</string>
+	<string name="message_agreements_loaded">Завантажені договори</string>
+	<string name="message_nomenclature_loaded">Завантажена номенклатура</string>
+	<string name="message_rests_loaded">Завантажені залишки</string>
+	<string name="message_stocks_loaded">Завантажені склади</string>
+	<string name="message_debts_loaded">Завантажені борги</string>
+	<string name="message_debts_by_docs_loaded">Завантажені борги за документами</string>
+	<string name="message_price_types_loaded">Завантажені типи цін</string>
+	<string name="message_discounts_loaded">завантажені знижки</string>
+	<string name="message_prices_loaded">завантажені ціни</string>
+	<string name="message_contracts_for_distribs_loaded">Завантажені контракти для дистрибуції</string>
+	<string name="message_agents_loaded">завантажені агенти</string>
+	<string name="message_curators_loaded">завантажені куратори</string>
+	<string name="message_distr_points_loaded">Завантажені торгові точки</string>
+	<string name="message_organizations_loaded">завантажені організації</string>
+	<string name="message_clients_prices_loaded">Завантажений прайс клієнтів</string>
+	<string name="message_curators_prices_loaded">Завантажений прайс кураторів</string>
+	<string name="message_messages_loaded">завантажені повідомлення</string>
+	<string name="message_sales_history_header_loaded">Завантажений заголовок історії продажів</string>
+	<string name="message_orders_updates_loaded">Завантажені поновлення замовлень</string>
+	<string name="message_distribs_updates_loaded">Завантажені поновлення дистрибуції</string>
+	<string name="message_shipping_notifications_updates_loaded">Завантажені поновлення сум відвантажень на замовлення</string>
+	<string name="message_payments_updates_loaded">Завантажені поновлення платежів</string>
+	<string name="message_refunds_updates_loaded">Завантажені поновлення замовлень на повернення</string>
+	<string name="message_vicarious_powers_updates_loaded">Завантажені поновлення довіреностей</string>
+	<string name="message_gps_updates_loaded">Завантажені поновлення gps</string>
+	<string name="title_activity_message">Повідомлення</string>
+	<string name="title_activity_message_changed">Повідомлення*</string>
+    <string name="label_abonent">абонент</string>
+	<string name="title_activity_photo">Світлина</string>
+	<string name="order_modiffied">замовлення змінений</string>
+	<string name="payment_modiffied">платіж змінений</string>
+	<string name="refund_modiffied">повернення змінений</string>
+	<string name="distribs_modiffied">дистрибуції змінені</string>
+	<string name="save_it_before_closing">Зберегти його перед закриттям?</string>
+	<string name="message_modiffied">повідомлення змінено</string>
+	<string name="save_message_before_closing">Зберегти його перед закриттям?</string>
+	<string name="message_delete_current_order">Видалити поточний замовлення?</string>
+	<string name="message_cancel_current_order">Скасувати поточний замовлення?</string>
+	<string name="message_delete_current_payment">Видалити поточний платіж?</string>
+    <string name="message_delete_current_refund">Видалити поточне повернення?</string>
+	<string name="message_cancel_current_refund">Скасувати поточне повернення?</string>
+	<string name="message_delete_current_distribs">Видалити поточну дистрибуцію?</string>
+	<string name="message_cancel_current_distribs">Скасувати поточну дистрибуцію?</string>
+	<string name="message_delete_current_message">Видалити поточне повідомлення?</string>
+	<string name="order_state_created">Створено</string>
+	<string name="order_state_sent">Відправлений</string>
+	<string name="order_state_query_cancel">Запит скасування</string>
+	<string name="order_state_loaded">Завантажений</string>
+	<string name="order_state_acknowledged">Підтверджено</string>
+	<string name="order_state_completed">Виконано</string>
+	<string name="order_state_canceled">Скасовано</string>
+	<string name="order_state_waiting_agreement">Узгодження</string>
+	<string name="order_state_backup_not_saved">Відновлено (збій)</string>
+	<string name="order_state_unknown">Невідомо</string>
+	<string name="refund_state_created">Створено</string>
+	<string name="refund_state_sent">Відправлений</string>
+	<string name="refund_state_query_cancel">Запит скасування</string>
+	<string name="refund_state_loaded">Завантажений</string>
+	<string name="refund_state_acknowledged">Підтверджено</string>
+	<string name="refund_state_completed">Виконано</string>
+	<string name="refund_state_canceled">Скасовано</string>
+	<string name="refund_state_waiting_agreement">Узгодження</string>
+	<string name="refund_state_backup_not_saved">Відновлено (збій)</string>
+	<string name="refund_state_unknown">Невідомо</string>
+	<string name="payment_state_created">Створено</string>
+	<string name="payment_state_sent">Відправлений</string>
+	<string name="payment_state_query_cancel">Запит скасування</string>
+	<string name="payment_state_loaded">Завантажений</string>
+	<string name="payment_state_acknowledged">Підтверджено</string>
+	<string name="payment_state_completed">Виконано</string>
+	<string name="payment_state_canceled">Скасовано</string>
+	<string name="payment_state_unknown">Невідомо</string>
+	<string name="action_delete_line">Видалити рядок</string>
+	<string name="action_change_quantity">Змінити кількість</string>
+	<string name="action_change_price">Змінити ціну</string>
+	<string name="action_move_up">Перемістити вгору</string>
+	<string name="action_move_down">Перемістити вниз</string>
+	<string name="action_clear">Очистити</string>
+	<string name="question_delete_lines">Видалити рядки?</string>
+	<string name="title_activity_quantity">Введення кількості</string>
+	<string name="label_price">Ціна</string>
+	<string name="label_rests">Залишки</string>
+	<string name="label_sum">Сума</string>
+	<string name="quantity_not_set">Кількість не вказано</string>
+	<string name="ask_close_without_changing">Закрити введення без змін?</string>
+	<string name="ask_remove_nomenclature_from_order">Видалити редаговану рядок з замовлення?</string>
+	<string name="order_cant_be_saved">Замовлення не може бути збережений!</string>
+	<string name="payment_cant_be_saved">Платіж не може бути збережений!</string>
+	<string name="refund_cant_be_saved">Повернення не може бути збережений!</string>
+	<string name="distribs_cant_be_saved">Дистрибуції не можуть бути збережені!</string>
+	<string name="message_cant_be_saved">Повідомлення не може бути збережено!</string>
+	<string name="title_activity_pref">Налаштування</string>
+	<string name="title_payment_pref">Налаштування платежів</string>
+	<string name="title_nomenclature_pref">Налаштування номенклатури</string>
+	<string name="preferences_server_address_summary">Адреса сервера</string>
+	<string name="start_date_for_occupied_places">Початкова дата для зайнятих столів</string>
+	<string name="preferences_server_address_for_wifi_connection_summary">Адреса сервера при WiFi з\'єднанні</string>
+	<string name="preferences_ftp_server_address_title">Адреса FTP сервера</string>
+	<string name="preferences_ftp_server_address_for_wifi_connection_title">Адреса FTP сервера при WiFi з\'єднанні</string>
+	<string name="preferences_web_server_address_title">Адреса WEB сервера</string>
+	<string name="data_format_summary">формат даних</string>
+	<string name="data_format_title">формат даних</string>
+	<string name="data_format_dialog_title">формат даних</string>
+	<string-array name="data_format_entries">
+		<item>Демо</item>
+		<item>Формат 1</item>
+		<item>Формат 2</item>
+		<item>Формат 3</item>
+		<item>Формат 4</item>
+		<item>Формат 5(TN)</item>
+		<item>Формат 6(PH)</item>
+		<item>Формат 7(TA)</item>
+		<item>Формат 8(IS)</item>
+		<item>Формат 9(FB)</item>
+		<item>Формат 10(VK)</item>
+	</string-array>
+	<string-array name="data_format_values">
+		<item>DM</item>
+		<item>MG</item>
+		<item>SG</item>
+		<item>PL</item>
+		<item>PT</item>
+		<item>TN</item>
+		<item>PH</item>
+		<item>TA</item>
+		<item>IS</item>
+		<item>FB</item>
+		<item>VK</item>
+	</string-array>
+
+	<string name="currency_summary">Валюта</string>
+	<string name="currency_title">Валюта</string>
+	<string name="currency_dialog_title">Валюта</string>
+
+	<string-array name="currency_entries">
+		<item>Рублi</item>
+		<item>Гривнi</item>
+		<item>Тенге</item>
+		<item>Долари</item>
+	</string-array>
+
+	<string name="currency_rur">р.</string>
+	<string name="currency_uah">грн.</string>
+	<string name="currency_kzt">тнг.</string>
+	<string name="currency_default">грн.</string>
+
+	<string name="currency_format_rur" formatted="false">%s р.</string>
+	<string name="currency_format_uah" formatted="false">%s грн.</string>
+	<string name="currency_format_kzt" formatted="false">%s тнг.</string>
+	<string name="currency_format_default" formatted="false">%s грн.</string>
+
+	<string name="app_theme">Тема програми</string>
+	<string name="app_theme_title">Тема програми</string>
+	<string name="app_theme_dialog_title">Тема програми</string>
+	<string-array name="app_theme_entries">
+		<item>Темна</item>
+		<item>Свiтла</item>
+	</string-array>
+	<string-array name="app_theme_values">
+		<item>DARK</item>
+		<item>LIGHT</item>
+	</string-array>
+	<string name="quantity_button_place">Розташування кнопок</string>
+	<string name="quantity_button_place_title">Розташування кнопок</string>
+	<string name="quantity_button_place_dialog_title">Розташування кнопок</string>
+	<string-array name="quantity_button_place_entries">
+		<item>Внизу</item>
+		<item>Справа</item>
+	</string-array>
+	<string-array name="quantity_button_place_values">
+		<item>BOTTOM</item>
+		<item>RIGHT</item>
+	</string-array>
+	<string name="payment_agreement_select_style">Спосіб вибору договору</string>
+	<string name="payment_agreement_select_style_title">Спосіб вибору договору</string>
+	<string name="payment_agreement_select_style_dialog_title">Спосіб вибору договору</string>
+	<string-array name="payment_agreement_select_style_entries">
+		<item>За замовчуванням</item>
+		<item>Старий стиль</item>
+	</string-array>
+	<string-array name="payment_agreement_select_style_values">
+		<item>DEFAULT</item>
+		<item>OLDSTYLE</item>
+	</string-array>
+	<string name="preferences_server_user_title">Ім\'я користувача</string>
+	<string name="preferences_server_user_summary">Ім\'я користувача для FTP сервера</string>
+	<string name="preferences_server_password_title">Пароль</string>
+	<string name="preferences_server_password_summary">Пароль для FTP сервера</string>
+	<string name="preferences_server_directory_title">Каталог</string>
+	<string name="preferences_server_directory_summary">Домашній каталог користувача FTP (якщо потрібно)</string>
+	<string name="label_message_text">Текст повідомлення</string>
+	<string name="label_min_quantity">Мін.кол-під</string>
+	<string name="label_multiplicity">кратність</string>
+	<string name="label_message_type">Тип повідомлення</string>
+    <string name="label_date_begin">Дата початку</string>
+	<string name="label_date_end">Дата закінчення</string>
+	<string name="label_shipping_type">Доставка</string>
+	<string name="label_order_time">Час замовлення</string>
+	<string name="label_shipping_time">Час</string>
+	<string name="label_shipping_begin_time">З</string>
+	<string name="label_shipping_end_time">по</string>
+	<string name="title_activity_image">Зображення</string>
+	<string name="preferences_work_date_title">Робоча дата</string>
+	<string name="error_no_sd_card_access">Немає доступу до SD карті!</string>
+	<string name="error_files_cnt">, Помилок читання файлів:%d, помилок в даних файлів:%d</string>
+	<string name="error_no_orders_to_restore">Замовлень для відновлення немає</string>
+	<string name="message_orders_restored_from_files">Замовлення з текстових файлів відновлені</string>
+	<string name="message_decrease_resolution">Зменшіть дозвіл в настройках до 2 мегапікселів!</string>
+	<string name="error_raised_exception">Викликано виняток</string>
+	<string name="error_file_not_found" formatted="false">Файл %s не знайден!</string>
+	<string name="error_cant_read_file" formatted="false">Файл %s не може бути прочитаний!</string>
+	<string name="message_settings_restored">Повернеться до початкових установок з файлу mtrade.ini</string>
+	<string name="message_database_demo_filled">Змінено формат даних, довідники заповнені демонстраційними даними!</string>
+	<string name="message_database_cleared">Змінено формат даних, довідники очищені!</string>
+    <string name="field_client">Клієнт</string>
+	<string name="field_agreement">Договір</string>
+	<string name="field_manager">Менеджер</string>
+	<string name="field_sum">сума</string>
+	<string name="field_stock">Склад</string>
+	<string name="field_price_type">Тип ціни</string>
+	<string name="error_client_blocked">Клієнт заблокований!</string>
+	<string name="message_required_field_not_filled">Чи не заповнені обов\'язкові поля:</string>
+	<string name="error_shipping_interval">Інтервал доставки: дата закінчення не може бути менше дати початку</string>
+	<string name="error_service_time_not_set">Час обслуговування не вказано</string>
+	<string name="message_price_recalc_sum">Ціни перераховані, сума замовлення %s</string>
+	<string name="orders_statistics" formatted="false">Всього замовлень: %d, сума %s вага %s</string>
+	<string name="payments_statistics" formatted="false">Всього платежів %d, сума %s</string>
+	<string name="message_type_incoming">вх.</string>
+	<string name="message_type_outgoing">вих.</string>
+	<string name="hint_empty_log">Лог порожній</string>
+	<string name="hint_price">Ціна</string>
+	<string name="label_discount">Знижка</string>
+	<string name="radio_create_client">Новий клієнт</string>
+	<string name="radio_existing_client">Iснуючий клієнт</string>
+	<string name="label_card_num">Номер картки</string>
+	<string name="label_client_lastname">Прізвище</string>
+	<string name="label_client_firstname">Iм\'я</string>
+	<string name="label_client_surname">По батькові</string>
+	<string name="label_client_phone">Телефон</string>
+	<string name="label_place">Стіл</string>
+	<string name="label_count">Кількість</string>
+    <string name="label_kredit">Передоплата</string>
+	<string name="hint_zero">0</string>
+	<string name="default_weight">кг.</string>
+	<string name="weight">вага</string>
+	<string name="hint_date_not_set">Дата не вказана</string>
+	<string name="hint_time_not_set">Час не вказано</string>
+	<string name="settings_only_current_level">Показувати тільки поточний рівень</string>
+	<string name="action_cancel_distribs">Скасувати дистрибуцію</string>
+	<string name="action_delete_closed_orders">Видалити відпрацьовані замовлення</string>
+	<string name="message_exchange_state_stopping">Процес зупиняється</string>
+	<string name="message_exchange_state_executing">Виконується</string>
+	<string name="message_exchange_state_completed">Виконано</string>
+	<string name="message_archive_error">Помилка при роботі з архівом</string>
+	<string name="message_file_error">Файлова помилка</string>
+	<string name="message_file_not_sent">Чи не вдалося відправити файл</string>
+	<string name="message_file_not_sent_reply_code">Чи не вдалося відправити файл, reply code: %d</string>
+	<string name="title_exchange">Обмін</string>
+	<string name="ftp_message_connection_error">Помилка зв\'язку</string>
+	<string name="ftp_message_io_error">Помилка вводу-виводу</string>
+	<string name="ftp_message_error">Помилка</string>
+	<string name="ftp_message_interrupted">Перервано</string>
+	<string name="ftp_state_connecting_to_server">Підключення до FTP-сервера ...</string>
+	<string name="ftp_state_load_in_base">Завантаження в базу ...</string>
+	<string name="ftp_state_success">Виконано</string>
+	<string name="ftp_message_success_no_data">Успішне підключення, даних до отримання немає</string>
+	<string name="ftp_state_finished_error">Виконано з помилками</string>
+	<string name="ftp_state_send_eoutf">Відправлення файлу обміну</string>
+	<string name="ftp_state_aborted">Перервано</string>
+	<string name="ftp_state_receive_arch">Отримання файлу обміну</string>
+	<string name="ftp_state_receive_image">Отримання зображення номенклатури</string>
+	<string name="message_database_created_prevent_reindex">Створена нова база даних! Буде виконана реіндексація</string>
+	<string name="message_database_updated_prevent_reindex">База даних оновлена! Буде виконана реіндексація</string>
+	<string name="message_query_reindex">Попередній сеанс був некоректно завершений! Виконати реіндексацію, пошук втрачених замовлень і продовжити роботу?</string>
+	<string name="field_distr_point">Торгова точка</string>
+	<string name="message_equipment_updates_loaded">Завантажено обладнання</string>
+	<string name="message_equipment_rests_updates_loaded">Завантажені залишки обладнання</string>
+	<string name="label_equipment">Устаткування</string>
+	<string name="label_tare">Тара</string>
+	<string name="label_no_image">&lt;Немає зображення&gt;</string>
+	<string name="label_image_ok">Знімок зроблений</string>
+	<string name="label_make_photo1">Зробити знімок 1</string>
+	<string name="label_make_photo2">Зробити знімок 2</string>
+	<string name="error_during_backup_to_sd">Помилка при копіюванні на SD</string>
+	<string name="info_message_about_request_permission_fine_location">Потрібні права для визначення GPS координат</string>
+	<string name="error_no_permissions_to_sd">Немає прав на запис на SD карту</string>
+	<string name="error_required_permissions_expected">Необхідні дозволи відсутні. В Android Настройки-&gt; Програми-&gt; MTade-&gt; Дозволи, \ "Пам'ять \" має бути дозволено</string>
+	<string name="action_copy_refund">копіювати повернення</string>
+	<string name="title_activity_agreements30_list">Список угод</string>
+	<string name="label_convention">Угода</string>
+	<string name="agreement30_not_set">&lt;Угода не вибрано&gt;</string>
+	<string name="message_agreements30_loaded">Завантажені угоди</string>
+	<string name="message_prices_by_agreements30_loaded">Завантажені ціни за угодами</string>
+	<string name="need_gps_permissions">Требуются разрешения для GPS</string>
+	<string name="action_exit">вихід</string>
+	<string name="tab_routes">Маршрути</string>
+	<string name="tab_payments">платежі</string>
+	<string name="exchange_not_executed">Обмін не виконувався</string>
+	<string name="title_activity_routes_with_dates">Маршрути з датами</string>
+	<string name="label_distribs_short">Дистриб.</string>
+	<string name="message_routes_loaded">Маршрути завантажені</string>
+	<string name="message_routes_dates_loaded">Дати маршрутів завантажені</string>
+	<string name="message_vists_updates_loaded">Завантажені поновлення візитів</string>
+	<string name="navigation_drawer_open">Відкрити отрісовщік навігації</string>
+	<string name="navigation_drawer_close">Закрити отрісовщік навігації</string>
+	<string name="nav_header_desc">Тема навігації</string>
+	<string name="client_blocked_select_anyway">Клієнт заблокований, вибрати його все одно?</string>
+	<string name="space_from_space">" з "</string>
+	<string name="much">багато</string>
+	<string name="route_not_set"><![CDATA[Маршрут не вказано>]]></string>
+	<string name="query_start_visit">Почати візит в% s?</string>
+	<string name="query_end_visit">Завершити візит в% s?</string>
+	<string name="query_cancel_visit">Скасувати візит в% s?</string>
+	<string name="action_cancel_visit">Скасувати візит</string>
+	<string name="action_end_visit">завершити візит</string>
+	<string name="action_refresh_route">оновити маршрут</string>
+	<string name="no_clients_for_trade_point">Немає клієнтів для торгової точки</string>
+	<string name="select_client_to_create_order">Вибе клієнта для створення замовлення</string>
+	<string name="select_client_to_create_refund">Виберіть клієнта для створення повернення</string>
+	<string name="select_client_to_create_payment">Виберіть клієнта для створення платежу</string>
+	<string name="select_client_to_create_distribs">Виберіть клієнта для створення дистрибуції</string>
+    <string name="title_payment_statistics">Статистика платежів</string>
+    <string name="route_cant_be_refreshed">Маршрут не може бути оновлений</string>
+	<string name="route_refreshed_successfully">Маршрут успішно оновлений</string>
+    <string name="only_not_worked_out">Тільки не відпрацьовані</string>
+    <string name="service_operation_state_moving_old_files">Переміщаємо старі файли</string>
+	<string name="update_downloaded">Оновлення завантажено</string>
+	<string name="Restart">Рестарт</string>
+	<string name="list_columns_portrait">Колонок списку (портрет)</string>
+	<string name="list_columnds_landscape">Колонок списку (ландшафт)</string>
+    <string name="Weight">Вага</string>
+    <string name="Price_kg">Ціна/кг</string>
+    <string name="no_email"><![CDATA[<no email>]]></string>
+    <string name="message_settings_loaded">Налаштування завантажено</string>
+    <string name="message_settings_not_changed">Налаштування не змінено</string>
+
+</resources>
