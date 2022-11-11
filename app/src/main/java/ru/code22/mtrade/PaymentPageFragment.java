@@ -278,7 +278,7 @@ public class PaymentPageFragment extends Fragment {
 
         boolean bVisible=false;
 
-        if (g.Common.PRODLIDER||g.Common.TANDEM)
+        if (g.Common.PRAIT||g.Common.PRODLIDER||g.Common.TANDEM)
         {
             if (!g.MyDatabase.m_payment_editing.agreement_id.isEmpty())
             {
@@ -380,7 +380,7 @@ public class PaymentPageFragment extends Fragment {
         if (bHeaderPage) {
 
             TextView tvEmailForCheques=(TextView) m_view.findViewById(R.id.tvEmailForCheques);
-            if (g.Common.PRODLIDER) {
+            if (g.Common.PRAIT||g.Common.PRODLIDER) {
                 if (g.MyDatabase.m_payment_editing.stuff_email.contains("@"))
                     tvEmailForCheques.setText(g.MyDatabase.m_payment_editing.stuff_email);
                 else
@@ -483,7 +483,7 @@ public class PaymentPageFragment extends Fragment {
                     intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("client_id", g.MyDatabase.m_payment_editing.client_id.toString());
                     // Только у нас и только для платежей
-                    if (g.Common.PRODLIDER)
+                    if (g.Common.PRAIT||g.Common.PRODLIDER)
                         intent.putExtra("show_email_for_cheques", true);
                     startActivityForResult(intent, SELECT_CLIENT_FROM_PAYMENT_REQUEST);
                 }
@@ -497,7 +497,7 @@ public class PaymentPageFragment extends Fragment {
                     MySingleton g = MySingleton.getInstance();
 
                     Intent intent;
-                    if (g.Common.PRODLIDER || g.Common.TANDEM) {
+                    if (g.Common.PRAIT||g.Common.PRODLIDER || g.Common.TANDEM) {
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
                         if (sharedPreferences.getString("payment_agreement_select_style", "DEFAULT").equals("OLDSTYLE")) {
                             intent = new Intent(getActivity(), AgreementsActivity.class);

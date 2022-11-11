@@ -42,8 +42,6 @@ public class Common {
 	
 	public int m_mtrade_version;
 	
-	public Locale m_locale=null;
-	
 	// Format 1 MG (мега)
 	// Format 2 SG (снежный городок)
 	// Format 3 PL (продлидер)
@@ -91,8 +89,8 @@ public class Common {
 	public boolean DISTRIBS_BY_QUANTITY = true;
 	
 	public String m_app_theme="DARK";
-
     public String m_currency="DEFAULT";
+	public Locale m_locale=Locale.ENGLISH;
 
     public boolean isDataFormatWithTradePoints()
     {

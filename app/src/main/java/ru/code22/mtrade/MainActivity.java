@@ -7488,6 +7488,13 @@ public class MainActivity extends AppCompatActivity
                         zipStream.setMethod(ZipOutputStream.DEFLATED);
                         zipStream.setLevel(Deflater.DEFAULT_COMPRESSION);
                         try {
+
+                            ArrayList<UUID> uuids = new ArrayList();
+                            ArrayList<Long> idsVisits = new ArrayList();
+                            ArrayList<UUID> uuidsPayments = new ArrayList();
+                            ArrayList<UUID> uuidsRefunds = new ArrayList();
+                            ArrayList<UUID> uuidsDistribs = new ArrayList();
+
                             // Текстовый файл
                             ZipEntry ze = new ZipEntry("eout.txt");
                             zipStream.putNextEntry(ze);
@@ -7505,7 +7512,6 @@ public class MainActivity extends AppCompatActivity
                             zipStream.write(bytes.toByteArray());
                             // Заказы отправляемые
                             bytes.reset();
-                            ArrayList<UUID> uuids = new ArrayList<UUID>();
                             TextDatabase.SaveSendOrders(bw, getContentResolver(), g.MyDatabase, uuids);
                             bw.flush();
                             zipStream.write(bytes.toByteArray());
@@ -7522,7 +7528,6 @@ public class MainActivity extends AppCompatActivity
                                 //g.MyDatabase.m_acks_shipping_sums.clear();
                             }
                             // Платежи отправляемые
-                            ArrayList<UUID> uuidsPayments = new ArrayList();
                             if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.ISTART || g.Common.FACTORY) {
                                 bytes.reset();
                                 TextDatabase.SaveSendPayments(bw, getContentResolver(), g.MyDatabase, uuidsPayments);
@@ -7531,18 +7536,15 @@ public class MainActivity extends AppCompatActivity
                             }
                             // Возвраты отправляемые
                             bytes.reset();
-                            ArrayList<UUID> uuidsRefunds = new ArrayList();
                             TextDatabase.SaveSendRefunds(bw, getContentResolver(), g.MyDatabase, uuidsRefunds);
                             bw.flush();
                             zipStream.write(bytes.toByteArray());
                             // Визиты отправляемые
                             bytes.reset();
-                            ArrayList<Long> idsVisits = new ArrayList();
                             TextDatabase.SaveSendVisits(bw, getContentResolver(), g.MyDatabase, idsVisits);
                             bw.flush();
                             zipStream.write(bytes.toByteArray());
                             // Дистрибьюции отправляемые
-                            ArrayList<UUID> uuidsDistribs = new ArrayList();
                             if (g.Common.PRODLIDER || g.Common.TANDEM) {
                                 bytes.reset();
                                 TextDatabase.SaveSendDistribs(bw, getContentResolver(), g.MyDatabase, uuidsDistribs);
@@ -7604,8 +7606,7 @@ public class MainActivity extends AppCompatActivity
 
                                 ze = new ZipEntry("orders.xml");
                                 zipStream.putNextEntry(ze);
-                                ArrayList<UUID> uuidsXML = new ArrayList<UUID>();
-                                TextDatabase.SaveSendOrdersXML(zipStream, getContentResolver(), g.MyDatabase, uuidsXML);
+                                TextDatabase.SaveSendOrdersXML(zipStream, getContentResolver(), g.MyDatabase, uuids);
                                 zipStream.closeEntry();
                                 zipStream.flush();
 
@@ -7619,34 +7620,30 @@ public class MainActivity extends AppCompatActivity
                                     zipStream.flush();
                                 }
                                 // Платежи отправляемые
-                                ArrayList<UUID> uuidsPaymentsXML = new ArrayList();
                                 if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.ISTART || g.Common.FACTORY) {
                                     ze = new ZipEntry("payments.xml");
                                     zipStream.putNextEntry(ze);
-                                    TextDatabase.SaveSendPaymentsXML(zipStream, getContentResolver(), g.MyDatabase, uuidsPaymentsXML);
+                                    TextDatabase.SaveSendPaymentsXML(zipStream, getContentResolver(), g.MyDatabase, uuidsPayments);
                                     zipStream.closeEntry();
                                     zipStream.flush();
                                 }
                                 // Возвраты отправляемые
                                 ze = new ZipEntry("refunds.xml");
                                 zipStream.putNextEntry(ze);
-                                ArrayList<UUID> uuidsRefundsXML = new ArrayList();
-                                TextDatabase.SaveSendRefundsXML(zipStream, getContentResolver(), g.MyDatabase, uuidsRefundsXML);
+                                TextDatabase.SaveSendRefundsXML(zipStream, getContentResolver(), g.MyDatabase, uuidsRefunds);
                                 zipStream.closeEntry();
                                 zipStream.flush();
                                 // Визиты отправляемые
                                 ze = new ZipEntry("visits.xml");
                                 zipStream.putNextEntry(ze);
-                                ArrayList<Long> idsVisitsXML = new ArrayList();
-                                TextDatabase.SaveSendVisitsXML(zipStream, getContentResolver(), g.MyDatabase, idsVisitsXML);
+                                TextDatabase.SaveSendVisitsXML(zipStream, getContentResolver(), g.MyDatabase, idsVisits);
                                 zipStream.closeEntry();
                                 zipStream.flush();
                                 // Дистрибьюции отправляемые
                                 if (g.Common.PRODLIDER || g.Common.TANDEM) {
                                     ze = new ZipEntry("distribs.xml");
                                     zipStream.putNextEntry(ze);
-                                    ArrayList<UUID> uuidsDistribsXML = new ArrayList();
-                                    TextDatabase.SaveSendDistribsXML(zipStream, getContentResolver(), g.MyDatabase, uuidsDistribsXML);
+                                    TextDatabase.SaveSendDistribsXML(zipStream, getContentResolver(), g.MyDatabase, uuidsDistribs);
                                     zipStream.closeEntry();
                                     zipStream.flush();
                                 }

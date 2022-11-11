@@ -3,6 +3,7 @@ package ru.code22.mtrade;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Context;
@@ -288,6 +289,12 @@ public class MySingleton {
 		SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(activity);
 		Common.m_app_theme=sharedPreferences.getString("app_theme", "DARK");
 		Common.m_currency=sharedPreferences.getString("currency", "DEFAULT");
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+			Common.m_locale=activity.getResources().getConfiguration().getLocales().get(0);
+		} else{
+			//noinspection deprecation
+			Common.m_locale=activity.getResources().getConfiguration().locale;
+		}
 		readIniFile(activity, activity, sharedPreferences);
 		readPreferences(sharedPreferences);
 	}

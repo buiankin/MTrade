@@ -5,6 +5,8 @@ import android.content.Context;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.google.firebase.FirebaseApp;
+
 public class Globals extends Application {
 
 	// Это чисто для того, чтобы получить контекст для выполнения запроса из PrefActivity, где нет контекста
@@ -20,6 +22,7 @@ public class Globals extends Application {
 		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
 		Globals.context = getApplicationContext();
+		FirebaseApp.initializeApp(this);
 	}
 
 	public static Context getAppContext() {

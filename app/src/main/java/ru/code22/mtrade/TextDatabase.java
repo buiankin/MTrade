@@ -10632,7 +10632,7 @@ public class TextDatabase {
 				bw.write("-1\r\n"); // 8
 
 				Cursor realRouteLinesCursor = contentResolver.query(MTradeContentProvider.REAL_ROUTES_LINES_CONTENT_URI, new String[]{"_id", "lineno", "distr_point_id", "start_visit_time", "end_visit_time", "version", "version_ack", "versionPDA", "versionPDA_ack", "datecoord", "latitude", "longitude"}, "real_route_id=?", new String[]{Long.toString(_id)}, "lineno");
-				int index__id = realRouteLinesCursor.getColumnIndex("lineno");
+				int index__id = realRouteLinesCursor.getColumnIndex("_id");
 				int index_RouteLinesLineno = realRouteLinesCursor.getColumnIndex("lineno");
 				int index_RouteLinesDistrPointId = realRouteLinesCursor.getColumnIndex("distr_point_id");
 				int index_RouteLinesStartVivitTime = realRouteLinesCursor.getColumnIndex("start_visit_time");
@@ -10714,7 +10714,7 @@ public class TextDatabase {
 
 		serializer.startTag(null, "Visits");
 
-		// один раз отправляем и забываем. если еще раз придут отсутствующие возвраты
+		// один раз отправляем и забываем. если еще раз придут отсутствующие визиты,
 		// тогда отправятся еще раз
 		for (Map.Entry<UUID, Integer> it : myBase.m_empty_visits.entrySet()) {
 			SaveEmptyVisitXML(serializer, it.getKey(), it.getValue());
@@ -10757,7 +10757,7 @@ public class TextDatabase {
 				serializer.attribute(null, "real_route_date", realRouteDate); // 2
 
 				Cursor realRouteLinesCursor = contentResolver.query(MTradeContentProvider.REAL_ROUTES_LINES_CONTENT_URI, new String[]{"_id", "lineno", "distr_point_id", "start_visit_time", "end_visit_time", "version", "version_ack", "versionPDA", "versionPDA_ack", "datecoord", "latitude", "longitude"}, "real_route_id=?", new String[]{Long.toString(_id)}, "lineno");
-				int index__id = realRouteLinesCursor.getColumnIndex("lineno");
+				int index__id = realRouteLinesCursor.getColumnIndex("_id");
 				int index_RouteLinesLineno = realRouteLinesCursor.getColumnIndex("lineno");
 				int index_RouteLinesDistrPointId = realRouteLinesCursor.getColumnIndex("distr_point_id");
 				int index_RouteLinesStartVivitTime = realRouteLinesCursor.getColumnIndex("start_visit_time");
