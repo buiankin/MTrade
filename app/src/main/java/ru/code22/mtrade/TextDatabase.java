@@ -7538,7 +7538,7 @@ public class TextDatabase {
 			}
 			contentResolver.bulkInsert(MTradeContentProvider.ORDERS_LINES_CONTENT_URI, values);
 		}
-		if (MySingleton.getInstance().Common.PHARAON) {
+		if (MySingleton.getInstance().Common.PHARAOH) {
 			contentResolver.delete(MTradeContentProvider.ORDERS_PLACES_CONTENT_URI, "order_id=?", new String[]{Long.toString(_id)});
 
 			ContentValues[] values = new ContentValues[rec.places.size()];
@@ -7676,7 +7676,7 @@ public class TextDatabase {
 					rec.shipping_end_time = "2359";
 				}
 				rec.shipping_date = cursor.getString(index_shipping_date);
-				if (MySingleton.getInstance().Common.PHARAON) {
+				if (MySingleton.getInstance().Common.PHARAOH) {
 					rec.simple_discount_id = new MyID(cursor.getString(index_simple_discount_id));
 					rec.create_client = cursor.getInt(index_create_client);
 				} else {
@@ -8141,7 +8141,7 @@ public class TextDatabase {
 				//	rec.shipping_end_time="2359";
 				//}
 				//rec.shipping_date=cursor.getString(index_shipping_date);
-				//if (Common.PHARAON)
+				//if (Common.PHARAOH)
 				//{
 				//	rec.simple_discount_id=new MyID(cursor.getString(index_simple_discount_id));
 				//	rec.create_client=cursor.getInt(index_create_client);
@@ -11584,7 +11584,7 @@ public class TextDatabase {
 		m_list2 = new ArrayList<Tree>();
 
 		Cursor cursor;
-		if (MySingleton.getInstance().Common.PHARAON) {
+		if (MySingleton.getInstance().Common.PHARAOH) {
 			cursor = contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "order_for_sorting, descr");
 		} else {
 			cursor = contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "descr");
@@ -11984,7 +11984,7 @@ public class TextDatabase {
 	        	cv.put("curator_id", g.MyDatabase.m_order_editing.curator_id.toString());
 	        }
         } else
-        if (g.Common.PHARAON)
+        if (g.Common.PHARAOH)
         {
     	    cv.put("priceProcent", g.MyDatabase.m_order_editing.stuff_discount_procent);
         } else
@@ -12027,7 +12027,7 @@ public class TextDatabase {
         contentResolver.insert(MTradeContentProvider.RESTS_SALES_STUFF_CONTENT_URI,  cv);
         if (g.Common.MEGA)
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_MEGA_CONTENT_URI,  cv);
-        else if (g.Common.TITAN||g.Common.PHARAON||g.Common.ISTART||g.Common.FACTORY)
+        else if (g.Common.TITAN||g.Common.PHARAOH||g.Common.ISTART||g.Common.FACTORY)
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_SIMPLE_CONTENT_URI,  cv);
         else
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_OTHER_CONTENT_URI,  cv);
@@ -12085,7 +12085,7 @@ public class TextDatabase {
 	        	cv.put("curator_id", g.MyDatabase.m_refund_editing.curator_id.toString());
 	        }
         } else
-        if (g.Common.PHARAON)
+        if (g.Common.PHARAOH)
         {
     	    cv.put("priceProcent", 0.0);
         } else
@@ -12102,7 +12102,7 @@ public class TextDatabase {
         contentResolver.insert(MTradeContentProvider.RESTS_SALES_STUFF_CONTENT_URI,  cv);
         if (g.Common.MEGA)
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_MEGA_CONTENT_URI,  cv);
-        else if (g.Common.TITAN||g.Common.PHARAON||g.Common.ISTART||g.Common.FACTORY)
+        else if (g.Common.TITAN||g.Common.PHARAOH||g.Common.ISTART||g.Common.FACTORY)
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_SIMPLE_CONTENT_URI,  cv);
         else
         	contentResolver.insert(MTradeContentProvider.DISCOUNTS_STUFF_OTHER_CONTENT_URI,  cv);

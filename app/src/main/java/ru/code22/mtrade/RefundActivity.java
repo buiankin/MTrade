@@ -136,12 +136,12 @@ public class RefundActivity extends AppCompatActivity implements onSomeRefundEve
 		}
 		//if (g.Common.FACTORY&&!stuff_agreement_required)
 		//{} else
-		if (g.MyDatabase.m_refund_editing.agreement_id.isEmpty()&&!g.Common.MEGA&&!g.Common.PHARAON)
+		if (g.MyDatabase.m_refund_editing.agreement_id.isEmpty()&&!g.Common.MEGA&&!g.Common.PHARAOH)
 		{
 			//strWarning+=",договор";
 			strWarning+=","+getString(R.string.field_agreement);
 		}
-		if (g.MyDatabase.m_refund_editing.stock_id.isEmpty()&&!g.Common.MEGA&&!g.Common.PHARAON)
+		if (g.MyDatabase.m_refund_editing.stock_id.isEmpty()&&!g.Common.MEGA&&!g.Common.PHARAOH)
 		{
 			//strWarning+=",склад";
 			strWarning+=","+getString(R.string.field_stock);
@@ -356,7 +356,7 @@ public class RefundActivity extends AppCompatActivity implements onSomeRefundEve
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
-	    if (g.Common.PHARAON)
+	    if (g.Common.PHARAOH)
 	    {
 	    	getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 	    }
@@ -470,7 +470,7 @@ public class RefundActivity extends AppCompatActivity implements onSomeRefundEve
 	        } else
 	        {
 	        	/*
-	    	    if (Common.PHARAON)
+	    	    if (Common.PHARAOH)
 	    	    {
 	    	    	getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 	    	    } else
@@ -730,7 +730,7 @@ public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuIn
 	switch (v.getId()) {
 	case R.id.listViewRefundLines:
 	{
-		if (g.Common.PHARAON)
+		if (g.Common.PHARAOH)
 		{
 			//int pos_group=ExpandableListView.getPackedPositionGroup(info.packedPosition);
 			int pos_child=ExpandableListView.getPackedPositionChild(info.packedPosition);

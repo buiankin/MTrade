@@ -3,12 +3,14 @@ package ru.code22.mtrade;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.ContextMenu;
@@ -28,6 +30,10 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.UUID;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
@@ -42,6 +48,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class RoutesListFragment extends Fragment {
 
+    private ActivityResultLauncher<Intent> selectRoutesWithDatesActivityResultLauncher;
     private UniversalInterface mListener;
 
     private boolean m_bDataInited;
@@ -108,6 +115,38 @@ public class RoutesListFragment extends Fragment {
         }
 
         readDataFromBundle(savedInstanceState);
+
+        selectRoutesWithDatesActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == RoutesWithDatesActivity.RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data != null) {
+                                long id = data.getLongExtra("id", 0);
+                                Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.ROUTES_DATES_LIST_CONTENT_URI, id);
+                                //Cursor cursor=getContentResolver().query(singleUri, mProjection, "", selectionArgs, null);
+                                Cursor cursor = getActivity().getContentResolver().query(singleUri, new String[]{"route_id", "route_date", "descr"}, null, null, null);
+                                if (cursor.moveToNext()) {
+                                    int indexRouteId = cursor.getColumnIndex("route_id");
+                                    int indexRouteDate = cursor.getColumnIndex("route_date");
+                                    int indexRouteDescr = cursor.getColumnIndex("descr");
+
+                                    Bundle parameters = new Bundle();
+                                    parameters.putString("route_id", cursor.getString(indexRouteId));
+                                    parameters.putString("route_date", cursor.getString(indexRouteDate));
+                                    parameters.putString("route_descr", cursor.getString(indexRouteDescr));
+
+                                    cursor.close();
+
+                                    mListener.onUniversalEventListener("routeAndDateSelected", parameters);
+                                }
+                            }
+                        }
+                    }
+                });
+
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         boolean bOnlyWorkedOut=sharedPreferences.getBoolean("routes_show_only_worked_out", false);
@@ -265,7 +304,8 @@ public class RoutesListFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), RoutesWithDatesActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivityForResult(intent, MainActivity.SELECT_ROUTES_WITH_DATES_REQUEST);
+                //startActivityForResult(intent, MainActivity.SELECT_ROUTES_WITH_DATES_REQUEST);
+                selectRoutesWithDatesActivityResultLauncher.launch(intent);
             }
         });
 

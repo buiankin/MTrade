@@ -224,17 +224,17 @@ public class OrderActivity extends AppCompatActivity implements onSomeEventListe
 		}
 		if (g.Common.FACTORY&&!g.MyDatabase.m_order_editing.stuff_agreement_required)
 		{} else
-		if (g.MyDatabase.m_order_editing.agreement_id.isEmpty()&&!g.Common.MEGA&&!g.Common.PHARAON)
+		if (g.MyDatabase.m_order_editing.agreement_id.isEmpty()&&!g.Common.MEGA&&!g.Common.PHARAOH)
 		{
 			//strWarning+=",договор";
 			strWarning+=","+getString(R.string.field_agreement);
 		}
-		if (g.MyDatabase.m_order_editing.stock_id.isEmpty()&&!g.Common.MEGA&&!g.Common.PHARAON)
+		if (g.MyDatabase.m_order_editing.stock_id.isEmpty()&&!g.Common.MEGA&&!g.Common.PHARAOH)
 		{
 			//strWarning+=",склад";
 			strWarning+=","+getString(R.string.field_stock);
 		}
-		if (g.MyDatabase.m_order_editing.price_type_id.isEmpty()&&!g.Common.PHARAON)
+		if (g.MyDatabase.m_order_editing.price_type_id.isEmpty()&&!g.Common.PHARAOH)
 		{
 			//strWarning+=",тип цены";
 			strWarning+=","+getString(R.string.field_price_type);
@@ -251,7 +251,7 @@ public class OrderActivity extends AppCompatActivity implements onSomeEventListe
 			}
 			return false;
 		}
-		if (g.Common.PHARAON)
+		if (g.Common.PHARAOH)
 		{
 			if (g.MyDatabase.m_order_editing.shipping_begin_time.isEmpty()||g.MyDatabase.m_order_editing.shipping_date.isEmpty())
 			{
@@ -649,7 +649,7 @@ public class OrderActivity extends AppCompatActivity implements onSomeEventListe
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
-	    if (g.Common.PHARAON)
+	    if (g.Common.PHARAOH)
 	    {
 	    	getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 	    }
@@ -777,7 +777,7 @@ public class OrderActivity extends AppCompatActivity implements onSomeEventListe
 	        } else
 	        {
 	        	/*
-	    	    if (g.Common.PHARAON)
+	    	    if (g.Common.PHARAOH)
 	    	    {
 	    	    	getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 	    	    } else
@@ -1347,7 +1347,7 @@ public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuIn
 	switch (v.getId()) {
 	case R.id.buttonOrderPrint:
 	{
-		if (g.Common.PHARAON)
+		if (g.Common.PHARAOH)
 		{
 			inflater.inflate(R.menu.order_print, menu);
 		}
@@ -1355,7 +1355,7 @@ public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuIn
 	break;
 	case R.id.listViewOrderLines:
 	{
-		if (g.Common.PHARAON)
+		if (g.Common.PHARAOH)
 		{
 			//int pos_group=ExpandableListView.getPackedPositionGroup(info.packedPosition);
 			int pos_child=ExpandableListView.getPackedPositionChild(info.packedPosition);
@@ -1407,7 +1407,7 @@ public boolean onContextItemSelected(MenuItem item) {
 	{
 	case R.id.action_delete_line:
 	{
-		if (g.Common.PHARAON)
+		if (g.Common.PHARAOH)
 		{
 			ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) item.getMenuInfo();
 			int pos_group=ExpandableListView.getPackedPositionGroup(info.packedPosition);
@@ -1631,7 +1631,7 @@ public boolean onClientSelected(View view0, long _id)
 				
 	    	}
 
-			if (g.Common.MEGA||g.Common.PHARAON)
+			if (g.Common.MEGA||g.Common.PHARAOH)
 			{
 			    if (onPriceTypeSelected(view0, new MyID(clientsCursor.getString(priceType_Index))))
 			    {
@@ -2308,7 +2308,7 @@ public void someEvent(String s) {
 				    }
 				}
 			}
-			if (g.Common.PHARAON&&g.MyDatabase.m_order_editing.dont_need_send!=1)
+			if (g.Common.PHARAOH&&g.MyDatabase.m_order_editing.dont_need_send!=1)
 			{
 				// и запускаем обмен
 				//new ExchangeTask().execute(3, 0, "11111");

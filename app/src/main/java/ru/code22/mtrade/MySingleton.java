@@ -161,7 +161,7 @@ public class MySingleton {
     	g.Common.PRODLIDER=false;
     	g.Common.PRAIT=false;
     	g.Common.TITAN=false;    	
-    	g.Common.PHARAON=false;
+    	g.Common.PHARAOH=false;
     	g.Common.TANDEM=false;
     	g.Common.ISTART=false;
 		g.Common.FACTORY=false;
@@ -172,7 +172,7 @@ public class MySingleton {
     		g.Common.PRODLIDER=false;
     		g.Common.PRAIT=false;
     		g.Common.TITAN=false;
-    		g.Common.PHARAON=false;
+    		g.Common.PHARAOH=false;
     		g.Common.TANDEM=false;
     		g.Common.ISTART=true;
 			g.Common.FACTORY=false;
@@ -184,7 +184,7 @@ public class MySingleton {
     		g.Common.PRODLIDER=false;
     		g.Common.PRAIT=false;
     		g.Common.TITAN=true;
-    		g.Common.PHARAON=false;
+    		g.Common.PHARAOH=false;
     		g.Common.TANDEM=false;
     		g.Common.ISTART=false;
 			g.Common.FACTORY=false;
@@ -197,7 +197,7 @@ public class MySingleton {
     		g.Common.PRODLIDER=false;
     		g.Common.PRAIT=false;
     		g.Common.TITAN=false;
-    		g.Common.PHARAON=false;
+    		g.Common.PHARAOH=false;
     		g.Common.TANDEM=false;
     		g.Common.ISTART=false;
 			g.Common.FACTORY=false;
@@ -214,7 +214,7 @@ public class MySingleton {
     		g.Common.PRODLIDER=true;
     		g.Common.PRAIT=false;
     		g.Common.TITAN=false;
-    		g.Common.PHARAON=false;
+    		g.Common.PHARAOH=false;
     		g.Common.TANDEM=false;
     		g.Common.ISTART=false;
 			g.Common.FACTORY=false;
@@ -226,7 +226,7 @@ public class MySingleton {
     		g.Common.PRODLIDER=false;
     		g.Common.PRAIT=true;
     		g.Common.TITAN=false;
-    		g.Common.PHARAON=false;
+    		g.Common.PHARAOH=false;
     		g.Common.TANDEM=false;
     		g.Common.ISTART=false;
 			g.Common.FACTORY=false;
@@ -238,7 +238,7 @@ public class MySingleton {
     		g.Common.PRODLIDER=false;
     		g.Common.PRAIT=false;
     		g.Common.TITAN=false;
-    		g.Common.PHARAON=true;
+    		g.Common.PHARAOH=true;
     		g.Common.TANDEM=false;
     		g.Common.ISTART=false;
 			g.Common.FACTORY=false;
@@ -250,7 +250,7 @@ public class MySingleton {
     		g.Common.PRODLIDER=false;
     		g.Common.PRAIT=false;
     		g.Common.TITAN=false;
-    		g.Common.PHARAON=false;
+    		g.Common.PHARAOH=false;
     		g.Common.TANDEM=true;
     		g.Common.ISTART=false;
 			g.Common.FACTORY=false;
@@ -262,7 +262,7 @@ public class MySingleton {
 			g.Common.PRODLIDER=false;
 			g.Common.PRAIT=false;
 			g.Common.TITAN=false;
-			g.Common.PHARAON=false;
+			g.Common.PHARAOH=false;
 			g.Common.TANDEM=false;
 			g.Common.ISTART=false;
 			g.Common.FACTORY=true;
@@ -274,7 +274,7 @@ public class MySingleton {
 			g.Common.PRODLIDER=true;
 			g.Common.PRAIT=false;
 			g.Common.TITAN=false;
-			g.Common.PHARAON=false;
+			g.Common.PHARAOH=false;
 			g.Common.TANDEM=false;
 			g.Common.ISTART=false;
 			g.Common.FACTORY=false;

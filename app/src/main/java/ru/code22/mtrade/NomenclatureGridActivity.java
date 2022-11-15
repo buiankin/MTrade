@@ -89,7 +89,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
     // Для варианта Common.isHierarchyNomenclatureInTable
     ArrayList<String> m_nomenclatureSurfing;
 
-    ActivityResultLauncher<Intent> launchQuantityRequest;
+    private ActivityResultLauncher<Intent> launchQuantityRequest;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -504,7 +504,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
             }
         });
 
-        if (g.Common.PHARAON)
+        if (g.Common.PHARAOH)
         {
             buttonNomenclatureInStock.setVisibility(View.GONE);
             buttonNomenclaturePacks.setVisibility(View.GONE);
@@ -826,7 +826,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
 
 
         Cursor cursor;
-        if (g.Common.PHARAON)
+        if (g.Common.PHARAOH)
         {
             cursor=contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "order_for_sorting, descr");
         } else
@@ -1124,7 +1124,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                 boolean bInStock=(m_bInStock&&!m_mode.equals("REFUND"));
                 if (m_group_id==null)
                 {
-                    if (g.Common.PHARAON)
+                    if (g.Common.PHARAOH)
                     {
                         return new CursorLoader(this, MTradeContentProvider.NOMENCLATURE_LIST_CONTENT_URI,
                                 NomenclatureAdapter.NOMENCLATURE_LIST_COLUMNS, "isFolder<>3"+(bInStock?" and (isFolder=1 or nom_quantity>0)":"")+(m_filter.isEmpty()?"":" and descr_lower like '%"+m_filter+"%'"), null, "ifnull(h.ord_idx, h_parent.ord_idx), isFolder, order_for_sorting, descr");
@@ -1159,7 +1159,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                 if (m_b_onlyCurrentLevel)
                 {
                     // isFolder и т.п. в сортировке, конечно, лишние
-                    if (g.Common.PHARAON)
+                    if (g.Common.PHARAOH)
                     {
                         return new CursorLoader(this, MTradeContentProvider.NOMENCLATURE_LIST_CONTENT_URI,
                                 NomenclatureAdapter.NOMENCLATURE_LIST_COLUMNS, "isFolder=2 and parent_id=?"+(bInStock?" and nom_quantity>0":"")+(m_filter.isEmpty()?"":" and descr_lower like '%"+m_filter+"%'"), new String[]{m_group_id.toString()}, "ifnull(h.ord_idx, h_parent.ord_idx), isFolder, order_for_sorting, descr");
@@ -1173,7 +1173,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
 
                 }
                 // TODO вспомнить, в каких случаях isFolder=3 (иерархия?)
-                if (g.Common.PHARAON)
+                if (g.Common.PHARAOH)
                 {
                     return new CursorLoader(this, MTradeContentProvider.NOMENCLATURE_LIST_CONTENT_URI,
                             NomenclatureAdapter.NOMENCLATURE_LIST_COLUMNS, "isFolder<>3 and parent_id IN ("+sb.toString()+")"+(bInStock?" and (isFolder=1 or nom_quantity>0)":"")+(m_filter.isEmpty()?"":" and descr_lower like '%"+m_filter+"%'"), args2, "ifnull(h.ord_idx, h_parent.ord_idx), isFolder, order_for_sorting, descr");

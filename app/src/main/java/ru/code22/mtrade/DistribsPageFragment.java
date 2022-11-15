@@ -2,6 +2,10 @@ package ru.code22.mtrade;
 
 import java.util.Random;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import ru.code22.mtrade.DistribsLinesAdapter.onDistribsLinesDataChangedListener;
@@ -38,15 +42,19 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class DistribsPageFragment extends Fragment implements onDistribsLinesDataChangedListener{
-	
-	//static final int SELECT_DATE_FROM_ORDER_REQUEST = 1;
-    static final int SELECT_CLIENT_FROM_DISTRIBS_REQUEST = 2;
-    //static final int SELECT_AGREEMENT_FROM_REFUND_REQUEST = 3;
-    //static final int OPEN_CONTRACTS_FROM_DISTRIBS_REQUEST = 4;
-    static final int SELECT_TRADE_POINT_FROM_DISTRIBS_REQUEST = 5;
-	//static final int QUANTITY_REQUEST = 6;
-    //static final int SELECT_DISCOUNT_FROM_ORDER_REQUEST = 7;
-    //static final int SELECT_PLACES_FROM_ORDER_REQUEST = 8;
+
+	private ActivityResultLauncher<Intent> selectClientFromDistibsActivityResultLauncher;
+	private ActivityResultLauncher<Intent> selectTradePointFromDistibsActivityResultLauncher;
+	private ActivityResultLauncher<Intent> quantitySimpleRequestActivityResultLauncher;
+
+	////static final int SELECT_DATE_FROM_ORDER_REQUEST = 1;
+    //static final int SELECT_CLIENT_FROM_DISTRIBS_REQUEST = 2;
+    ////static final int SELECT_AGREEMENT_FROM_REFUND_REQUEST = 3;
+    ////static final int OPEN_CONTRACTS_FROM_DISTRIBS_REQUEST = 4;
+    //static final int SELECT_TRADE_POINT_FROM_DISTRIBS_REQUEST = 5;
+	////static final int QUANTITY_REQUEST = 6;
+    ////static final int SELECT_DISCOUNT_FROM_ORDER_REQUEST = 7;
+    ////static final int SELECT_PLACES_FROM_ORDER_REQUEST = 8;
     
 	static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     
@@ -92,252 +100,7 @@ public class DistribsPageFragment extends Fragment implements onDistribsLinesDat
 	}
 	};
 	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		super.onActivityResult(requestCode, resultCode, data);
-		
-	    if (data == null) 
-	    	return;
-	    
-	    //Globals g=(Globals)getActivity().getApplication();
-		
-		switch (requestCode)
-		{
-		case SELECT_CLIENT_FROM_DISTRIBS_REQUEST:
-		if (bHeaderPage)
-		{
-			View view0=m_view;
-		    long _id=data.getLongExtra("id", 0);
-			if (someEventListener.onDistribsClientSelected(view0, _id))
-			{
-				setModified();
-				/*
-				boolean bWrongAgreement=true;
-				// Проверим, принадлежит ли договор текущему контрагенту 
-		        Cursor agreementsCursor=getActivity().getContentResolver().query(MTradeContentProvider.AGREEMENTS_CONTENT_URI, new String[]{"owner_id"}, "id=?", new String[]{MyDatabase.m_refund_editing.agreement_id.toString()}, null);
-		        if (agreementsCursor.moveToNext())
-		        {
-		        	int owner_idIndex = agreementsCursor.getColumnIndex("owner_id");
-		        	String owner_id = agreementsCursor.getString(owner_idIndex);
-		        	if (MyDatabase.m_refund_editing.client_id.toString().equals(owner_id))
-		        		bWrongAgreement=false;
-		        }
-		        agreementsCursor.close();
-		        if (bWrongAgreement)
-		        {
-	        		// Не принадлежит, установим договор по умолчанию, если он единственный
-	    	        Cursor defaultAgreementCursor=getActivity().getContentResolver().query(MTradeContentProvider.AGREEMENTS_CONTENT_URI, new String[]{"_id"}, "owner_id=?", new String[]{MyDatabase.m_refund_editing.client_id.toString()}, null);
-	    	        if (defaultAgreementCursor!=null &&defaultAgreementCursor.moveToNext())
-	    	        {
-	    	        	int _idIndex = defaultAgreementCursor.getColumnIndex("_id");
-	    	        	Long _idAgreement = defaultAgreementCursor.getLong(_idIndex);
-	    	        	if (!defaultAgreementCursor.moveToNext())
-	    	        	{
-	    	        		// Есть единственный договор
-	    	        		someEventListener.onRefundAgreementSelected(view0, _idAgreement);
-	    	        	} else
-	    	        	{
-	    	        		// Есть несколько договоров
-	    	        		someEventListener.onRefundAgreementSelected(view0, 0);
-	    	        	}
-	    	        } else
-	    	        {
-	    	        	// Договора нет
-	    	        	someEventListener.onRefundAgreementSelected(view0, 0);
-	    	        }
-		        }
-		        */
-			}
-			break;
-		}
-		/*
-		case SELECT_AGREEMENT_FROM_REFUND_REQUEST:
-		if (bHeaderPage)
-		{
-			View view0=m_view;
-			EditText et=(EditText)view0.findViewById(R.id.etAgreement);
-			TextView tvOrganization=(TextView)view0.findViewById(R.id.textViewRefundOrganization);
-			
-		    long _id=data.getLongExtra("id", 0);
-		    if (someEventListener.onRefundAgreementSelected(view0, _id))
-		    {
-		    	setModified();
-		    }
-			break;
-		}
-		*/
-		case SELECT_TRADE_POINT_FROM_DISTRIBS_REQUEST:
-		if (bHeaderPage)
-		{
-			View view0=m_view;
-			EditText et=(EditText)view0.findViewById(R.id.etTradePoint);
-			
-			setModified();
-			
-		    long _id=data.getLongExtra("id", 0);
-		    Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.DISTR_POINTS_CONTENT_URI, _id);
-		    Cursor cursor=getActivity().getContentResolver().query(singleUri, new String[]{"id", "descr", "address"}, null, null, null);
-		    if (cursor.moveToNext())
-		    {
-		    	int descrIndex = cursor.getColumnIndex("descr");
-		    	int idIndex = cursor.getColumnIndex("id");
-		    	//int addressIndex = cursor.getColumnIndex("address");
-		    	String descr = cursor.getString(descrIndex);
-		    	String tradePointId = cursor.getString(idIndex);
-		    	//String address = cursor.getString(addressIndex);
-		    	et.setText(descr);
-				MySingleton.getInstance().MyDatabase.m_distribs_editing.distr_point_id.m_id=tradePointId;
-				MySingleton.getInstance().MyDatabase.m_distribs_editing.stuff_distr_point_name=descr;
-		    } else
-		    {
-		    	et.setText(getResources().getString(R.string.trade_point_not_set));
-		    	MySingleton.getInstance().MyDatabase.m_distribs_editing.distr_point_id.m_id="";
-		    	MySingleton.getInstance().MyDatabase.m_distribs_editing.stuff_distr_point_name=getResources().getString(R.string.trade_point_not_set);
-		    }
-		    cursor.close();
-			break;
-		}
-		/*
-		case OPEN_CONTRACTS_FROM_DISTRIBS_REQUEST:
-		if (bLinesPage)
-		{
-			if (resultCode==ContractsActivity.CONTRACTS_RESULT_DOCUMENT_CHANGED)
-			{
-				MyDatabase.m_distribsLinesAdapter.notifyDataSetChanged();
-				setModified();
-				recalcWeight();
-				redrawWeight();
-			}
-			break;
-		}
-		*/
-		case DistribsActivity.QUANTITY_SIMPLE_REQUEST:
-		if (bLinesPage)
-		{
-			if (resultCode==QuantitySimpleActivity.QUANTITY_SIMPLE_RESULT_OK)
-			{
-	      		if (data!=null)
-	      		{
-				    long _id=data.getLongExtra("_id", 0);
-				    MyID nomenclature_id=new MyID(data.getStringExtra("id"));
-				    double quantity=data.getDoubleExtra("quantity", 0.0);
-				    
-					DistribsLineRecord line=MySingleton.getInstance().MyDatabase.m_distribs_editing.lines.get(m_distribs_editing_line_num);
-					line.quantity=quantity;
-					MySingleton.getInstance().MyDatabase.m_distribsLinesAdapter.notifyDataSetChanged();
-					setModified();
-	      		}
-			}
-			/*
-	  		if (resultCode==QuantityActivity.QUANTITY_RESULT_OK)
-	  		{
-	      		if (data!=null)
-	      		{
-				    long _id=data.getLongExtra("_id", 0);
-				    MyID nomenclature_id=new MyID(data.getStringExtra("id"));
-				    double quantity=data.getDoubleExtra("quantity", 0.0);
-				    double k=data.getDoubleExtra("k", 1.0);
-				    //double price=data.getDoubleExtra("price", 0.0);
-				    //double price_k=data.getDoubleExtra("price_k", 1.0);
-				    String ed=data.getStringExtra("ed");
-				    String comment_in_line=data.getStringExtra("comment_in_line");
-	      			
-	  	    	    //long id=data.getLongExtra("id", 0);
-	      			DistribsLineRecord line;
-	      			if (m_refund_editing_line_num<MyDatabase.m_refund_editing.lines.size())
-	      			{
-	      				line=MyDatabase.m_refund_editing.lines.get(m_refund_editing_line_num);
-	      				if (!line.nomenclature_id.equals(nomenclature_id))
-	      				{
-	      					line=new RefundLineRecord();
-	      				}
-	      			} else
-	      			{
-	      				line=new RefundLineRecord();      				
-	      			}
-	      			Cursor nomenclatureCursor;
-	      			if (_id==0)
-	      			{
-	      				nomenclatureCursor=getActivity().getContentResolver().query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, new String[]{"descr", "flags"}, "id=?", new String[]{nomenclature_id.toString()}, null);
-	      			} else
-	      			{
-					    Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, _id);
-						nomenclatureCursor=getActivity().getContentResolver().query(singleUri, new String[]{"descr", "flags"}, null, null, null);
-	      			}
-					if (nomenclatureCursor.moveToFirst())
-					{
-						// nomenclature_id не меняем, он правильный
-				    	int descrIndex = nomenclatureCursor.getColumnIndex("descr");
-				    	int flagsIndex = nomenclatureCursor.getColumnIndex("flags");
-						line.stuff_nomenclature=nomenclatureCursor.getString(descrIndex);
-						line.stuff_nomenclature_flags=nomenclatureCursor.getInt(flagsIndex);
-						line.quantity=quantity;
-						line.quantity_requested=quantity;
-						//line.discount=0.0;
-						line.k=k;
-						line.ed=ed;
-						//if (price_k>-0.0001&&price_k<0.0001)
-						//{
-						//	price_k=1.0;
-						//}
-						//if (price_k-k>-0.0001&&price_k-k<0.0001)
-						//{
-						//	line.price=price;
-						//} else
-						//{
-						//	line.price=Math.floor(price*k/price_k*100.0+0.00001)/100.0;
-						//}
-						//line.total=Math.floor(line.price*line.quantity*100.0+0.00001)/100.0;
-						line.comment_in_line=comment_in_line;
-						
-						MyDatabase.m_distribsLinesAdapter.notifyDataSetChanged();
-						setModified();
-						recalcWeight();
-						redrawWeight();
-						if (MyDatabase.m_refund_editing.state==E_REFUND_STATE.E_REFUND_STATE_BACKUP_NOT_SAVED)
-						{
-							ContentValues cv=new ContentValues();
-							cv.put("client_id", ""); // в данном случае это не важно
-							cv.put("quantity", quantity);
-							cv.put("quantity_requested", quantity);
-							cv.put("k", k);
-							cv.put("ed", ed);
-							//cv.put("price", price);
-							cv.put("comment_in_line", comment_in_line);
-							
-							int cnt=getActivity().getContentResolver().update(MTradeContentProvider.REFUNDS_LINES_CONTENT_URI, cv, "refund_id=? and nomenclature_id=?", new String[]{String.valueOf(MyDatabase.m_refund_editing_id), nomenclature_id.toString()});
-						}
-					}
-	      		}
-	  		}
-	  		if (resultCode==QuantityActivity.QUANTITY_RESULT_DELETE_LINE)
-	  		{
-	      		if (data!=null)
-	      		{
-				    MyID nomenclature_id=new MyID(data.getStringExtra("id"));
-	      			RefundLineRecord line;
-	      			if (m_refund_editing_line_num<MyDatabase.m_refund_editing.lines.size())
-	      			{
-	      				line=MyDatabase.m_refund_editing.lines.get(m_refund_editing_line_num);
-	      				// на всякий случай проверка на совпадение номенклатуры
-	      				if (line.nomenclature_id.equals(nomenclature_id))
-	      				{
-    	      				MyDatabase.m_refund_editing.lines.remove(line);
-	      				}
-	      			}
-	      			MyDatabase.m_distribsLinesAdapter.notifyDataSetChanged();
-	      			setModified();
-	      			recalcWeight();
-	      			redrawWeight();
-	      		}
-	  		}
-			break;
-			*/
-		}
-		}
-	}
-	
+
 	
 		private void redrawWeight()
 		{
@@ -418,7 +181,98 @@ public class DistribsPageFragment extends Fragment implements onDistribsLinesDat
 		  
 		  //Globals g=(Globals)getActivity().getApplication();
 		  MySingleton g=MySingleton.getInstance();
-		  
+
+		  selectClientFromDistibsActivityResultLauncher = registerForActivityResult(
+				  new ActivityResultContracts.StartActivityForResult(),
+				  new ActivityResultCallback<ActivityResult>() {
+					  @Override
+					  public void onActivityResult(ActivityResult result) {
+						  if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+							  Intent data = result.getData();
+							  if (data != null) {
+								  if (bHeaderPage)
+								  {
+									  View view0=m_view;
+									  long _id=data.getLongExtra("id", 0);
+									  if (someEventListener.onDistribsClientSelected(view0, _id))
+									  {
+										  setModified();
+									  }
+								  }
+
+							  }
+						  }
+					  }
+				  });
+
+		  selectTradePointFromDistibsActivityResultLauncher = registerForActivityResult(
+				  new ActivityResultContracts.StartActivityForResult(),
+				  new ActivityResultCallback<ActivityResult>() {
+					  @Override
+					  public void onActivityResult(ActivityResult result) {
+						  if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+							  Intent data = result.getData();
+							  if (data != null) {
+								  if (bHeaderPage)
+								  {
+									  View view0=m_view;
+									  EditText et=(EditText)view0.findViewById(R.id.etTradePoint);
+
+									  setModified();
+
+									  long _id=data.getLongExtra("id", 0);
+									  Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.DISTR_POINTS_CONTENT_URI, _id);
+									  Cursor cursor=getActivity().getContentResolver().query(singleUri, new String[]{"id", "descr", "address"}, null, null, null);
+									  if (cursor.moveToNext())
+									  {
+										  int descrIndex = cursor.getColumnIndex("descr");
+										  int idIndex = cursor.getColumnIndex("id");
+										  //int addressIndex = cursor.getColumnIndex("address");
+										  String descr = cursor.getString(descrIndex);
+										  String tradePointId = cursor.getString(idIndex);
+										  //String address = cursor.getString(addressIndex);
+										  et.setText(descr);
+										  MySingleton.getInstance().MyDatabase.m_distribs_editing.distr_point_id.m_id=tradePointId;
+										  MySingleton.getInstance().MyDatabase.m_distribs_editing.stuff_distr_point_name=descr;
+									  } else
+									  {
+										  et.setText(getResources().getString(R.string.trade_point_not_set));
+										  MySingleton.getInstance().MyDatabase.m_distribs_editing.distr_point_id.m_id="";
+										  MySingleton.getInstance().MyDatabase.m_distribs_editing.stuff_distr_point_name=getResources().getString(R.string.trade_point_not_set);
+									  }
+									  cursor.close();
+								  }
+
+							  }
+						  }
+					  }
+				  });
+
+		  quantitySimpleRequestActivityResultLauncher = registerForActivityResult(
+				  new ActivityResultContracts.StartActivityForResult(),
+				  new ActivityResultCallback<ActivityResult>() {
+					  @Override
+					  public void onActivityResult(ActivityResult result) {
+						  if (result.getResultCode() == QuantitySimpleActivity.RESULT_OK) {
+							  Intent data = result.getData();
+							  if (data != null) {
+								  if (bLinesPage) {
+									  long _id = data.getLongExtra("_id", 0);
+									  MyID nomenclature_id = new MyID(data.getStringExtra("id"));
+									  double quantity = data.getDoubleExtra("quantity", 0.0);
+
+									  DistribsLineRecord line = MySingleton.getInstance().MyDatabase.m_distribs_editing.lines.get(m_distribs_editing_line_num);
+									  line.quantity = quantity;
+									  MySingleton.getInstance().MyDatabase.m_distribsLinesAdapter.notifyDataSetChanged();
+									  setModified();
+								  }
+							  }
+						  }
+					  }
+				  });
+
+
+
 		  bHeaderPage=false;
 		  bLinesPage=false;
 		  bSettingsPage=false;
@@ -506,7 +360,7 @@ public class DistribsPageFragment extends Fragment implements onDistribsLinesDat
 			EditText etAgreement = (EditText) m_view.findViewById(R.id.etAgreement);
 			etAgreement.setText(rec.stuff_agreement_name);
 			tvOrganizationName.setText(rec.stuff_organization_name);
-			if (Common.MEGA||Common.PHARAON)
+			if (Common.MEGA||Common.PHARAOH)
 			{
 				tvOrganizationName.setVisibility(View.GONE);
 				tvAgreement.setVisibility(View.GONE);
@@ -516,7 +370,7 @@ public class DistribsPageFragment extends Fragment implements onDistribsLinesDat
 			// Торговая точка
 			EditText etTradePoint = (EditText) m_view.findViewById(R.id.etTradePoint);
 			etTradePoint.setText(rec.stuff_distr_point_name);
-			if (MySingleton.getInstance().Common.MEGA||MySingleton.getInstance().Common.PHARAON||MySingleton.getInstance().Common.TITAN||MySingleton.getInstance().Common.FACTORY)
+			if (MySingleton.getInstance().Common.MEGA||MySingleton.getInstance().Common.PHARAOH||MySingleton.getInstance().Common.TITAN||MySingleton.getInstance().Common.FACTORY)
 			{
 				TextView tvTradePoint = (TextView) m_view.findViewById(R.id.textViewTradePoint);
 				View layoutTradePoint = m_view.findViewById(R.id.layoutTradePoint);
@@ -541,7 +395,7 @@ public class DistribsPageFragment extends Fragment implements onDistribsLinesDat
 			TextView textPriceType=(TextView)m_view.findViewById(R.id.textPriceType);
 			EditText etPriceType=(EditText)m_view.findViewById(R.id.etPriceType);
 			
-			if (Common.PHARAON)
+			if (Common.PHARAOH)
 			{
 				etDebt.setVisibility(View.GONE);
 				etDebtPast.setVisibility(View.GONE);
@@ -638,7 +492,8 @@ public class DistribsPageFragment extends Fragment implements onDistribsLinesDat
 					Intent intent=new Intent(getActivity(), ClientsActivity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					intent.putExtra("client_id", MySingleton.getInstance().MyDatabase.m_distribs_editing.client_id.toString());
-					startActivityForResult(intent, SELECT_CLIENT_FROM_DISTRIBS_REQUEST);
+					//startActivityForResult(intent, SELECT_CLIENT_FROM_DISTRIBS_REQUEST);
+					selectClientFromDistibsActivityResultLauncher.launch(intent);
 				}
 			});
 			
@@ -651,7 +506,8 @@ public class DistribsPageFragment extends Fragment implements onDistribsLinesDat
 					Intent intent=new Intent(getActivity(), TradePointsActivity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					intent.putExtra("client_id", MySingleton.getInstance().MyDatabase.m_distribs_editing.client_id.toString());
-					startActivityForResult(intent, SELECT_TRADE_POINT_FROM_DISTRIBS_REQUEST);
+					//startActivityForResult(intent, SELECT_TRADE_POINT_FROM_DISTRIBS_REQUEST);
+					selectTradePointFromDistibsActivityResultLauncher.launch(intent);
 				}
 			});
 			
@@ -703,7 +559,7 @@ public class DistribsPageFragment extends Fragment implements onDistribsLinesDat
 				}
 			});
 	        
-	        if (Common.MEGA||Common.PHARAON)
+	        if (Common.MEGA||Common.PHARAOH)
 	        {
 	        	View layoutAgreement=m_view.findViewById(R.id.layoutAgreement);
 	        	layoutAgreement.setVisibility(View.GONE);
@@ -741,7 +597,7 @@ public class DistribsPageFragment extends Fragment implements onDistribsLinesDat
 				}
 	        });
 	        
-	        if (Common.MEGA||Common.PHARAON)
+	        if (Common.MEGA||Common.PHARAOH)
 	        {
 	        	View tvStock=m_view.findViewById(R.id.textViewStock);
 	        	tvStock.setVisibility(View.GONE);
@@ -818,7 +674,8 @@ public class DistribsPageFragment extends Fragment implements onDistribsLinesDat
 					DistribsLineRecord line=g.MyDatabase.m_distribs_editing.lines.get(position);
 					intent.putExtra("description", line.stuff_distribs_contract);
 					intent.putExtra("quantity", line.quantity);
-					startActivityForResult(intent, DistribsActivity.QUANTITY_SIMPLE_REQUEST);
+					//startActivityForResult(intent, DistribsActivity.QUANTITY_SIMPLE_REQUEST);
+					quantitySimpleRequestActivityResultLauncher.launch(intent);
 					
 					/*
 					m_distribs_editing_line_num=position;
@@ -1106,7 +963,7 @@ public class DistribsPageFragment extends Fragment implements onDistribsLinesDat
 			        //Toast.makeText(this, "keyboard hidden", Toast.LENGTH_SHORT).show();
 					if (buttonOk!=null)
 						buttonOk.setVisibility(View.VISIBLE);
-					if (buttonPrint!=null&&Common.PHARAON)
+					if (buttonPrint!=null&&Common.PHARAOH)
 						buttonPrint.setVisibility(View.VISIBLE);
 					if (buttonClose!=null)
 						buttonClose.setVisibility(View.VISIBLE);

@@ -2,6 +2,10 @@ package ru.code22.mtrade;
 
 import java.util.Random;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -44,15 +48,21 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 public class RefundPageFragment extends Fragment {
-	
-	//static final int SELECT_DATE_FROM_ORDER_REQUEST = 1;
-    static final int SELECT_CLIENT_FROM_REFUND_REQUEST = 2;
-    static final int SELECT_AGREEMENT_FROM_REFUND_REQUEST = 3;
-    static final int OPEN_NOMENCLATURE_FROM_REFUND_REQUEST = 4;
-    static final int SELECT_TRADE_POINT_FROM_REFUND_REQUEST = 5;
-	//static final int QUANTITY_REQUEST = 6;
-    //static final int SELECT_DISCOUNT_FROM_ORDER_REQUEST = 7;
-    //static final int SELECT_PLACES_FROM_ORDER_REQUEST = 8;
+
+	private ActivityResultLauncher<Intent> selectClientFromRefundActivityResultLauncher;
+	private ActivityResultLauncher<Intent> selectAgreementFromRefundActivityResultLauncher;
+	private ActivityResultLauncher<Intent> openNomenclatureFromRefundActivityResultLauncher;
+	private ActivityResultLauncher<Intent> selectTradePointFromRefundActivityResultLauncher;
+	private ActivityResultLauncher<Intent> quantityRequestFromRefundActivityResultLauncher;
+
+	////static final int SELECT_DATE_FROM_ORDER_REQUEST = 1;
+    //static final int SELECT_CLIENT_FROM_REFUND_REQUEST = 2;
+    //static final int SELECT_AGREEMENT_FROM_REFUND_REQUEST = 3;
+    //static final int OPEN_NOMENCLATURE_FROM_REFUND_REQUEST = 4;
+    //static final int SELECT_TRADE_POINT_FROM_REFUND_REQUEST = 5;
+	////static final int QUANTITY_REQUEST = 6;
+    ////static final int SELECT_DISCOUNT_FROM_ORDER_REQUEST = 7;
+    ////static final int SELECT_PLACES_FROM_ORDER_REQUEST = 8;
 
 	static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     
@@ -62,7 +72,7 @@ public class RefundPageFragment extends Fragment {
     View m_view=null;
 	EquipmentRestsFragment myFrag1=null;
 	EquipmentRestsFragment myFrag2=null;
-    
+
     //SimpleAdapter sAdapter;
     //ArrayList<Map<String, Object>> data;
     
@@ -104,7 +114,8 @@ public class RefundPageFragment extends Fragment {
 	}
 	};
 	*/
-	
+
+	/*
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
@@ -350,6 +361,8 @@ public class RefundPageFragment extends Fragment {
 		}
 		}
 	}
+
+	 */
 	
 	
 		private void redrawWeight()
@@ -431,6 +444,257 @@ public class RefundPageFragment extends Fragment {
 		  boolean orientationLandscape=(getResources().getConfiguration().orientation==Configuration.ORIENTATION_LANDSCAPE);
 		  
 		  MySingleton g=MySingleton.getInstance();
+
+		  selectClientFromRefundActivityResultLauncher = registerForActivityResult(
+				  new ActivityResultContracts.StartActivityForResult(),
+				  new ActivityResultCallback<ActivityResult>() {
+					  @Override
+					  public void onActivityResult(ActivityResult result) {
+						  if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+							  Intent data = result.getData();
+							  if (data != null && bHeaderPage) {
+								  View view0=m_view;
+								  long _id=data.getLongExtra("id", 0);
+								  if (someEventListener.onRefundClientSelected(view0, _id)) {
+									  setModified();
+									  boolean bWrongAgreement = true;
+									  // Проверим, принадлежит ли договор текущему контрагенту
+									  Cursor agreementsCursor = getActivity().getContentResolver().query(MTradeContentProvider.AGREEMENTS_CONTENT_URI, new String[]{"owner_id"}, "id=?", new String[]{g.MyDatabase.m_refund_editing.agreement_id.toString()}, null);
+									  if (agreementsCursor.moveToNext()) {
+										  int owner_idIndex = agreementsCursor.getColumnIndex("owner_id");
+										  String owner_id = agreementsCursor.getString(owner_idIndex);
+										  if (g.MyDatabase.m_refund_editing.client_id.toString().equals(owner_id))
+											  bWrongAgreement = false;
+									  }
+									  agreementsCursor.close();
+									  if (bWrongAgreement) {
+										  // Не принадлежит, установим договор по умолчанию, если он единственный
+										  Cursor defaultAgreementCursor = getActivity().getContentResolver().query(MTradeContentProvider.AGREEMENTS_CONTENT_URI, new String[]{"_id"}, "owner_id=?", new String[]{g.MyDatabase.m_refund_editing.client_id.toString()}, null);
+										  if (defaultAgreementCursor != null && defaultAgreementCursor.moveToNext()) {
+											  int _idIndex = defaultAgreementCursor.getColumnIndex("_id");
+											  Long _idAgreement = defaultAgreementCursor.getLong(_idIndex);
+											  if (!defaultAgreementCursor.moveToNext()) {
+												  // Есть единственный договор
+												  someEventListener.onRefundAgreementSelected(view0, _idAgreement);
+											  } else {
+												  // Есть несколько договоров
+												  someEventListener.onRefundAgreementSelected(view0, 0);
+											  }
+										  } else {
+											  // Договора нет
+											  someEventListener.onRefundAgreementSelected(view0, 0);
+										  }
+									  }
+								  }
+							  }
+						  }
+					  }
+				  });
+
+		  selectAgreementFromRefundActivityResultLauncher = registerForActivityResult(
+				  new ActivityResultContracts.StartActivityForResult(),
+				  new ActivityResultCallback<ActivityResult>() {
+					  @Override
+					  public void onActivityResult(ActivityResult result) {
+						  if (result.getResultCode() == AgreementsActivity.RESULT_OK) {
+							  Intent data = result.getData();
+							  if (data != null && bHeaderPage) {
+								  View view0=m_view;
+								  EditText et=(EditText)view0.findViewById(R.id.etAgreement);
+								  TextView tvOrganization=(TextView)view0.findViewById(R.id.textViewRefundOrganization);
+
+								  long _id=data.getLongExtra("id", 0);
+								  if (someEventListener.onRefundAgreementSelected(view0, _id))
+								  {
+									  setModified();
+								  }
+							  }
+						  }
+					  }
+				  });
+
+		  openNomenclatureFromRefundActivityResultLauncher = registerForActivityResult(
+				  new ActivityResultContracts.StartActivityForResult(),
+				  new ActivityResultCallback<ActivityResult>() {
+					  @Override
+					  public void onActivityResult(ActivityResult result) {
+						  if (result.getResultCode() == NomenclatureActivity.RESULT_OK) {
+							  Intent data = result.getData();
+							  if (data != null && bLinesPage) {
+								  // 12.06.2018 в связи с изменениями в коде, считываем изменения
+								  Bundle bundle=data.getExtras();
+
+								  g.MyDatabase.m_refund_editing_id=bundle.getLong("refund_editing_id");
+								  g.MyDatabase.m_refund_editing_created=bundle.getBoolean("refund_editing_created");
+								  g.MyDatabase.m_refund_editing_modified=bundle.getBoolean("refund_editing_modified");
+
+								  g.MyDatabase.m_refund_editing=bundle.getParcelable("refund_editing");
+
+								  g.MyDatabase.m_refundLinesAdapter.notifyDataSetChanged();
+								  setModified();
+								  recalcWeight();
+								  redrawWeight();
+							  }
+						  }
+					  }
+				  });
+
+		  selectTradePointFromRefundActivityResultLauncher = registerForActivityResult(
+				  new ActivityResultContracts.StartActivityForResult(),
+				  new ActivityResultCallback<ActivityResult>() {
+					  @Override
+					  public void onActivityResult(ActivityResult result) {
+						  if (result.getResultCode() == TradePointsActivity.RESULT_OK) {
+							  Intent data = result.getData();
+							  if (data != null && bHeaderPage) {
+								  View view0=m_view;
+								  EditText et=(EditText)view0.findViewById(R.id.etTradePoint);
+
+								  setModified();
+
+								  long _id=data.getLongExtra("id", 0);
+								  Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.DISTR_POINTS_CONTENT_URI, _id);
+								  Cursor cursor=getActivity().getContentResolver().query(singleUri, new String[]{"id", "descr", "address"}, null, null, null);
+								  if (cursor.moveToNext())
+								  {
+									  int descrIndex = cursor.getColumnIndex("descr");
+									  int idIndex = cursor.getColumnIndex("id");
+									  //int addressIndex = cursor.getColumnIndex("address");
+									  String descr = cursor.getString(descrIndex);
+									  String tradePointId = cursor.getString(idIndex);
+									  //String address = cursor.getString(addressIndex);
+									  et.setText(descr);
+									  g.MyDatabase.m_refund_editing.distr_point_id.m_id=tradePointId;
+									  g.MyDatabase.m_refund_editing.stuff_distr_point_name=descr;
+								  } else
+								  {
+									  et.setText(getResources().getString(R.string.trade_point_not_set));
+									  g.MyDatabase.m_refund_editing.distr_point_id.m_id="";
+									  g.MyDatabase.m_refund_editing.stuff_distr_point_name=getResources().getString(R.string.trade_point_not_set);
+								  }
+								  cursor.close();
+								  // Остатки оборудования у клинта
+								  EquipmentRestsFragment fragment1 = (EquipmentRestsFragment)getFragmentManager().findFragmentByTag("fragmentEquipment");
+								  if (fragment1!=null)
+									  fragment1.myRestartLoader();
+								  EquipmentRestsFragment fragment2 = (EquipmentRestsFragment)getFragmentManager().findFragmentByTag("fragmentEquipmentTare");
+								  if (fragment2!=null)
+								  {
+									  fragment2.myRestartLoader();
+								  }
+							  }
+						  }
+					  }
+				  });
+
+
+		  quantityRequestFromRefundActivityResultLauncher = registerForActivityResult(
+				  new ActivityResultContracts.StartActivityForResult(),
+				  new ActivityResultCallback<ActivityResult>() {
+					  @Override
+					  public void onActivityResult(ActivityResult result) {
+						  int resultCode = result.getResultCode();
+						  if (resultCode == QuantityActivity.QUANTITY_RESULT_OK) {
+							  Intent data = result.getData();
+							  if (data != null && bLinesPage) {
+								  long _id=data.getLongExtra("_id", 0);
+								  MyID nomenclature_id=new MyID(data.getStringExtra("id"));
+								  double quantity=data.getDoubleExtra("quantity", 0.0);
+								  double k=data.getDoubleExtra("k", 1.0);
+								  //double price=data.getDoubleExtra("price", 0.0);
+								  //double price_k=data.getDoubleExtra("price_k", 1.0);
+								  String ed=data.getStringExtra("ed");
+								  String comment_in_line=data.getStringExtra("comment_in_line");
+
+								  //long id=data.getLongExtra("id", 0);
+								  RefundLineRecord line;
+								  if (m_refund_editing_line_num<g.MyDatabase.m_refund_editing.lines.size())
+								  {
+									  line=g.MyDatabase.m_refund_editing.lines.get(m_refund_editing_line_num);
+									  if (!line.nomenclature_id.equals(nomenclature_id))
+									  {
+										  line=new RefundLineRecord();
+									  }
+								  } else
+								  {
+									  line=new RefundLineRecord();
+								  }
+								  Cursor nomenclatureCursor;
+								  if (_id==0)
+								  {
+									  nomenclatureCursor=getActivity().getContentResolver().query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, new String[]{"descr", "flags"}, "id=?", new String[]{nomenclature_id.toString()}, null);
+								  } else
+								  {
+									  Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, _id);
+									  nomenclatureCursor=getActivity().getContentResolver().query(singleUri, new String[]{"descr", "flags"}, null, null, null);
+								  }
+								  if (nomenclatureCursor.moveToFirst())
+								  {
+									  // nomenclature_id не меняем, он правильный
+									  int descrIndex = nomenclatureCursor.getColumnIndex("descr");
+									  int flagsIndex = nomenclatureCursor.getColumnIndex("flags");
+									  line.stuff_nomenclature=nomenclatureCursor.getString(descrIndex);
+									  line.stuff_nomenclature_flags=nomenclatureCursor.getInt(flagsIndex);
+									  line.quantity=quantity;
+									  line.quantity_requested=quantity;
+									  //line.discount=0.0;
+									  line.k=k;
+									  line.ed=ed;
+									  //if (price_k>-0.0001&&price_k<0.0001)
+									  //{
+									  //	price_k=1.0;
+									  //}
+									  //if (price_k-k>-0.0001&&price_k-k<0.0001)
+									  //{
+									  //	line.price=price;
+									  //} else
+									  //{
+									  //	line.price=Math.floor(price*k/price_k*100.0+0.00001)/100.0;
+									  //}
+									  //line.total=Math.floor(line.price*line.quantity*100.0+0.00001)/100.0;
+									  line.comment_in_line=comment_in_line;
+
+									  g.MyDatabase.m_refundLinesAdapter.notifyDataSetChanged();
+									  setModified();
+									  recalcWeight();
+									  redrawWeight();
+									  if (g.MyDatabase.m_refund_editing.state==E_REFUND_STATE.E_REFUND_STATE_BACKUP_NOT_SAVED)
+									  {
+										  ContentValues cv=new ContentValues();
+										  cv.put("client_id", ""); // в данном случае это не важно
+										  cv.put("quantity", quantity);
+										  cv.put("quantity_requested", quantity);
+										  cv.put("k", k);
+										  cv.put("ed", ed);
+										  //cv.put("price", price);
+										  cv.put("comment_in_line", comment_in_line);
+
+										  int cnt=getActivity().getContentResolver().update(MTradeContentProvider.REFUNDS_LINES_CONTENT_URI, cv, "refund_id=? and nomenclature_id=?", new String[]{String.valueOf(g.MyDatabase.m_refund_editing_id), nomenclature_id.toString()});
+									  }
+								  }
+							  }
+						  } else if (resultCode==QuantityActivity.QUANTITY_RESULT_DELETE_LINE)
+						  {
+							  Intent data = result.getData();
+							  if (data != null && bLinesPage) {
+								  MyID nomenclature_id = new MyID(data.getStringExtra("id"));
+								  RefundLineRecord line;
+								  if (m_refund_editing_line_num < g.MyDatabase.m_refund_editing.lines.size()) {
+									  line = g.MyDatabase.m_refund_editing.lines.get(m_refund_editing_line_num);
+									  // на всякий случай проверка на совпадение номенклатуры
+									  if (line.nomenclature_id.equals(nomenclature_id)) {
+										  g.MyDatabase.m_refund_editing.lines.remove(line);
+									  }
+								  }
+								  g.MyDatabase.m_refundLinesAdapter.notifyDataSetChanged();
+								  setModified();
+								  recalcWeight();
+								  redrawWeight();
+							  }
+						  }
+					  }
+				  });
+
 		  
 		  bHeaderPage=false;
 		  bLinesPage=false;
@@ -541,7 +805,7 @@ public class RefundPageFragment extends Fragment {
 			EditText etAgreement = (EditText) m_view.findViewById(R.id.etAgreement);
 			etAgreement.setText(rec.stuff_agreement_name);
 			tvOrganizationName.setText(rec.stuff_organization_name);
-			if (g.Common.MEGA||g.Common.PHARAON)
+			if (g.Common.MEGA||g.Common.PHARAOH)
 			{
 				tvOrganizationName.setVisibility(View.GONE);
 				tvAgreement.setVisibility(View.GONE);
@@ -550,7 +814,7 @@ public class RefundPageFragment extends Fragment {
 			// Торговая точка
 			EditText etTradePoint = (EditText) m_view.findViewById(R.id.etTradePoint);
 			etTradePoint.setText(rec.stuff_distr_point_name);
-			if (g.Common.MEGA||g.Common.PHARAON||g.Common.TITAN||g.Common.FACTORY)
+			if (g.Common.MEGA||g.Common.PHARAOH||g.Common.TITAN||g.Common.FACTORY)
 			{
 				TextView tvTradePoint = (TextView) m_view.findViewById(R.id.textViewTradePoint);
 				View layoutTradePoint = m_view.findViewById(R.id.layoutTradePoint);
@@ -574,7 +838,7 @@ public class RefundPageFragment extends Fragment {
 			EditText etPriceType=(EditText)m_view.findViewById(R.id.etPriceType);
 
 			// Не знаю, зачем проверяю, у них и возрватов то не бывает
-			if (g.Common.PHARAON)
+			if (g.Common.PHARAOH)
 			{
 				etDebt.setVisibility(View.GONE);
 				etDebtPast.setVisibility(View.GONE);
@@ -678,7 +942,8 @@ public class RefundPageFragment extends Fragment {
 					Intent intent=new Intent(getActivity(), ClientsActivity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					intent.putExtra("client_id", g.MyDatabase.m_refund_editing.client_id.toString());
-					startActivityForResult(intent, SELECT_CLIENT_FROM_REFUND_REQUEST);
+					//startActivityForResult(intent, SELECT_CLIENT_FROM_REFUND_REQUEST);
+					selectClientFromRefundActivityResultLauncher.launch(intent);
 				}
 			});
 			
@@ -691,7 +956,8 @@ public class RefundPageFragment extends Fragment {
 					Intent intent=new Intent(getActivity(), AgreementsActivity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					intent.putExtra("client_id", g.MyDatabase.m_refund_editing.client_id.toString());
-					startActivityForResult(intent, SELECT_AGREEMENT_FROM_REFUND_REQUEST);
+					//startActivityForResult(intent, SELECT_AGREEMENT_FROM_REFUND_REQUEST);
+					selectAgreementFromRefundActivityResultLauncher.launch(intent);
 				}
 			});
 			
@@ -704,7 +970,8 @@ public class RefundPageFragment extends Fragment {
 					Intent intent=new Intent(getActivity(), TradePointsActivity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					intent.putExtra("client_id", g.MyDatabase.m_refund_editing.client_id.toString());
-					startActivityForResult(intent, SELECT_TRADE_POINT_FROM_REFUND_REQUEST);
+					//startActivityForResult(intent, SELECT_TRADE_POINT_FROM_REFUND_REQUEST);
+					selectTradePointFromRefundActivityResultLauncher.launch(intent);
 				}
 			});
 			
@@ -757,7 +1024,7 @@ public class RefundPageFragment extends Fragment {
 				}
 			});
 	        
-	        if (g.Common.MEGA||g.Common.PHARAON)
+	        if (g.Common.MEGA||g.Common.PHARAOH)
 	        {
 	        	View layoutAgreement=m_view.findViewById(R.id.layoutAgreement);
 	        	layoutAgreement.setVisibility(View.GONE);
@@ -796,7 +1063,7 @@ public class RefundPageFragment extends Fragment {
 				}
 	        });
 	        
-	        if (g.Common.MEGA||g.Common.PHARAON)
+	        if (g.Common.MEGA||g.Common.PHARAOH)
 	        {
 	        	View tvStock=m_view.findViewById(R.id.textViewStock);
 	        	tvStock.setVisibility(View.GONE);
@@ -839,7 +1106,7 @@ public class RefundPageFragment extends Fragment {
 	        // Куратор
 	        final EditText etCurator=(EditText)m_view.findViewById(R.id.editTextCurator);
 	        etCurator.setText(rec.stuff_curator_name);
-	        if (g.Common.PHARAON)
+	        if (g.Common.PHARAOH)
 	        {
 	        	etCurator.setVisibility(View.GONE);
 		        TextView textViewCurator=(TextView)m_view.findViewById(R.id.textViewCurator);
@@ -947,8 +1214,9 @@ public class RefundPageFragment extends Fragment {
     	    */
 		    	ExpandableListView lvSimple = (ExpandableListView) m_view.findViewById(R.id.listViewRefundLines);
 				int defaultTextColor=Common.getColorFromAttr(getActivity(), R.attr.myTextColor);
-		    	if (g.MyDatabase.m_refundLinesAdapter==null)
-		    		g.MyDatabase.m_refundLinesAdapter = new RefundExpListAdapter(getActivity().getApplicationContext(), defaultTextColor);
+		    	if (g.MyDatabase.m_refundLinesAdapter==null) {
+					g.MyDatabase.m_refundLinesAdapter = new RefundExpListAdapter(getActivity().getApplicationContext(), defaultTextColor);
+				}
     	        lvSimple.setAdapter(g.MyDatabase.m_refundLinesAdapter);
     	        
     	        /*
@@ -977,7 +1245,8 @@ public class RefundPageFragment extends Fragment {
     					Intent intent=new Intent(getActivity(), NomenclatureActivity.class);
     					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
     					intent.putExtra("MODE", "REFUND");
-    					startActivityForResult(intent, OPEN_NOMENCLATURE_FROM_REFUND_REQUEST);
+    					//startActivityForResult(intent, OPEN_NOMENCLATURE_FROM_REFUND_REQUEST);
+						openNomenclatureFromRefundActivityResultLauncher.launch(intent);
     					//startActivity(intent);
     				}
     			});
@@ -1101,7 +1370,8 @@ public class RefundPageFragment extends Fragment {
 					restCursor.close();
 				}
 
-				startActivityForResult(intent, RefundActivity.QUANTITY_REQUEST);
+				//startActivityForResult(intent, RefundActivity.QUANTITY_REQUEST);
+				quantityRequestFromRefundActivityResultLauncher.launch(intent);
 				
 			}
 			break;
@@ -1138,7 +1408,7 @@ public class RefundPageFragment extends Fragment {
 			        //Toast.makeText(this, "keyboard hidden", Toast.LENGTH_SHORT).show();
 					if (buttonOk!=null)
 						buttonOk.setVisibility(View.VISIBLE);
-					if (buttonPrint!=null&&Common.PHARAON)
+					if (buttonPrint!=null&&Common.PHARAOH)
 						buttonPrint.setVisibility(View.VISIBLE);
 					if (buttonClose!=null)
 						buttonClose.setVisibility(View.VISIBLE);

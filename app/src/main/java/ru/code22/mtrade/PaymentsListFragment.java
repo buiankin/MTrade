@@ -1,9 +1,11 @@
 package ru.code22.mtrade;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,10 @@ import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cursoradapter.widget.SimpleCursorAdapter;
@@ -27,6 +33,7 @@ import androidx.loader.content.Loader;
 
 public class PaymentsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private ActivityResultLauncher<Intent> selectClientActivityResultLauncher;
     private UniversalInterface mListener;
 
     private String m_client_id;
@@ -89,6 +96,39 @@ public class PaymentsListFragment extends Fragment implements LoaderManager.Load
 
         readDataFromBundle(savedInstanceState);
 
+        selectClientActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+                            Intent data = result.getData();
+
+                            if (data != null) {
+                                long id = data.getLongExtra("id", 0);
+                                //Toast.makeText(MainActivity.this, "id=" + id, Toast.LENGTH_SHORT).show();
+                                Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.CLIENTS_CONTENT_URI, id);
+                                //Cursor cursor=getContentResolver().query(singleUri, mProjection, "", selectionArgs, null);
+                                Cursor cursor = getActivity().getContentResolver().query(singleUri, new String[]{"descr", "id"}, null, null, null);
+                                if (cursor.moveToNext()) {
+                                    int descrIndex = cursor.getColumnIndex("descr");
+                                    int idIndex = cursor.getColumnIndex("id");
+                                    String newWord = cursor.getString(descrIndex);
+                                    String clientId = cursor.getString(idIndex);
+
+                                    Bundle parameters = new Bundle();
+                                    parameters.putString("client_id", clientId);
+                                    parameters.putString("client_descr", newWord);
+                                    mListener.onUniversalEventListener("FilterClient", parameters);
+                                }
+                                cursor.close();
+                            }
+
+                        }
+                    }
+                });
+
+
         View view = inflater.inflate(R.layout.payments_list_fragment, container, false);
 
         EditText etClient = (EditText) view.findViewById(R.id.etClient);
@@ -114,7 +154,8 @@ public class PaymentsListFragment extends Fragment implements LoaderManager.Load
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ClientsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivityForResult(intent, MainActivity.SELECT_CLIENT_REQUEST);
+                //startActivityForResult(intent, MainActivity.SELECT_CLIENT_REQUEST);
+                selectClientActivityResultLauncher.launch(intent);
             }
         });
 

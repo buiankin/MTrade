@@ -267,7 +267,7 @@ public class OrdersHelpers {
 				rec.stuff_discount_procent = 0.0;
 			}
 			cursor.close();
-		    if (g.Common.PHARAON)
+		    if (g.Common.PHARAOH)
 		    {
 		    	// Скидка в документе
 			    Cursor discountCursor=activity.getContentResolver().query(MTradeContentProvider.SIMPLE_DISCOUNTS_CONTENT_URI, new String[]{"descr", "priceProcent"}, "id=?", new String[]{rec.simple_discount_id.toString()}, null);
@@ -349,7 +349,7 @@ public class OrdersHelpers {
 			{
 				rec.shipping_date=new String(rec.datedoc);
 			}
-    		if (g.Common.PHARAON)
+    		if (g.Common.PHARAOH)
     		{
         		rec.shipping_begin_time="";
     			rec.create_client=1;
@@ -381,7 +381,7 @@ public class OrdersHelpers {
 			rec.gpsaccuracy=0.0;
 			rec.gpsstate=-1;
 			rec.accept_coord=1;
-			if (g.Common.PHARAON)
+			if (g.Common.PHARAOH)
 			{
 				// заляп (потому, что клиент не всегда выбирается, а иногда создается)
 				rec.price_type_id=new MyID(MyWebExchange.dummyId);
@@ -681,7 +681,7 @@ public class OrdersHelpers {
 		double oldOrderSum=g.MyDatabase.m_order_editing.GetOrderSum(null, false);
 		// пересчет стоимости билетов
 		/*
-		if (g.Common.PHARAON)
+		if (g.Common.PHARAOH)
 		{
 			g.MyDatabase.m_order_editing.ticket_m=Math.floor(g.MyDatabase.m_order_editing.stuff_full_ticket_m*(100.0+g.MyDatabase.m_order_editing.stuff_discount_procent)+0.00001)/100.0;
 			g.MyDatabase.m_order_editing.ticket_w=Math.floor(g.MyDatabase.m_order_editing.stuff_full_ticket_w*(100.0+g.MyDatabase.m_order_editing.stuff_discount_procent)+0.00001)/100.0;
@@ -734,7 +734,7 @@ public class OrdersHelpers {
 				}
 				cursorNomenclature.close();
 			} else
-			if (g.Common.TITAN||g.Common.PHARAON||g.Common.ISTART||g.Common.FACTORY)
+			if (g.Common.TITAN||g.Common.PHARAOH||g.Common.ISTART||g.Common.FACTORY)
 			{
 				Cursor cursorPrice=activity.getContentResolver().query(MTradeContentProvider.PRICES_CONTENT_URI, new String[]{"price", "k"}, "nomenclature_id=? and price_type_id=?", new String[]{line.nomenclature_id.toString(), g.MyDatabase.m_order_editing.price_type_id.toString()}, null);
 				if (cursorPrice.moveToFirst())

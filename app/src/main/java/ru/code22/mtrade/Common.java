@@ -75,7 +75,7 @@ public class Common {
 	//public static final String UserFtpHomeDir="";
 	
 	public boolean TITAN = false;
-	public boolean PHARAON = false;
+	public boolean PHARAOH = false;
 	public boolean TANDEM = false;
 	public boolean ISTART = false;
 	public boolean FACTORY = false;
@@ -94,7 +94,7 @@ public class Common {
 
     public boolean isDataFormatWithTradePoints()
     {
-        if (MEGA||PHARAON||TANDEM||TITAN||FACTORY)
+        if (MEGA||PHARAOH||TANDEM||TITAN||FACTORY)
             return false;
         return true;
     }

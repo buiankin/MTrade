@@ -1362,7 +1362,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.RouteViewH
                 if (order.datedoc.length() == 14) {
                     StringBuilder sb = new StringBuilder();
                     sb.append(Common.dateStringAsText(order.datedoc));
-                    if (g.Common.PHARAON || g.Common.FACTORY) {
+                    if (g.Common.PHARAOH || g.Common.FACTORY) {
                         if (order.shipping_date.length() >= 8) {
                             sb.append('(').append(order.shipping_date).append(')');
                         }

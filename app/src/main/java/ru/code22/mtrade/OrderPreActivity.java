@@ -2,7 +2,6 @@ package ru.code22.mtrade;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
 
 import net.sourceforge.jheader.App1Header;
 import net.sourceforge.jheader.ExifFormatException;
@@ -344,7 +343,7 @@ public class OrderPreActivity extends Activity {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 				   }
-	    			if (requestCode==CAMERA_REQUEST2)
+				   if (requestCode==CAMERA_REQUEST2)
 	    			{
 	    				m_bHavePicture2=true;
 	    			} else

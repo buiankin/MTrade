@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.cursoradapter.widget.SimpleCursorAdapter;
@@ -21,6 +25,7 @@ import ru.code22.mtrade.MyDatabase.MyID;
 
 import android.app.SearchManager;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +33,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -54,9 +60,13 @@ import android.widget.Spinner;
 
 public class ContractsActivity extends AppCompatActivity
 implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListener {
-	
-	static final int QUANTITY_REQUEST = 1;
-	static final int OPEN_IMAGE_REQUEST = 2;
+
+	private ActivityResultLauncher<Intent> openImageActivityResultLauncher;
+	private ActivityResultLauncher<Intent> quantityRequestActivityResultLauncher;
+
+
+	//static final int QUANTITY_REQUEST = 1;
+	//static final int OPEN_IMAGE_REQUEST = 2;
 	
 	static final int CONTRACTS_RESULT_DOCUMENT_CHANGED=1;
 	
@@ -270,7 +280,8 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 						Intent intent=new Intent(ContractsActivity.this, ImageActivity.class);
 						intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 						intent.putExtra("image_file", imageFile.getAbsolutePath());
-						startActivityForResult(intent, OPEN_IMAGE_REQUEST);
+						//startActivityForResult(intent, OPEN_IMAGE_REQUEST);
+						openImageActivityResultLauncher.launch(intent);
 	            	}
             	}
             }
@@ -356,8 +367,37 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 		}
 		
 		PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
-		
-		
+
+		openImageActivityResultLauncher  = registerForActivityResult(
+				new ActivityResultContracts.StartActivityForResult(),
+				new ActivityResultCallback<ActivityResult>() {
+					@Override
+					public void onActivityResult(ActivityResult result) {
+						if (result.getResultCode() == ImageActivity.RESULT_OK) {
+							Intent data = result.getData();
+							if (data != null) {
+								// TODO обработчика не было, наверное, он и не нужен тут
+							}
+						}
+					}
+				});
+
+		quantityRequestActivityResultLauncher = registerForActivityResult(
+				new ActivityResultContracts.StartActivityForResult(),
+				new ActivityResultCallback<ActivityResult>() {
+					@Override
+					public void onActivityResult(ActivityResult result) {
+						if (result.getResultCode() == QuantityActivity.QUANTITY_RESULT_OK) {
+							Intent data = result.getData();
+							if (data != null) {
+								// TODO обработчика не было, наверное, он и не нужен тут
+							}
+						}
+					}
+				});
+
+
+
 		lvContracts = (ListView)findViewById(R.id.lvContracts);
 		lvContracts.setEmptyView(findViewById(android.R.id.empty));
 		
@@ -474,7 +514,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
             		w1.setBackgroundColor(myBackgroundColor);
             		int nom_quantity_index=cursor.getColumnIndex("nom_quantity");
         			double quantity=cursor.getDouble(nom_quantity_index);
-        			if (Common.PHARAON||m_mode.equals("REFUND"))
+        			if (Common.PHARAOH||m_mode.equals("REFUND"))
         			{
         				((TextView)view).setText("");
         			} else
@@ -778,7 +818,8 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 				    intent.putExtra("rest", cursorList.getDouble(nom_quantityIndex));
 					//intent.putExtra("MODE", m_mode);
 				    
-					startActivityForResult(intent, QUANTITY_REQUEST);
+					//startActivityForResult(intent, QUANTITY_REQUEST);
+					quantityRequestActivityResultLauncher.launch(intent);
 				}
 				
 			}
@@ -935,7 +976,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 			}
 		});
 		
-		if (Common.PHARAON)
+		if (Common.PHARAOH)
 		{
 			buttonNomenclatureInStock.setVisibility(View.GONE);
 			buttonNomenclaturePacks.setVisibility(View.GONE);
@@ -1151,7 +1192,8 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
         // longer using it.
         mAdapter.swapCursor(null);
     }
-    
+
+	/*
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	super.onActivityResult(requestCode, resultCode, data);
         //String name = data.getStringExtra("name");
@@ -1161,7 +1203,6 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
       	case QUANTITY_REQUEST:
       		if (resultCode==QuantityActivity.QUANTITY_RESULT_OK)
       		{
-      			/*
       			m_bQuantityChanged=true;
 	      		if (data!=null)
 	      		{
@@ -1370,11 +1411,11 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 						}
 		      		}
 	      		}
-	      		*/
       		}
       		break;
       	}
     }
+	*/
     
     private void onCloseActivity()
     {

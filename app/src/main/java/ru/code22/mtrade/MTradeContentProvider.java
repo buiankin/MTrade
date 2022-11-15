@@ -4599,7 +4599,7 @@ public class MTradeContentProvider extends ContentProvider {
                             "join nomenclature on nomenclature_id=nomenclature.id and isFolder<>1 " +
                             ";");
                 } else
-                    //if (g.Common.TITAN||g.Common.PHARAON||g.Common.ISTART)
+                    //if (g.Common.TITAN||g.Common.PHARAOH||g.Common.ISTART)
                     if (sUriMatcher.match(uri) == URI_DISCOUNTS_STUFF_SIMPLE) {
                         // Тут простейший (обычный для 1С) вариант, скидка от номенклатуры не зависит
                         // а только от договора, но номенклатуру все равно выберем

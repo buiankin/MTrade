@@ -4,6 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import ru.code22.mtrade.MyDatabase.MessageRecord;
@@ -49,13 +53,17 @@ public class MessageActivity extends AppCompatActivity {
     public static final int IDD_DATE_1 = 3;
     public static final int IDD_DATE_2 = 4;
 
-    private static final int SELECT_ABONENT_REQUEST = 1;
-    private static final int SELECT_CLIENT_REQUEST = 2;
-    private static final int SELECT_AGREEMENT_REQUEST = 3;
+    //private static final int SELECT_ABONENT_REQUEST = 1;
+    //private static final int SELECT_CLIENT_REQUEST = 2;
+    //private static final int SELECT_AGREEMENT_REQUEST = 3;
 	
 	static final int MESSAGE_RESULT_OK=1;
 	static final int MESSAGE_RESULT_CANCEL=2;
-	
+
+	private ActivityResultLauncher<Intent> selectAbonentActivityResultLauncher;
+	private ActivityResultLauncher<Intent> selectClientActivityResultLauncher;
+	private ActivityResultLauncher<Intent> selectAgreementActivityResultLauncher;
+
 	List<String> m_list_message_types;	
 	List<Integer> m_list_message_types_idx;
 	
@@ -245,6 +253,123 @@ public class MessageActivity extends AppCompatActivity {
 		*/
 		setContentView(R.layout.message);
 
+		selectAbonentActivityResultLauncher = registerForActivityResult(
+				new ActivityResultContracts.StartActivityForResult(),
+				new ActivityResultCallback<ActivityResult>() {
+					@Override
+					public void onActivityResult(ActivityResult result) {
+						if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+							Intent data = result.getData();
+
+							if (data != null) {
+								long id=data.getLongExtra("id", 0);
+								Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.AGENTS_CONTENT_URI, id);
+								String[] mProjection =
+										{
+												"descr",
+												"id"
+										};
+								Cursor cursor=getContentResolver().query(singleUri, mProjection, null, null, null);
+								if (cursor!=null &&cursor.moveToNext())
+								{
+									int descrIndex = cursor.getColumnIndex("descr");
+									int idIndex = cursor.getColumnIndex("id");
+									String descr = cursor.getString(descrIndex);
+									String abonentId = cursor.getString(idIndex);
+									EditText et = (EditText) findViewById(R.id.etMessageAbonent);
+									et.setText(descr);
+									if ((g.MyDatabase.m_message_editing.acknowledged&4)!=0)
+									{
+										g.MyDatabase.m_message_editing.receiver_id=new MyID(abonentId);
+									} else
+									{
+										g.MyDatabase.m_message_editing.sender_id=new MyID(abonentId);
+									}
+									cursor.close();
+									setModified();
+								}
+							}
+
+						}
+					}
+				});
+
+
+		selectClientActivityResultLauncher = registerForActivityResult(
+				new ActivityResultContracts.StartActivityForResult(),
+				new ActivityResultCallback<ActivityResult>() {
+					@Override
+					public void onActivityResult(ActivityResult result) {
+						if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+							Intent data = result.getData();
+
+							if (data != null) {
+								long id=data.getLongExtra("id", 0);
+								Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.CLIENTS_CONTENT_URI, id);
+								String[] mProjection =
+										{
+												"descr",
+												"id"
+										};
+								Cursor cursor=getContentResolver().query(singleUri, mProjection, null, null, null);
+								if (cursor!=null &&cursor.moveToNext())
+								{
+									int descrIndex = cursor.getColumnIndex("descr");
+									int idIndex = cursor.getColumnIndex("id");
+									String descr = cursor.getString(descrIndex);
+									String clientId = cursor.getString(idIndex);
+									EditText etClient = (EditText) findViewById(R.id.etMessageClient);
+									etClient.setText(descr);
+									EditText etAgreement = (EditText) findViewById(R.id.etMessageAgreement);
+									etAgreement.setText(getResources().getString(R.string.agreement_not_set));
+
+									g.MyDatabase.m_message_editing.client_id=new MyID(clientId);
+									g.MyDatabase.m_message_editing.agreement_id=new MyID();
+									cursor.close();
+									setModified();
+								}
+							}
+
+						}
+					}
+				});
+
+		selectAgreementActivityResultLauncher = registerForActivityResult(
+				new ActivityResultContracts.StartActivityForResult(),
+				new ActivityResultCallback<ActivityResult>() {
+					@Override
+					public void onActivityResult(ActivityResult result) {
+						if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+							Intent data = result.getData();
+
+							if (data != null) {
+								long id=data.getLongExtra("id", 0);
+								Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.AGREEMENTS_CONTENT_URI, id);
+								String[] mProjection =
+										{
+												"descr",
+												"id"
+										};
+								Cursor cursor=getContentResolver().query(singleUri, mProjection, null, null, null);
+								if (cursor!=null &&cursor.moveToNext())
+								{
+									int descrIndex = cursor.getColumnIndex("descr");
+									int idIndex = cursor.getColumnIndex("id");
+									String descr = cursor.getString(descrIndex);
+									String agreementtId = cursor.getString(idIndex);
+									EditText et = (EditText) findViewById(R.id.etMessageAgreement);
+									et.setText(descr);
+									g.MyDatabase.m_message_editing.agreement_id=new MyID(agreementtId);
+									cursor.close();
+									setModified();
+								}
+							}
+
+						}
+					}
+				});
+
+
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
@@ -335,7 +460,8 @@ public class MessageActivity extends AppCompatActivity {
 			public void onClick(View v) {
 				Intent intent=new Intent(MessageActivity.this, AgentsActivity.class);
 				intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivityForResult(intent, SELECT_ABONENT_REQUEST);
+				//startActivityForResult(intent, SELECT_ABONENT_REQUEST);
+				selectAbonentActivityResultLauncher.launch(intent);
 			}
 		});
 		
@@ -373,7 +499,8 @@ public class MessageActivity extends AppCompatActivity {
 			public void onClick(View v) {
 				Intent intent=new Intent(MessageActivity.this, ClientsActivity.class);
 				intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivityForResult(intent, SELECT_CLIENT_REQUEST);
+				//startActivityForResult(intent, SELECT_CLIENT_REQUEST);
+				selectClientActivityResultLauncher.launch(intent);
 			}
 		});
 		
@@ -401,7 +528,8 @@ public class MessageActivity extends AppCompatActivity {
 				Intent intent=new Intent(MessageActivity.this, AgreementsActivity.class);
 				intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				intent.putExtra("client_id", MySingleton.getInstance().MyDatabase.m_message_editing.client_id.toString());
-				startActivityForResult(intent, SELECT_AGREEMENT_REQUEST);
+				//startActivityForResult(intent, SELECT_AGREEMENT_REQUEST);
+				selectAgreementActivityResultLauncher.launch(intent);
 			}
 		});
 
@@ -805,7 +933,8 @@ public void onDateSet(DatePicker view, int selectedYear,
 			finish();
 		}
 	}
-	
+
+	/*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	MySingleton g=MySingleton.getInstance();
@@ -900,7 +1029,7 @@ public void onDateSet(DatePicker view, int selectedYear,
 	    }
     	
     }
-    
+    */
     
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

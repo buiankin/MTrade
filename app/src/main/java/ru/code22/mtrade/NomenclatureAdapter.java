@@ -387,7 +387,7 @@ public class NomenclatureAdapter extends RecyclerViewCursorAdapter<NomenclatureA
             //View w1=(View)view.getParent().getParent();
             //w1.setBackgroundColor(myBackgroundColor);
             double quantity=cursor.getDouble(NOM_QUANTITY_INDEX);
-            if (g.Common.PHARAON||m_mode.equals("REFUND"))
+            if (g.Common.PHARAOH||m_mode.equals("REFUND"))
             {
                 mNomenclatureLineRests.setText("");
             } else

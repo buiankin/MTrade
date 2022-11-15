@@ -276,7 +276,7 @@ public class DistribsActivity extends AppCompatActivity implements onSomeDistrib
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
-	    if (MySingleton.getInstance().Common.PHARAON)
+	    if (MySingleton.getInstance().Common.PHARAOH)
 	    {
 	    	getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 	    }

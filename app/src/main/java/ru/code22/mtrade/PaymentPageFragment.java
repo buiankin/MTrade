@@ -25,14 +25,24 @@ import android.widget.TextView;
 
 import java.util.Random;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 
 public class PaymentPageFragment extends Fragment {
 
-    static final int SELECT_CLIENT_FROM_PAYMENT_REQUEST = 1;
-    static final int SELECT_AGREEMENT_FROM_PAYMENT_REQUEST = 2;
-    static final int SELECT_MANAGER_FROM_PAYMENT_REQUEST = 3;
-    static final int SELECT_VICARIOUS_POWER_FROM_PAYMENT_REQUEST = 4;
+    private ActivityResultLauncher<Intent> selectClientFromPaymentActivityResultLauncher;
+    private ActivityResultLauncher<Intent> selectAgreementFromPaymentActivityResultLauncher;
+    private ActivityResultLauncher<Intent> selectManagerFromPaymentActivityResultLauncher;
+    private ActivityResultLauncher<Intent> selectVicariousPowerFromPaymentActivityResultLauncher;
+
+
+    //static final int SELECT_CLIENT_FROM_PAYMENT_REQUEST = 1;
+    //static final int SELECT_AGREEMENT_FROM_PAYMENT_REQUEST = 2;
+    //static final int SELECT_MANAGER_FROM_PAYMENT_REQUEST = 3;
+    //static final int SELECT_VICARIOUS_POWER_FROM_PAYMENT_REQUEST = 4;
 
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
 
@@ -61,6 +71,7 @@ public class PaymentPageFragment extends Fragment {
     }
 
 
+    /*
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -263,8 +274,8 @@ public class PaymentPageFragment extends Fragment {
                 break;
             }
         }
-
     }
+    */
 
 
     private boolean checkVicariousPowerVisibility(View m_view)
@@ -357,6 +368,232 @@ public class PaymentPageFragment extends Fragment {
 
         //Globals g=(Globals)getActivity().getApplication();
         MySingleton g = MySingleton.getInstance();
+
+        selectClientFromPaymentActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data != null) {
+                                View view0=m_view;
+                                long _id=data.getLongExtra("id", 0);
+                                if (someEventListener.onPaymentClientSelected(view0, _id))
+                                {
+                                    setModified();
+                                    clearVicariousPower(view0);
+                                    boolean bWrongAgreement=true;
+                                    // Проверим, принадлежит ли договор текущему контрагенту
+                                    Cursor agreementsCursor=getActivity().getContentResolver().query(MTradeContentProvider.AGREEMENTS_CONTENT_URI, new String[]{"owner_id"}, "id=?", new String[]{g.MyDatabase.m_payment_editing.agreement_id.toString()}, null);
+                                    if (agreementsCursor.moveToNext())
+                                    {
+                                        int owner_idIndex = agreementsCursor.getColumnIndex("owner_id");
+                                        String owner_id = agreementsCursor.getString(owner_idIndex);
+                                        if (g.MyDatabase.m_payment_editing.client_id.toString().equals(owner_id))
+                                            bWrongAgreement=false;
+                                    }
+                                    agreementsCursor.close();
+                                    if (bWrongAgreement)
+                                    {
+                                        // Не принадлежит, установим договор по умолчанию, если он единственный
+                                        Cursor defaultAgreementCursor=getActivity().getContentResolver().query(MTradeContentProvider.AGREEMENTS_CONTENT_URI, new String[]{"_id"}, "owner_id=?", new String[]{g.MyDatabase.m_payment_editing.client_id.toString()}, null);
+                                        if (defaultAgreementCursor!=null &&defaultAgreementCursor.moveToNext())
+                                        {
+                                            int _idIndex = defaultAgreementCursor.getColumnIndex("_id");
+                                            Long _idAgreement = defaultAgreementCursor.getLong(_idIndex);
+                                            if (!defaultAgreementCursor.moveToNext())
+                                            {
+                                                // Есть единственный договор
+                                                someEventListener.onPaymentAgreementSelected(view0, _idAgreement);
+                                            } else
+                                            {
+                                                // Есть несколько договоров
+                                                someEventListener.onPaymentAgreementSelected(view0, 0);
+                                            }
+                                        } else
+                                        {
+                                            // Договора нет
+                                            someEventListener.onPaymentAgreementSelected(view0, 0);
+                                        }
+                                    }
+                                }
+                                checkVicariousPowerVisibility(view0);
+                            }
+                        }
+                    }
+                });
+
+        selectAgreementFromPaymentActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data != null) {
+                                View view0=m_view;
+                                //EditText et=(EditText)view0.findViewById(R.id.etAgreement);
+                                //TextView tvOrganization=(TextView)view0.findViewById(R.id.textViewOrdersOrganization);
+                                long _id=data.getLongExtra("id", 0);
+                                if (_id!=0)
+                                {
+                                    if (someEventListener.onPaymentAgreementSelected(view0, _id))
+                                    {
+                                        setModified();
+                                        clearVicariousPower(view0);
+                                    }
+                                } else
+                                {
+                                    g.MyDatabase.m_payment_editing.agreement_id=new MyDatabase.MyID(data.getStringExtra("agreement_id"));
+                                    g.MyDatabase.m_payment_editing.stuff_agreement_name=data.getStringExtra("agreement_descr");
+                                    g.MyDatabase.m_payment_editing.stuff_organization_name=data.getStringExtra("organization_descr");
+
+                                    g.MyDatabase.m_payment_editing.manager_id=new MyDatabase.MyID(data.getStringExtra("manager_id"));
+                                    g.MyDatabase.m_payment_editing.stuff_manager_name=data.getStringExtra("manager_descr");
+
+                                    TextView textViewPaymentOrganization=(TextView)view0.findViewById(R.id.textViewPaymentOrganization);
+                                    textViewPaymentOrganization.setText(g.MyDatabase.m_payment_editing.stuff_organization_name);
+
+                                    EditText etPaymentAgreement=(EditText)view0.findViewById(R.id.etPaymentAgreement);
+                                    etPaymentAgreement.setText(g.MyDatabase.m_payment_editing.stuff_agreement_name);
+
+                                    EditText etPaymentManager=(EditText)view0.findViewById(R.id.etPaymentManager);
+                                    etPaymentManager.setText(g.MyDatabase.m_payment_editing.stuff_manager_name);
+
+                                    double sumDoc=data.getDoubleExtra("sum", -1.0);
+                                    if (sumDoc>=0.0)
+                                    {
+                                        g.MyDatabase.m_payment_editing.sumDoc=sumDoc;
+                                        EditText editTextPaymentSum=(EditText)view0.findViewById(R.id.editTextPaymentSum);
+                                        editTextPaymentSum.setText(Math.abs(g.MyDatabase.m_payment_editing.sumDoc)>0.001?Common.DoubleToStringFormat(g.MyDatabase.m_payment_editing.sumDoc, "%.2f"):"");
+                                    }
+
+                                    setModified();
+                                    clearVicariousPower(view0);
+                                }
+                                checkVicariousPowerVisibility(view0);
+                            }
+                        }
+                    }
+                });
+
+        selectManagerFromPaymentActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data != null) {
+                                View view0=m_view;
+
+                                setModified();
+
+                                EditText et=(EditText)view0.findViewById(R.id.etPaymentManager);
+
+                                long _id=data.getLongExtra("id", 0);
+                                if (_id%2==0)
+                                {
+                                    Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.CURATORS_CONTENT_URI, _id/2);
+                                    Cursor cursor=getActivity().getContentResolver().query(singleUri, new String[]{"id", "descr"}, null, null, null);
+                                    if (cursor.moveToNext())
+                                    {
+                                        int descrIndex = cursor.getColumnIndex("descr");
+                                        int idIndex = cursor.getColumnIndex("id");
+                                        String descr = cursor.getString(descrIndex);
+                                        String curatorId = cursor.getString(idIndex);
+                                        et.setText(descr);
+                                        if (!g.MyDatabase.m_payment_editing.manager_id.toString().equals(curatorId))
+                                        {
+                                            clearVicariousPower(view0);
+                                        }
+                                        g.MyDatabase.m_payment_editing.manager_id=new MyDatabase.MyID(curatorId);
+                                        g.MyDatabase.m_payment_editing.stuff_manager_name=descr;
+                                    } else
+                                    {
+                                        g.MyDatabase.m_payment_editing.manager_id=new MyDatabase.MyID();
+                                        g.MyDatabase.m_payment_editing.stuff_manager_name=getResources().getString(R.string.manager_not_set);
+                                        et.setText(g.MyDatabase.m_payment_editing.stuff_manager_name);
+                                        clearVicariousPower(view0);
+                                    }
+                                    cursor.close();
+                                } else
+                                {
+                                    Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.SALDO_EXTENDED_CONTENT_URI, (_id-1)/2);
+                                    Cursor cursor=getActivity().getContentResolver().query(singleUri, new String[]{"manager_id", "manager_descr"}, null, null, null);
+                                    if (cursor.moveToNext())
+                                    {
+                                        int descrIndex = cursor.getColumnIndex("manager_descr");
+                                        int idIndex = cursor.getColumnIndex("manager_id");
+                                        String descr = cursor.getString(descrIndex);
+                                        String curatorId = cursor.getString(idIndex);
+                                        et.setText(descr);
+                                        if (!g.MyDatabase.m_payment_editing.manager_id.toString().equals(curatorId))
+                                        {
+                                            clearVicariousPower(view0);
+                                        }
+                                        g.MyDatabase.m_payment_editing.manager_id=new MyDatabase.MyID(curatorId);
+                                        g.MyDatabase.m_payment_editing.stuff_manager_name=descr;
+                                    } else
+                                    {
+                                        g.MyDatabase.m_payment_editing.manager_id=new MyDatabase.MyID();
+                                        g.MyDatabase.m_payment_editing.stuff_manager_name=getResources().getString(R.string.manager_not_set);
+                                        et.setText(g.MyDatabase.m_payment_editing.stuff_manager_name);
+                                        clearVicariousPower(view0);
+                                    }
+                                    cursor.close();
+                                }
+                            }
+                        }
+                    }
+                });
+
+        selectVicariousPowerFromPaymentActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data != null) {
+                                View view0=m_view;
+
+                                setModified();
+
+                                EditText et=(EditText)view0.findViewById(R.id.etPaymentVicariousPower);
+
+                                long _id=data.getLongExtra("id", 0);
+
+                                Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.VICARIOUS_POWER_CONTENT_URI, _id);
+                                Cursor cursor=getActivity().getContentResolver().query(singleUri, new String[]{"id", "descr", "organization_id", "client_id"}, null, null, null);
+                                if (cursor.moveToNext())
+                                {
+                                    int descrIndex = cursor.getColumnIndex("descr");
+                                    int idIndex = cursor.getColumnIndex("id");
+                                    int organization_idIndex = cursor.getColumnIndex("organization_id");
+                                    int client_idIndex = cursor.getColumnIndex("client_id");
+                                    String descr = cursor.getString(descrIndex);
+                                    String vicariousPowerId = cursor.getString(idIndex);
+                                    String organization_id = cursor.getString(organization_idIndex);
+                                    String client_id = cursor.getString(client_idIndex);
+                                    // TODO можно было бы и проверить, что клиент и организация совпали
+                                    et.setText(descr);
+                                    g.MyDatabase.m_payment_editing.vicarious_power_id=new MyDatabase.MyID(vicariousPowerId);
+                                    g.MyDatabase.m_payment_editing.vicarious_power_descr=descr;
+                                } else
+                                {
+                                    // вообще это невозможно
+                                    g.MyDatabase.m_payment_editing.vicarious_power_id=new MyDatabase.MyID();
+                                    g.MyDatabase.m_payment_editing.vicarious_power_descr=getResources().getString(R.string.vicarious_power_not_set);
+                                    et.setText(g.MyDatabase.m_payment_editing.vicarious_power_descr);
+                                }
+                                cursor.close();
+                            }
+                        }
+                    }
+                });
+
 
         bHeaderPage = false;
         bSettingsPage = false;
@@ -485,7 +722,8 @@ public class PaymentPageFragment extends Fragment {
                     // Только у нас и только для платежей
                     if (g.Common.PRAIT||g.Common.PRODLIDER)
                         intent.putExtra("show_email_for_cheques", true);
-                    startActivityForResult(intent, SELECT_CLIENT_FROM_PAYMENT_REQUEST);
+                    //startActivityForResult(intent, SELECT_CLIENT_FROM_PAYMENT_REQUEST);
+                    selectClientFromPaymentActivityResultLauncher.launch(intent);
                 }
             });
 
@@ -509,7 +747,8 @@ public class PaymentPageFragment extends Fragment {
                     }
                     intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("client_id", g.MyDatabase.m_payment_editing.client_id.toString());
-                    startActivityForResult(intent, SELECT_AGREEMENT_FROM_PAYMENT_REQUEST);
+                    //startActivityForResult(intent, SELECT_AGREEMENT_FROM_PAYMENT_REQUEST);
+                    selectAgreementFromPaymentActivityResultLauncher.launch(intent);
                 }
             });
 
@@ -523,7 +762,8 @@ public class PaymentPageFragment extends Fragment {
                     intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("payment", true);
                     intent.putExtra("client_id", g.MyDatabase.m_payment_editing.client_id.toString());
-                    startActivityForResult(intent, SELECT_MANAGER_FROM_PAYMENT_REQUEST);
+                    //startActivityForResult(intent, SELECT_MANAGER_FROM_PAYMENT_REQUEST);
+                    selectManagerFromPaymentActivityResultLauncher.launch(intent);
                 }
             });
 
@@ -554,7 +794,8 @@ public class PaymentPageFragment extends Fragment {
                         intent.putExtra("organization_id", organization_id);
                         intent.putExtra("agreement_id", g.MyDatabase.m_payment_editing.agreement_id.toString());
                     }
-                    startActivityForResult(intent, SELECT_VICARIOUS_POWER_FROM_PAYMENT_REQUEST);
+                    //startActivityForResult(intent, SELECT_VICARIOUS_POWER_FROM_PAYMENT_REQUEST);
+                    selectVicariousPowerFromPaymentActivityResultLauncher.launch(intent);
 
                 }
             });

@@ -155,7 +155,7 @@ public class ExchangeFragment extends Fragment {
         Button btnNomenclaturePhotos = (Button) view.findViewById(R.id.btnNomenclaturePhotos); // 2
         Button btnExchangeWebService = (Button) view.findViewById(R.id.btnExchangeWebService);
 
-        if (g.Common.PHARAON) {
+        if (g.Common.PHARAOH) {
             btnConnect.setVisibility(View.GONE);
             btnRefresh.setVisibility(View.VISIBLE);
             btnRefresh.setText(R.string.exchange_ws_all);

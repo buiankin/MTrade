@@ -1,9 +1,11 @@
 package ru.code22.mtrade;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,15 +20,23 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cursoradapter.widget.SimpleCursorAdapter;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
 public class OrdersListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    private ActivityResultLauncher<Intent> selectClientActivityResultLauncher;
+
 
     private UniversalInterface mListener;
 
@@ -118,15 +128,46 @@ public class OrdersListFragment extends Fragment implements LoaderManager.Loader
         });
         */
 
-        m_bDataInited=true;
+        m_bDataInited = true;
 
-        if (savedInstanceState==null)
-        {
+        if (savedInstanceState == null) {
             // Если данные не сохранялись, берем установленные прогрммно при создании фрейма
-            savedInstanceState=getArguments();
+            savedInstanceState = getArguments();
         }
 
         readDataFromBundle(savedInstanceState);
+
+        selectClientActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+                            Intent data = result.getData();
+
+                            if (data != null) {
+                                long id = data.getLongExtra("id", 0);
+                                //Toast.makeText(MainActivity.this, "id=" + id, Toast.LENGTH_SHORT).show();
+                                Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.CLIENTS_CONTENT_URI, id);
+                                //Cursor cursor=getContentResolver().query(singleUri, mProjection, "", selectionArgs, null);
+                                Cursor cursor = getActivity().getContentResolver().query(singleUri, new String[]{"descr", "id"}, null, null, null);
+                                if (cursor.moveToNext()) {
+                                    int descrIndex = cursor.getColumnIndex("descr");
+                                    int idIndex = cursor.getColumnIndex("id");
+                                    String newWord = cursor.getString(descrIndex);
+                                    String clientId = cursor.getString(idIndex);
+
+                                    Bundle parameters = new Bundle();
+                                    parameters.putString("client_id", clientId);
+                                    parameters.putString("client_descr", newWord);
+                                    mListener.onUniversalEventListener("FilterClient", parameters);
+                                }
+                                cursor.close();
+                            }
+
+                        }
+                    }
+                });
 
         View view = inflater.inflate(R.layout.orders_list_fragment, container, false);
 
@@ -140,7 +181,7 @@ public class OrdersListFragment extends Fragment implements LoaderManager.Loader
         buttonClearClient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle parameters=new Bundle();
+                Bundle parameters = new Bundle();
                 parameters.putString("client_id", null);
                 parameters.putString("client_descr", getString(R.string.catalogue_all_clients));
                 mListener.onUniversalEventListener("FilterClient", parameters);
@@ -153,11 +194,12 @@ public class OrdersListFragment extends Fragment implements LoaderManager.Loader
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ClientsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivityForResult(intent, MainActivity.SELECT_CLIENT_REQUEST);
+                //startActivityForResult(intent, MainActivity.SELECT_CLIENT_REQUEST);
+                selectClientActivityResultLauncher.launch(intent);
             }
         });
 
-        final FloatingActionButton fabAddOrder=(FloatingActionButton)view.findViewById(R.id.fab_add_order);
+        final FloatingActionButton fabAddOrder = (FloatingActionButton) view.findViewById(R.id.fab_add_order);
         fabAddOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -198,18 +240,18 @@ public class OrdersListFragment extends Fragment implements LoaderManager.Loader
                     int index_distribs_id = cursor.getColumnIndex("distribs_id");
                     cursor.moveToPosition(position);
                     if (cursor.getLong(index_order_id) != 0) {
-                        Bundle parameters=new Bundle();
+                        Bundle parameters = new Bundle();
                         parameters.putLong("id", cursor.getLong(index_order_id));
                         parameters.putBoolean("copy_order", false);
                         mListener.onUniversalEventListener("editOrder", parameters);
                     } else if (cursor.getLong(index_refund_id) != 0) {
-                        Bundle parameters=new Bundle();
+                        Bundle parameters = new Bundle();
                         parameters.putLong("id", cursor.getLong(index_refund_id));
                         parameters.putBoolean("copy_refund", false);
                         parameters.putLong("order_id", 0);
                         mListener.onUniversalEventListener("editRefund", parameters);
                     } else if (cursor.getLong(index_distribs_id) != 0) {
-                        Bundle parameters=new Bundle();
+                        Bundle parameters = new Bundle();
                         parameters.putLong("id", cursor.getLong(index_distribs_id));
                         parameters.putBoolean("copy_distribs", false);
                         mListener.onUniversalEventListener("editDistribs", parameters);
@@ -258,7 +300,7 @@ public class OrdersListFragment extends Fragment implements LoaderManager.Loader
                     if (d.length() == 14) {
                         StringBuilder sb = new StringBuilder();
                         sb.append(d.substring(6, 8)).append('.').append(d.substring(4, 6)).append('.').append(d.substring(0, 4)).append(' ').append(d.substring(8, 10)).append(':').append(d.substring(10, 12)).append(':').append(d.substring(12, 14));
-                        if (g.Common.PHARAON || g.Common.FACTORY) {
+                        if (g.Common.PHARAOH || g.Common.FACTORY) {
                             int index_shipping_date = cursor.getColumnIndex("shipping_date");
                             String shipping_date = cursor.getString(index_shipping_date);
                             if (shipping_date.length() >= 8) {
@@ -432,7 +474,7 @@ public class OrdersListFragment extends Fragment implements LoaderManager.Loader
                         conditionString = Common.combineConditions(conditionString, conditionArgs, sb.toString(), new String[]{});
                     }
                 }
-                if (g.Common.PHARAON && m_filter_type == 1) {
+                if (g.Common.PHARAOH && m_filter_type == 1) {
                     // По дате обслуживания
                     //conditionString=Common.combineConditions(conditionString, conditionArgs, "(shipping_date between ? and ?)", new String[]{m_date, m_date+"Z"});
                     switch (m_filter_date_type) {

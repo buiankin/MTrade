@@ -5,6 +5,10 @@ import java.util.Random;
 
 import net.thepaksoft.fdtrainer.NestedListView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -58,6 +62,18 @@ import android.widget.TextView;
 
 public class OrderPageFragment extends Fragment {
 	// Номера менять нельзя. В другом месте та же нумерация. В частности, цифра 6 точно используется
+
+	private ActivityResultLauncher<Intent> selectClientFromOrderActivityResultLauncher;
+	private ActivityResultLauncher<Intent> selectAgreementFromOrderActivityResultLauncher;
+	private ActivityResultLauncher<Intent> selectAgreement30FromOrderActivityResultLauncher;
+	private ActivityResultLauncher<Intent> openNomenclatureFromOrderActivityResultLauncher;
+	private ActivityResultLauncher<Intent> selectTradePointFromOrderActivityResultLauncher;
+	private ActivityResultLauncher<Intent> selectDiscountFromOrderActivityResultLauncher;
+	private ActivityResultLauncher<Intent> selectPlacesFromOrderActivityResultLauncher;
+	private ActivityResultLauncher<Intent> quantityRequestActivityResultLauncher;
+
+
+	/*
 	//static final int SELECT_DATE_FROM_ORDER_REQUEST = 1;
     static final int SELECT_CLIENT_FROM_ORDER_REQUEST = 2;
     static final int SELECT_AGREEMENT_FROM_ORDER_REQUEST = 3;
@@ -68,6 +84,7 @@ public class OrderPageFragment extends Fragment {
     static final int SELECT_PLACES_FROM_ORDER_REQUEST = 8;
     static final int OPEN_NOMENCLATURE_GRID_FROM_ORDER_REQUEST = 9;
 	static final int SELECT_AGREEMENT30_FROM_ORDER_REQUEST = 10;
+	 */
 
 	static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
 
@@ -213,7 +230,7 @@ public class OrderPageFragment extends Fragment {
 
 	*/
 
-	
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
@@ -226,6 +243,7 @@ public class OrderPageFragment extends Fragment {
 		
 		switch (requestCode)
 		{
+		/*
 		case SELECT_CLIENT_FROM_ORDER_REQUEST:
 		if (bHeaderPage)
 		{
@@ -462,7 +480,7 @@ public class OrderPageFragment extends Fragment {
 			if (resultCode==NomenclatureActivity.NOMENCLATURE_RESULT_DOCUMENT_CHANGED||resultCode==NomenclatureGridActivity.NOMENCLATURE_RESULT_DOCUMENT_CHANGED)
 			{
 				g.MyDatabase.m_orderLinesAdapter.notifyDataSetChanged();
-				if (g.Common.PHARAON)
+				if (g.Common.PHARAOH)
 				{
 					ExpandableListView lvSimple = (ExpandableListView) m_view.findViewById(R.id.listViewOrderLines);
 			        // раскроем список
@@ -538,6 +556,7 @@ public class OrderPageFragment extends Fragment {
 	  		}
 			break;
 		}
+		*/
 		case OrderActivity.QUANTITY_REQUEST:
 		if (bLinesPage)
 		{
@@ -795,6 +814,496 @@ public class OrderPageFragment extends Fragment {
 		  
 		  MySingleton g=MySingleton.getInstance();
 
+		  selectClientFromOrderActivityResultLauncher = registerForActivityResult(
+				new ActivityResultContracts.StartActivityForResult(),
+				new ActivityResultCallback<ActivityResult>() {
+					@Override
+					public void onActivityResult(ActivityResult result) {
+						if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+							Intent data = result.getData();
+							if (data != null) {
+								if (bHeaderPage) {
+									View view0 = m_view;
+									long _id = data.getLongExtra("id", 0);
+									if (someEventListener.onClientSelected(view0, _id)) {
+										setModified();
+										if (g.Common.FACTORY) {
+											// Проверим, есть ли данное соглашение у этого контрагента
+											boolean bWrongAgreement30 = true;
+											Cursor agreements30Cursor = getActivity().getContentResolver().query(MTradeContentProvider.AGREEMENTS30_CONTENT_URI, new String[]{"id"}, "id=? and owner_id=?", new String[]{g.MyDatabase.m_order_editing.agreement30_id.toString(), g.MyDatabase.m_order_editing.client_id.toString()}, null);
+											if (agreements30Cursor.moveToNext()) {
+												bWrongAgreement30 = false;
+											}
+											agreements30Cursor.close();
+											if (bWrongAgreement30) {
+												// Не принадлежит, установим соглашение по умолчанию, если оно единственное
+												Cursor defaultAgreement30Cursor = getActivity().getContentResolver().query(MTradeContentProvider.AGREEMENTS30_CONTENT_URI, new String[]{"_id"}, "owner_id=?", new String[]{g.MyDatabase.m_order_editing.client_id.toString()}, null);
+												if (defaultAgreement30Cursor.moveToNext()) {
+													int _idIndex = defaultAgreement30Cursor.getColumnIndex("_id");
+													Long _idAgreement = defaultAgreement30Cursor.getLong(_idIndex);
+													if (!defaultAgreement30Cursor.moveToNext()) {
+														// Есть единственное соглашение
+														someEventListener.onAgreement30Selected(view0, _idAgreement);
+													} else {
+														// Есть несколько договоров
+														someEventListener.onAgreement30Selected(view0, 0);
+													}
+												} else {
+													// Договора нет
+													someEventListener.onAgreement30Selected(view0, 0);
+												}
+												defaultAgreement30Cursor.close();
+											}
+										}
+
+										boolean bWrongAgreement = true;
+										// Проверим, принадлежит ли договор текущему контрагенту
+										Cursor agreementsCursor = getActivity().getContentResolver().query(MTradeContentProvider.AGREEMENTS_CONTENT_URI, new String[]{"owner_id", "organization_id"}, "id=?", new String[]{g.MyDatabase.m_order_editing.agreement_id.toString()}, null);
+										if (agreementsCursor.moveToNext()) {
+											int owner_idIndex = agreementsCursor.getColumnIndex("owner_id");
+											int organization_idIndex = agreementsCursor.getColumnIndex("organization_id"); // проверка организации актуальна только для FACTORY
+											String owner_id = agreementsCursor.getString(owner_idIndex);
+											String organization_id = agreementsCursor.getString(organization_idIndex);
+											// Для FACTORY сначала проверится соответствие организации
+											if (!g.Common.FACTORY || g.MyDatabase.m_order_editing.organization_id.toString().equals(organization_id)) {
+												// Для всех проверится соответствие контрагента в договоре
+												if (g.MyDatabase.m_order_editing.client_id.toString().equals(owner_id))
+													bWrongAgreement = false;
+											}
+										}
+										agreementsCursor.close();
+										if (bWrongAgreement) {
+											// Не принадлежит, установим договор по умолчанию, если он единственный
+											Cursor defaultAgreementCursor;
+											if (g.Common.FACTORY) {
+												defaultAgreementCursor = getActivity().getContentResolver().query(MTradeContentProvider.AGREEMENTS_CONTENT_URI, new String[]{"_id"}, "owner_id=? and organization_id=?", new String[]{g.MyDatabase.m_order_editing.client_id.toString(), g.MyDatabase.m_order_editing.organization_id.toString()}, null);
+											} else {
+												defaultAgreementCursor = getActivity().getContentResolver().query(MTradeContentProvider.AGREEMENTS_CONTENT_URI, new String[]{"_id"}, "owner_id=?", new String[]{g.MyDatabase.m_order_editing.client_id.toString()}, null);
+											}
+											if (defaultAgreementCursor.moveToNext()) {
+												int _idIndex = defaultAgreementCursor.getColumnIndex("_id");
+												Long _idAgreement = defaultAgreementCursor.getLong(_idIndex);
+												if (!defaultAgreementCursor.moveToNext()) {
+													// Есть единственный договор
+													someEventListener.onAgreementSelected(view0, _idAgreement);
+												} else {
+													// Есть несколько договоров
+													someEventListener.onAgreementSelected(view0, 0);
+												}
+											} else {
+												// Договора нет
+												someEventListener.onAgreementSelected(view0, 0);
+											}
+											defaultAgreementCursor.close();
+										}
+									}
+
+								}
+
+							}
+						}
+					}
+			});
+
+		selectAgreementFromOrderActivityResultLauncher = registerForActivityResult(
+				new ActivityResultContracts.StartActivityForResult(),
+				new ActivityResultCallback<ActivityResult>() {
+					@Override
+					public void onActivityResult(ActivityResult result) {
+						if (result.getResultCode() == AgreementsActivity.RESULT_OK) {
+							Intent data = result.getData();
+							if (data != null) {
+								if (bHeaderPage)
+								{
+									View view0=m_view;
+									//EditText et=(EditText)view0.findViewById(R.id.etAgreement);
+									//TextView tvOrganization=(TextView)view0.findViewById(R.id.textViewOrdersOrganization);
+
+									long _id=data.getLongExtra("id", 0);
+									if (someEventListener.onAgreementSelected(view0, _id))
+									{
+										setModified();
+									}
+								}
+							}
+
+						}
+					}
+				});
+
+		selectAgreement30FromOrderActivityResultLauncher = registerForActivityResult(
+				new ActivityResultContracts.StartActivityForResult(),
+				new ActivityResultCallback<ActivityResult>() {
+					@Override
+					public void onActivityResult(ActivityResult result) {
+						if (result.getResultCode() == Agreements30Activity.RESULT_OK) {
+							Intent data = result.getData();
+							if (data != null) {
+								if (bHeaderPage)
+								{
+									View view0=m_view;
+									//EditText et=(EditText)view0.findViewById(R.id.etAgreement);
+									//TextView tvOrganization=(TextView)view0.findViewById(R.id.textViewOrdersOrganization);
+
+									long _id=data.getLongExtra("id", 0);
+									if (someEventListener.onAgreement30Selected(view0, _id))
+									{
+										setModified();
+									}
+								}
+							}
+						}
+					}
+				});
+
+		openNomenclatureFromOrderActivityResultLauncher = registerForActivityResult(
+				new ActivityResultContracts.StartActivityForResult(),
+				new ActivityResultCallback<ActivityResult>() {
+					@Override
+					public void onActivityResult(ActivityResult result) {
+						int resultCode=result.getResultCode();
+						if (resultCode==NomenclatureActivity.NOMENCLATURE_RESULT_DOCUMENT_CHANGED||resultCode==NomenclatureGridActivity.NOMENCLATURE_RESULT_DOCUMENT_CHANGED) {
+							//Intent data = result.getData();
+							//if (data != null) {
+								if (bLinesPage)
+								{
+									g.MyDatabase.m_orderLinesAdapter.notifyDataSetChanged();
+									if (g.Common.PHARAOH)
+									{
+										ExpandableListView lvSimple = (ExpandableListView) m_view.findViewById(R.id.listViewOrderLines);
+										// раскроем список
+										int count = ((OrderExpPhListAdapter)g.MyDatabase.m_orderLinesAdapter).getGroupCount();
+										for (int position = 0; position < count; position++)
+										{
+											if (((OrderExpPhListAdapter)g.MyDatabase.m_orderLinesAdapter).mGroups.get(position).need_expand)
+											{
+												((OrderExpPhListAdapter)g.MyDatabase.m_orderLinesAdapter).mGroups.get(position).need_expand=true;
+												lvSimple.expandGroup(position);
+											}
+										}
+									}
+									setModified();
+									recalcSumWeight();
+									redrawSumWeight();
+									if (g.Common.NEW_BACKUP_FORMAT)
+									{
+										// 11.06.2018 убрал, т.к. строки документа записываются в процессе редактирования
+										//TextDatabase.SaveOrderSQL(getActivity().getContentResolver(), g.MyDatabase.m_order_editing, g.MyDatabase.m_order_new_editing_id, g.MyDatabase.m_order_editing_id==0?1:2);
+									}
+								}
+							//}
+
+						}
+					}
+				});
+
+
+		selectTradePointFromOrderActivityResultLauncher = registerForActivityResult(
+				new ActivityResultContracts.StartActivityForResult(),
+				new ActivityResultCallback<ActivityResult>() {
+					@Override
+					public void onActivityResult(ActivityResult result) {
+						if (result.getResultCode() == TradePointsActivity.RESULT_OK) {
+							Intent data = result.getData();
+							if (data != null) {
+								if (bHeaderPage)
+								{
+									View view0=m_view;
+									EditText et=(EditText)view0.findViewById(R.id.etTradePoint);
+
+									setModified();
+
+									MyID newPriceTypeId=new MyID();
+
+									long _id=data.getLongExtra("id", 0);
+									Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.DISTR_POINTS_CONTENT_URI, _id);
+									Cursor cursor=getActivity().getContentResolver().query(singleUri, new String[]{"id", "descr", "address", "price_type_id"}, null, null, null);
+									if (cursor.moveToNext())
+									{
+										int descrIndex = cursor.getColumnIndex("descr");
+										int idIndex = cursor.getColumnIndex("id");
+										//int addressIndex = cursor.getColumnIndex("address");
+										int priceTypeIdIndex = cursor.getColumnIndex("price_type_id");
+										String descr = cursor.getString(descrIndex);
+										String tradePointId = cursor.getString(idIndex);
+										//String address = cursor.getString(addressIndex);
+										String priceTypeId = cursor.getString(priceTypeIdIndex);
+										et.setText(descr);
+										g.MyDatabase.m_order_editing.distr_point_id.m_id=tradePointId;
+										g.MyDatabase.m_order_editing.stuff_distr_point_name=descr;
+										newPriceTypeId=new MyID(priceTypeId);
+									} else
+									{
+										et.setText(getResources().getString(R.string.trade_point_not_set));
+										g.MyDatabase.m_order_editing.distr_point_id.m_id="";
+										g.MyDatabase.m_order_editing.stuff_distr_point_name=getResources().getString(R.string.trade_point_not_set);
+									}
+									cursor.close();
+
+									// Остатки оборудования у клинта
+									EquipmentRestsFragment fragment1 = (EquipmentRestsFragment)getFragmentManager().findFragmentByTag("fragmentEquipment");
+									if (fragment1!=null)
+										fragment1.myRestartLoader();
+									EquipmentRestsFragment fragment2 = (EquipmentRestsFragment)getFragmentManager().findFragmentByTag("fragmentEquipmentTare");
+									if (fragment2!=null)
+									{
+										fragment2.myRestartLoader();
+									}
+
+									if (g.Common.PRODLIDER)
+									{
+										// Если в торговой точке нет типа цены, берем из договора (как раньше)
+										if (newPriceTypeId.isEmpty())
+										{
+											Cursor agreementsCursor=getActivity().getContentResolver().query(MTradeContentProvider.AGREEMENTS_CONTENT_URI, new String[]{"_id", "price_type_id"}, "id=?", new String[]{g.MyDatabase.m_order_editing.agreement_id.toString()}, null);
+											int priceTypeIdIndex=agreementsCursor.getColumnIndex("price_type_id");
+											if (agreementsCursor.moveToFirst())
+											{
+												newPriceTypeId=new MyID(agreementsCursor.getString(priceTypeIdIndex));
+											}
+											agreementsCursor.close();
+										}
+										if (!g.MyDatabase.m_order_editing.price_type_id.equals(newPriceTypeId))
+										{
+											someEventListener.onPriceTypeSelected(m_view, newPriceTypeId);
+										}
+									}
+
+								}
+
+							}
+
+						}
+					}
+				});
+
+		selectDiscountFromOrderActivityResultLauncher = registerForActivityResult(
+				new ActivityResultContracts.StartActivityForResult(),
+				new ActivityResultCallback<ActivityResult>() {
+					@Override
+					public void onActivityResult(ActivityResult result) {
+						if (result.getResultCode() == DiscountsActivity.RESULT_OK) {
+							Intent data = result.getData();
+
+							if (data != null) {
+								if (bHeaderPage)
+								{
+									View view0=m_view;
+									EditText et=(EditText)view0.findViewById(R.id.editTextDiscount);
+
+									setModified();
+
+									long _id=data.getLongExtra("id", 0);
+									Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.SIMPLE_DISCOUNTS_CONTENT_URI, _id);
+									Cursor cursor=getActivity().getContentResolver().query(singleUri, new String[]{"id", "descr", "priceProcent"}, null, null, null);
+									if (cursor.moveToNext())
+									{
+										int descrIndex = cursor.getColumnIndex("descr");
+										int idIndex = cursor.getColumnIndex("id");
+										int priceProcentIndex = cursor.getColumnIndex("priceProcent");
+										String descr = cursor.getString(descrIndex);
+										String discountId = cursor.getString(idIndex);
+										double priceProcent = cursor.getDouble(priceProcentIndex);
+										et.setText(descr);
+										g.MyDatabase.m_order_editing.simple_discount_id=new MyID(discountId);
+										g.MyDatabase.m_order_editing.stuff_discount_procent=priceProcent;
+										g.MyDatabase.m_order_editing.stuff_discount=descr;
+									} else
+									{
+										et.setText(getResources().getString(R.string.trade_point_not_set));
+										g.MyDatabase.m_order_editing.simple_discount_id=new MyID();
+										g.MyDatabase.m_order_editing.stuff_discount_procent=0.0;
+										g.MyDatabase.m_order_editing.stuff_discount=getResources().getString(R.string.trade_point_not_set);
+									}
+									cursor.close();
+									someEventListener.someEvent("recalc_price");
+									redrawTicketPrice();
+									redrawSumWeight();
+
+									if (g.Common.NEW_BACKUP_FORMAT)
+									{
+										TextDatabase.SaveOrderSQL(getActivity().getContentResolver(), g.MyDatabase.m_order_editing, g.MyDatabase.m_order_new_editing_id, g.MyDatabase.m_order_editing_id==0?1:2);
+									}
+
+								}
+
+							}
+
+						}
+					}
+				});
+
+		selectPlacesFromOrderActivityResultLauncher = registerForActivityResult(
+				new ActivityResultContracts.StartActivityForResult(),
+				new ActivityResultCallback<ActivityResult>() {
+					@Override
+					public void onActivityResult(ActivityResult result) {
+						if (result.getResultCode() == PlacesActivity.PLACES_RESULT_OK) {
+							Intent data = result.getData();
+							if (data != null) {
+								if (bHeaderPage)
+								{
+									ArrayList<String> listId=data.getStringArrayListExtra("placesIndices");
+									ArrayList<String> listDescr=data.getStringArrayListExtra("placesDescr");
+
+									// один раз было null, причина не понятна
+									if (listId!=null)
+									{
+										setModified();
+										//long _id=data.getLongExtra("_id", 0);
+										g.MyDatabase.m_order_editing.shipping_begin_time=data.getStringExtra("order_time");
+										g.MyDatabase.m_order_editing.shipping_date=data.getStringExtra("order_date");
+										g.MyDatabase.m_order_editing.stuff_places=data.getStringExtra("places");
+
+										g.MyDatabase.m_order_editing.places.clear();
+
+										int idx=0;
+										for (String placeId: listId)
+										{
+											OrderPlaceRecord place=new OrderPlaceRecord();
+											place.place_id=new MyID(placeId);
+											place.stuff_descr=listDescr.get(idx);
+											g.MyDatabase.m_order_editing.places.add(place);
+											idx=idx+1;
+										}
+										EditText etOrderTime=(EditText)m_view.findViewById(R.id.etOrderTime);
+										if (g.MyDatabase.m_order_editing.shipping_begin_time.isEmpty())
+										{
+											etOrderTime.setText("");
+										} else
+										{
+											etOrderTime.setText(g.MyDatabase.m_order_editing.shipping_begin_time.substring(0,2)+":"+g.MyDatabase.m_order_editing.shipping_begin_time.substring(2,4));
+										}
+										EditText etOrderDate=(EditText)m_view.findViewById(R.id.etOrderDate);
+										if (g.MyDatabase.m_order_editing.shipping_date.isEmpty())
+										{
+											etOrderDate.setText("");
+										} else
+										{
+											etOrderDate.setText(Common.dateStringAsText(g.MyDatabase.m_order_editing.shipping_date));
+										}
+
+										final EditText editTextPlace=(EditText)m_view.findViewById(R.id.editTextPlace);
+										editTextPlace.setText(g.MyDatabase.m_order_editing.stuff_places);
+									}
+								}
+							}
+
+						}
+					}
+				});
+
+		quantityRequestActivityResultLauncher = registerForActivityResult(
+				new ActivityResultContracts.StartActivityForResult(),
+				new ActivityResultCallback<ActivityResult>() {
+					@Override
+					public void onActivityResult(ActivityResult result) {
+						int resultCode=result.getResultCode();
+						if (resultCode == QuantityActivity.QUANTITY_RESULT_OK) {
+							Intent data = result.getData();
+							if (data != null && bLinesPage) {
+
+								long _id=data.getLongExtra("_id", 0);
+								MyID nomenclature_id=new MyID(data.getStringExtra("id"));
+								double quantity=data.getDoubleExtra("quantity", 0.0);
+								double k=data.getDoubleExtra("k", 1.0);
+								double price=data.getDoubleExtra("price", 0.0);
+								double price_k=data.getDoubleExtra("price_k", 1.0);
+								String ed=data.getStringExtra("ed");
+								String shipping_time=data.getStringExtra("shipping_time");
+								String comment_in_line=data.getStringExtra("comment_in_line");
+
+								//long id=data.getLongExtra("id", 0);
+								OrderLineRecord line;
+								if (m_order_editing_line_num<g.MyDatabase.m_order_editing.lines.size())
+								{
+									line=g.MyDatabase.m_order_editing.lines.get(m_order_editing_line_num);
+									if (!line.nomenclature_id.equals(nomenclature_id))
+									{
+										line=new OrderLineRecord();
+									}
+								} else
+								{
+									line=new OrderLineRecord();
+								}
+								Cursor nomenclatureCursor;
+								if (_id==0)
+								{
+									nomenclatureCursor=getActivity().getContentResolver().query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, new String[]{"descr", "flags"}, "id=?", new String[]{nomenclature_id.toString()}, null);
+								} else
+								{
+									Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, _id);
+									nomenclatureCursor=getActivity().getContentResolver().query(singleUri, new String[]{"descr", "flags"}, null, null, null);
+								}
+								if (nomenclatureCursor.moveToFirst()) {
+									// nomenclature_id не меняем, он правильный
+									int descrIndex = nomenclatureCursor.getColumnIndex("descr");
+									int flagsIndex = nomenclatureCursor.getColumnIndex("flags");
+									line.stuff_nomenclature = nomenclatureCursor.getString(descrIndex);
+									line.stuff_nomenclature_flags = nomenclatureCursor.getInt(flagsIndex);
+									line.quantity = quantity;
+									line.quantity_requested = quantity;
+									line.discount = 0.0;
+									line.k = k;
+									line.ed = ed;
+									if (price_k > -0.0001 && price_k < 0.0001) {
+										price_k = 1.0;
+									}
+									if (price_k - k > -0.0001 && price_k - k < 0.0001) {
+										line.price = price;
+									} else {
+										line.price = Math.floor(price * k / price_k * 100.0 + 0.00001) / 100.0;
+									}
+									line.total = Math.floor(line.price * line.quantity * 100.0 + 0.00001) / 100.0;
+									line.shipping_time = shipping_time;
+									line.comment_in_line = comment_in_line;
+									if (line.lineno == 0) {
+										line.lineno = g.MyDatabase.m_order_editing.getMaxLineno() + 1;
+									}
+
+									g.MyDatabase.m_orderLinesAdapter.notifyDataSetChanged();
+									setModified();
+									recalcSumWeight();
+									redrawSumWeight();
+									if (g.Common.NEW_BACKUP_FORMAT) {
+										TextDatabase.UpdateOrderLine(getActivity().getContentResolver(), g.MyDatabase.m_order_new_editing_id, g.MyDatabase.m_order_editing, line);
+									}
+								}
+
+							}
+						} else
+						if (resultCode==QuantityActivity.QUANTITY_RESULT_DELETE_LINE)
+						{
+							Intent data = result.getData();
+							if (data!=null && bLinesPage)
+							{
+								MyID nomenclature_id=new MyID(data.getStringExtra("id"));
+								OrderLineRecord line;
+								if (m_order_editing_line_num<g.MyDatabase.m_order_editing.lines.size())
+								{
+									line=g.MyDatabase.m_order_editing.lines.get(m_order_editing_line_num);
+									// на всякий случай проверка на совпадение номенклатуры
+									if (line.nomenclature_id.equals(nomenclature_id))
+									{
+										if (g.Common.NEW_BACKUP_FORMAT)
+										{
+											setModified();
+											TextDatabase.DeleteOrderLine(getActivity().getContentResolver(), g.MyDatabase.m_order_new_editing_id, line.lineno);
+										}
+										g.MyDatabase.m_order_editing.lines.remove(line);
+									}
+								}
+								g.MyDatabase.m_orderLinesAdapter.notifyDataSetChanged();
+								setModified();
+								recalcSumWeight();
+								redrawSumWeight();
+							}
+						}
+
+					}
+				});
+
+
 		  bHeaderPage=false;
 		  bLinesPage=false;
 		  bSettingsPage=false;
@@ -901,7 +1410,7 @@ public class OrderPageFragment extends Fragment {
 				textViewOrdersAgreement30.setVisibility(View.GONE);
 				textViewOrdersOrganization30.setVisibility(View.GONE);
 				layoutAgreement30.setVisibility(View.GONE);
-				if (g.Common.MEGA||g.Common.PHARAON)
+				if (g.Common.MEGA||g.Common.PHARAOH)
 					layoutAgreement.setVisibility(View.GONE);
 				else
 					layoutAgreement.setVisibility(View.VISIBLE);
@@ -957,7 +1466,7 @@ public class OrderPageFragment extends Fragment {
 			}
 			
 			RadioGroup radioGroup=(RadioGroup) m_view.findViewById(R.id.radioGroupCreateSelectClient);
-			if (g.Common.PHARAON)
+			if (g.Common.PHARAOH)
 			{
 				if (g.MyDatabase.m_order_editing.create_client==1)
 					radioGroup.check(R.id.radioOrderCreateClient);
@@ -1147,7 +1656,7 @@ public class OrderPageFragment extends Fragment {
 			etAgreement.setText(rec.stuff_agreement_name);
 			tvOrganizationName30.setText(rec.stuff_organization_name);
 			tvOrganizationName.setText(rec.stuff_organization_name);
-			if (g.Common.MEGA||g.Common.PHARAON)
+			if (g.Common.MEGA||g.Common.PHARAOH)
 			{
 				tvOrganizationName.setVisibility(View.GONE);
 				tvAgreement.setVisibility(View.GONE);
@@ -1171,7 +1680,7 @@ public class OrderPageFragment extends Fragment {
 			TextView textViewKredit=(TextView)m_view.findViewById(R.id.textViewKredit);
 			EditText editTextKredit=(EditText)m_view.findViewById(R.id.editTextKredit);
 
-			if (g.Common.PHARAON)
+			if (g.Common.PHARAOH)
 			{
 				etCardNum.setText(g.MyDatabase.m_order_editing.card_num!=0?String.valueOf(g.MyDatabase.m_order_editing.card_num):"");
 				editTextPlace.setText(g.MyDatabase.m_order_editing.stuff_places);
@@ -1267,7 +1776,8 @@ public class OrderPageFragment extends Fragment {
 					public void onClick(View v) {
 						Intent intent=new Intent(getActivity(), PlacesActivity.class);
 						intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-						startActivityForResult(intent, SELECT_PLACES_FROM_ORDER_REQUEST);
+						//startActivityForResult(intent, SELECT_PLACES_FROM_ORDER_REQUEST);
+						selectPlacesFromOrderActivityResultLauncher.launch(intent);
 					}
 				});
 				
@@ -1473,7 +1983,7 @@ public class OrderPageFragment extends Fragment {
 			EditText etDiscount = (EditText)m_view.findViewById(R.id.editTextDiscount);
 			Button buttonSelectDiscount = (Button)m_view.findViewById(R.id.buttonOrderSelectDiscount);
 			
-			if (g.Common.PHARAON)
+			if (g.Common.PHARAOH)
 			{
 	    		etDiscount.setText(rec.stuff_discount);
 			    // Кнопка выбора скидки
@@ -1483,7 +1993,8 @@ public class OrderPageFragment extends Fragment {
 					public void onClick(View v) {
 						Intent intent=new Intent(getActivity(), DiscountsActivity.class);
 						intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-						startActivityForResult(intent, SELECT_DISCOUNT_FROM_ORDER_REQUEST);
+						//startActivityForResult(intent, SELECT_DISCOUNT_FROM_ORDER_REQUEST);
+						selectDiscountFromOrderActivityResultLauncher.launch(intent);
 					}
 				});
 	    		
@@ -1503,7 +2014,7 @@ public class OrderPageFragment extends Fragment {
 			// Торговая точка
 			EditText etTradePoint = (EditText) m_view.findViewById(R.id.etTradePoint);
 			etTradePoint.setText(rec.stuff_distr_point_name);
-			//if (g.Common.MEGA||g.Common.PHARAON||g.Common.TANDEM||g.Common.TITAN)
+			//if (g.Common.MEGA||g.Common.PHARAOH||g.Common.TANDEM||g.Common.TITAN)
 			if (!g.Common.isDataFormatWithTradePoints())
 			{
 				TextView tvTradePoint = (TextView) m_view.findViewById(R.id.textViewTradePoint);
@@ -1554,7 +2065,7 @@ public class OrderPageFragment extends Fragment {
 			TextView textPriceType=(TextView)m_view.findViewById(R.id.textPriceType);
 			EditText etPriceType=(EditText)m_view.findViewById(R.id.etPriceType);
 			
-			if (g.Common.PHARAON)
+			if (g.Common.PHARAOH)
 			{
 				etDebt.setVisibility(View.GONE);
 				etDebtPast.setVisibility(View.GONE);
@@ -1633,7 +2144,7 @@ public class OrderPageFragment extends Fragment {
 			//tvAccounts.setVisibility(View.VISIBLE);
 			//spinnerAccounts.setVisibility(View.VISIBLE);
 			
-			if (g.Common.PHARAON)
+			if (g.Common.PHARAOH)
 			{
 				EditText etCommentManager = (EditText) m_view.findViewById(R.id.etCommentManager);
 				etCommentManager.setText(rec.manager_comment);
@@ -2019,7 +2530,8 @@ public class OrderPageFragment extends Fragment {
 					{
 						intent.putExtra("distr_point_id_only", m_distr_point_id_only);
 					}
-					startActivityForResult(intent, SELECT_CLIENT_FROM_ORDER_REQUEST);
+					//startActivityForResult(intent, SELECT_CLIENT_FROM_ORDER_REQUEST);
+					selectClientFromOrderActivityResultLauncher.launch(intent);
 				}
 			});
 
@@ -2032,7 +2544,8 @@ public class OrderPageFragment extends Fragment {
 					Intent intent=new Intent(getActivity(), Agreements30Activity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					intent.putExtra("client_id", g.MyDatabase.m_order_editing.client_id.toString());
-					startActivityForResult(intent, SELECT_AGREEMENT30_FROM_ORDER_REQUEST);
+					//startActivityForResult(intent, SELECT_AGREEMENT30_FROM_ORDER_REQUEST);
+					selectAgreement30FromOrderActivityResultLauncher.launch(intent);
 				}
 			});
 
@@ -2045,7 +2558,8 @@ public class OrderPageFragment extends Fragment {
 					Intent intent=new Intent(getActivity(), AgreementsActivity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					intent.putExtra("client_id", g.MyDatabase.m_order_editing.client_id.toString());
-					startActivityForResult(intent, SELECT_AGREEMENT_FROM_ORDER_REQUEST);
+					//startActivityForResult(intent, SELECT_AGREEMENT_FROM_ORDER_REQUEST);
+					selectAgreementFromOrderActivityResultLauncher.launch(intent);
 				}
 			});
 			
@@ -2058,7 +2572,8 @@ public class OrderPageFragment extends Fragment {
 					Intent intent=new Intent(getActivity(), TradePointsActivity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					intent.putExtra("client_id", g.MyDatabase.m_order_editing.client_id.toString());
-					startActivityForResult(intent, SELECT_TRADE_POINT_FROM_ORDER_REQUEST);
+					//startActivityForResult(intent, SELECT_TRADE_POINT_FROM_ORDER_REQUEST);
+					selectTradePointFromOrderActivityResultLauncher.launch(intent);
 				}
 			});
 			
@@ -2120,7 +2635,7 @@ public class OrderPageFragment extends Fragment {
 	        {
 	        	// Запрещаем редактирование типа цены
 	        	spinnerPriceType.setVisibility(View.GONE);
-	        	if (!g.Common.PHARAON)
+	        	if (!g.Common.PHARAOH)
 	        	{
 	        		etPriceType.setVisibility(View.VISIBLE);
 	        	}
@@ -2200,7 +2715,7 @@ public class OrderPageFragment extends Fragment {
 				}
 	        });
 	        
-	        if (g.Common.MEGA||g.Common.PHARAON)
+	        if (g.Common.MEGA||g.Common.PHARAOH)
 	        {
 	        	View tvStock=m_view.findViewById(R.id.textViewStock);
 	        	tvStock.setVisibility(View.GONE);
@@ -2306,7 +2821,7 @@ public class OrderPageFragment extends Fragment {
 	        // Куратор
 	        final EditText etCurator=(EditText)m_view.findViewById(R.id.editTextCurator);
 	        etCurator.setText(rec.stuff_curator_name);
-	        if (g.Common.PHARAON)
+	        if (g.Common.PHARAOH)
 	        {
 	        	etCurator.setVisibility(View.GONE);
 		        TextView textViewCurator=(TextView)m_view.findViewById(R.id.textViewCurator);
@@ -2343,7 +2858,7 @@ public class OrderPageFragment extends Fragment {
 			final Button buttonPrint=(Button)m_view.findViewById(R.id.buttonOrderPrint);
 			if (buttonPrint!=null)
 			{
-				if (g.Common.PHARAON)
+				if (g.Common.PHARAOH)
 				{
 					buttonPrint.setOnClickListener(new OnClickListener() {
 						@Override
@@ -2462,7 +2977,7 @@ public class OrderPageFragment extends Fragment {
     	    */
 		    	ExpandableListView lvSimple = (ExpandableListView) m_view.findViewById(R.id.listViewOrderLines);
                 int defaultTextColor=Common.getColorFromAttr(getActivity(), R.attr.myTextColor);
-		    	if (g.Common.PHARAON)
+		    	if (g.Common.PHARAOH)
 		    	{
 		    		g.MyDatabase.m_orderLinesAdapter = new OrderExpPhListAdapter(getActivity().getApplicationContext(), defaultTextColor);
 		    		((OrderExpPhListAdapter)g.MyDatabase.m_orderLinesAdapter).init();
@@ -2509,8 +3024,10 @@ public class OrderPageFragment extends Fragment {
     				public void onClick(View v) {
     					Intent intent=new Intent(getActivity(), NomenclatureActivity.class);
     					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-    					startActivityForResult(intent, OPEN_NOMENCLATURE_FROM_ORDER_REQUEST);
+    					//startActivityForResult(intent, OPEN_NOMENCLATURE_FROM_ORDER_REQUEST);
+						openNomenclatureFromOrderActivityResultLauncher.launch(intent);
     					//startActivity(intent);
+
     				}
     			});
     			
@@ -2521,7 +3038,8 @@ public class OrderPageFragment extends Fragment {
     				public void onClick(View v) {
     					Intent intent=new Intent(getActivity(), NomenclatureGridActivity.class);
     					intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-    					startActivityForResult(intent, OPEN_NOMENCLATURE_GRID_FROM_ORDER_REQUEST);
+						openNomenclatureFromOrderActivityResultLauncher.launch(intent);
+    					//startActivityForResult(intent, OPEN_NOMENCLATURE_GRID_FROM_ORDER_REQUEST);
     					//startActivity(intent);
     				}
     			});
@@ -2594,7 +3112,7 @@ public class OrderPageFragment extends Fragment {
 		Button buttonOrderSelectClient=(Button)m_view.findViewById(R.id.buttonOrderSelectClient);
 		TextView textViewOrdersClientAddress=(TextView)m_view.findViewById(R.id.textViewOrdersClientAddress);
 		
-	    if (g.Common.PHARAON&&g.MyDatabase.m_order_editing.create_client==1)
+	    if (g.Common.PHARAOH&&g.MyDatabase.m_order_editing.create_client==1)
 	    {
 			textViewClientLastName.setVisibility(View.VISIBLE);
 			etLastname.setVisibility(View.VISIBLE);
@@ -2714,7 +3232,7 @@ public class OrderPageFragment extends Fragment {
 				
 				// TODO редактирование количества
 				// 1С печать общего списка количества 
-				if (g.Common.PHARAON)
+				if (g.Common.PHARAOH)
 				{
 					int pos_item=ExpandableListView.getPackedPositionChild(info.packedPosition);
 					line=((OrderExpPhListAdapter)g.MyDatabase.m_orderLinesAdapter).mGroups.get(pos).lines.get(pos_item);
@@ -2755,8 +3273,9 @@ public class OrderPageFragment extends Fragment {
 				    intent.putExtra("rest", restCursor.getDouble(0));
 			    }
 			    restCursor.close();
-				startActivityForResult(intent, OrderActivity.QUANTITY_REQUEST);
-				
+				//startActivityForResult(intent, OrderActivity.QUANTITY_REQUEST);
+				quantityRequestActivityResultLauncher.launch(intent);
+
 			}
 			break;
 			case R.id.action_change_price:
@@ -2766,7 +3285,7 @@ public class OrderPageFragment extends Fragment {
 				int pos=ExpandableListView.getPackedPositionGroup(info.packedPosition);
 				OrderLineRecord line;
 				
-				if (g.Common.PHARAON)
+				if (g.Common.PHARAOH)
 				{
 					int pos_item=ExpandableListView.getPackedPositionChild(info.packedPosition);
 					line=((OrderExpPhListAdapter)g.MyDatabase.m_orderLinesAdapter).mGroups.get(pos).lines.get(pos_item);
@@ -2889,7 +3408,7 @@ public class OrderPageFragment extends Fragment {
 			        //Toast.makeText(this, "keyboard hidden", Toast.LENGTH_SHORT).show();
 					if (buttonOk!=null)
 						buttonOk.setVisibility(View.VISIBLE);
-					if (buttonPrint!=null&&g.Common.PHARAON)
+					if (buttonPrint!=null&&g.Common.PHARAOH)
 						buttonPrint.setVisibility(View.VISIBLE);
 					if (buttonClose!=null)
 						buttonClose.setVisibility(View.VISIBLE);

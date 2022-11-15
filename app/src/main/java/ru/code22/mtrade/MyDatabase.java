@@ -1862,7 +1862,7 @@ public class MyDatabase
 	            sum+=Math.floor(it.total*100+0.000001);
 	        }
 	        /*
-	        if (Common.PHARAON)
+	        if (Common.PHARAOH)
 	        {
 	        	sum+=Math.floor(ticket_m*quant_m*100.0+0.000001)+Math.floor(ticket_w*quant_w*100.0+0.000001);
 	        }

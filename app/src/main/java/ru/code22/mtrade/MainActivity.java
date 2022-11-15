@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -77,6 +78,10 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.io.CopyStreamAdapter;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -173,8 +178,10 @@ import com.google.android.play.core.install.InstallStateUpdatedListener;
 import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.InstallStatus;
 import com.google.android.play.core.install.model.UpdateAvailability;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.FirebaseApp;
+//import com.google.firebase.iid.FirebaseInstanceId;
+//import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.nostra13.universalimageloader.utils.L;
 //import android.annotation.SuppressLint;
 //import android.support.v4.app.Fragment;
@@ -259,6 +266,16 @@ public class MainActivity extends AppCompatActivity
 
     //public TabHost tabHost;
 
+    private ActivityResultLauncher<Intent> selectClientActivityResultLauncher;
+    private ActivityResultLauncher<Intent> editOrderActivityResultLauncher;
+    private ActivityResultLauncher<Intent> editMessageActivityResultLauncher;
+    private ActivityResultLauncher<Intent> createCameraActivityResultLauncher;
+    private ActivityResultLauncher<Intent> editPaymentActivityResultLauncher;
+    private ActivityResultLauncher<Intent> editRefundActivityResultLauncher;
+    private ActivityResultLauncher<Intent> editDistribsActivityResultLauncher;
+    private ActivityResultLauncher<Intent> editOrderPreActivityResultLauncher;
+
+    /*
     public static final int SELECT_CLIENT_REQUEST = 1;
     private static final int EDIT_ORDER_REQUEST = 2;
     private static final int EDIT_MESSAGE_REQUEST = 3;
@@ -269,6 +286,7 @@ public class MainActivity extends AppCompatActivity
     private static final int EDIT_DISTRIBS_REQUEST = 8;
     private static final int EDIT_ORDER_PRE_REQUEST = 9;
     public static final int SELECT_ROUTES_WITH_DATES_REQUEST = 10;
+     */
 
     private static final int REQ_CODE_VERSION_UPDATE = 530;
 
@@ -633,7 +651,7 @@ public class MainActivity extends AppCompatActivity
                                 prevSection = section;
                             }
                         }
-                        if (g.Common.PHARAON) {
+                        if (g.Common.PHARAOH) {
                             // если в демо-режиме отлаживаем для фараона
                             //
                             cv.clear();
@@ -860,7 +878,501 @@ public class MainActivity extends AppCompatActivity
 		}
 		*/
 
+        selectClientActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data != null) {
 
+                                long id = data.getLongExtra("id", 0);
+                                //Toast.makeText(MainActivity.this, "id=" + id, Toast.LENGTH_SHORT).show();
+                                Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.CLIENTS_CONTENT_URI, id);
+                                //Cursor cursor=getContentResolver().query(singleUri, mProjection, "", selectionArgs, null);
+                                Cursor cursor = getContentResolver().query(singleUri, new String[]{"descr", "id"}, null, null, null);
+                                if (cursor.moveToNext()) {
+                                    int descrIndex = cursor.getColumnIndex("descr");
+                                    int idIndex = cursor.getColumnIndex("id");
+                                    String newWord = cursor.getString(descrIndex);
+                                    String clientId = cursor.getString(idIndex);
+                                    //EditText et = (EditText) findViewById(R.id.etClient);
+                                    //et.setText(newWord);
+                                    m_client_id = new MyID(clientId);
+                                    m_client_descr = newWord;
+                                    //getSupportLoaderManager().restartLoader(ORDERS_LOADER_ID, null, MainActivity.this);
+                                    //getSupportLoaderManager().restartLoader(PAYMENTS_LOADER_ID, null, MainActivity.this);
+                                    FragmentManager fragmentManager = getSupportFragmentManager();
+                                    Fragment fragment=fragmentManager.findFragmentById(R.id.content_frame);
+                                    if (fragment instanceof OrdersListFragment)
+                                    {
+                                        OrdersListFragment ordersListFragment=(OrdersListFragment)fragment;
+                                        ordersListFragment.onFilterClientSelected(clientId, newWord);
+                                    }
+                                    if (fragment instanceof PaymentsListFragment)
+                                    {
+                                        PaymentsListFragment paymentsListFragment=(PaymentsListFragment)fragment;
+                                        paymentsListFragment.onFilterClientSelected(clientId, newWord);
+                                    }
+
+                                }
+                                cursor.close();
+                            }
+                        }
+                    }
+                });
+
+        editOrderActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        int resultCode=result.getResultCode();
+                        Intent data = result.getData();
+                        if (data != null && resultCode == OrderActivity.ORDER_RESULT_OK) {
+                            if (g.MyDatabase.m_order_editing.accept_coord == 1) {
+                                boolean gpsenabled = m_locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                                g.MyDatabase.m_order_editing.gpsstate = gpsenabled ? 1 : 0;
+                            }
+                            g.MyDatabase.m_order_editing.versionPDA++;
+                            // Перед записью считаем сумму документа
+                            g.MyDatabase.m_order_editing.sumDoc = g.MyDatabase.m_order_editing.GetOrderSum(null, false);
+                            g.MyDatabase.m_order_editing.weightDoc = TextDatabase.GetOrderWeight(getContentResolver(), g.MyDatabase.m_order_editing, null, false);
+                            if (g.MyDatabase.m_order_editing.state == E_ORDER_STATE.E_ORDER_STATE_BACKUP_NOT_SAVED) {
+                                g.MyDatabase.m_order_editing.state = E_ORDER_STATE.E_ORDER_STATE_CREATED;
+                            }
+                            TextDatabase.SaveOrderSQL(getContentResolver(), g.MyDatabase.m_order_editing, g.MyDatabase.m_order_editing_id, 0);
+                            if (g.Common.NEW_BACKUP_FORMAT) {
+                                // Удаляем резервную копию документа после записи настоящего документа
+                                Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.ORDERS_CONTENT_URI, g.MyDatabase.m_order_new_editing_id);
+                                getContentResolver().delete(singleUri, "editing_backup<>0", null);
+                            }
+                            // Переименовываем файл изображения
+                            if ((g.Common.TITAN || g.Common.ISTART || g.Common.FACTORY) && g.MyDatabase.m_order_editing_created) {
+                                File photoFileDir = g.Common.getMyStorageFileDir(getBaseContext(), "photo");
+                                File attachFileDir = g.Common.getMyStorageFileDir(getBaseContext(), "attaches");
+                                File fileOrderImage1 = new File(photoFileDir, "order_image_1.jpg");
+                                if (fileOrderImage1.exists()) {
+                                    File fileOrderImage1Dest = new File(attachFileDir, "order_image_1_" + g.MyDatabase.m_order_editing.uid.toString().replace("{", "").replace("}", "") + ".jpg");
+                                    fileOrderImage1.renameTo(fileOrderImage1Dest);
+                                }
+                                File fileOrderImage2 = new File(photoFileDir, "order_image_2.jpg");
+                                if (fileOrderImage2.exists()) {
+                                    File fileOrderImage2Dest = new File(attachFileDir, "order_image_2_" + g.MyDatabase.m_order_editing.uid.toString().replace("{", "").replace("}", "") + ".jpg");
+                                    fileOrderImage2.renameTo(fileOrderImage2Dest);
+                                }
+
+                            }
+                            //
+                            if (!m_bNeedCoord && g.MyDatabase.m_order_editing.accept_coord == 1) {
+                                m_bNeedCoord = true;
+                                startGPS();
+                            }
+                            // Резервное сохрание заявки в текстовый файл, либо удаление этой копии
+                            if (!g.Common.NEW_BACKUP_FORMAT && Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                                // получаем путь к SD
+                                File sdPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/mtrade/orders");
+                                // создаем каталог
+                                if (!sdPath.exists()) {
+                                    sdPath.mkdirs();
+                                }
+                                //
+                                File sdFile = new File(sdPath, g.MyDatabase.m_order_editing.uid.toString() + ".txt");
+                                if (E_ORDER_STATE.getCanBeRestoredFromTextFile(g.MyDatabase.m_order_editing.state)) {
+                                    try {
+                                        //BufferedWriter bw = new BufferedWriter(new FileWriter(sdFile));
+                                        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(sdFile), "cp1251"));
+                                        bw.write("0\r\n"); // obsolette m_orders_version
+                                        bw.write(String.valueOf(g.Common.m_mtrade_version));
+                                        bw.write("\r\n");
+                                        TextDatabase.SaveOrderToText(bw, g.MyDatabase.m_order_editing, false, true);
+                                        bw.write("@@@"); // начиная с версии 3.0
+                                        bw.flush();
+                                        bw.close();
+                                    } catch (IOException e) {
+                                        Log.e(LOG_TAG, "error", e);
+                                    }
+                                } else {
+                                    sdFile.delete();
+                                }
+                            }
+
+                            if (g.Common.PHARAOH && g.MyDatabase.m_order_editing.dont_need_send == 0) {
+                                // и запускаем обмен
+                                new ExchangeTask().execute(3, 0, "");
+                            }
+
+                            // если режим маршрута, добавим туда заказ
+                            updateDocumentInRoute(g.MyDatabase.m_order_editing.distr_point_id.toString(), g.MyDatabase.m_order_editing);
+
+                        }
+                        if (resultCode == OrderActivity.ORDER_RESULT_CANCEL) {
+                            if (g.Common.NEW_BACKUP_FORMAT) {
+                                // если документ не меняли, там будет -1, соответственно удалять нечего
+                                if (g.MyDatabase.m_order_new_editing_id > 0) {
+                                    Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.ORDERS_CONTENT_URI, g.MyDatabase.m_order_new_editing_id);
+                                    getContentResolver().delete(singleUri, "editing_backup<>0", null);
+                                }
+                            } else {
+                                // Старый вариант
+                                if (g.MyDatabase.m_order_editing.state == E_ORDER_STATE.E_ORDER_STATE_BACKUP_NOT_SAVED && g.MyDatabase.m_order_editing_id != 0) {
+                                    Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.ORDERS_CONTENT_URI, g.MyDatabase.m_order_editing_id);
+                                    getContentResolver().delete(singleUri, E_ORDER_STATE.getCanBeDeletedConditionWhere(), E_ORDER_STATE.getCanBeDeletedArgs());
+                                }
+                            }
+                        }
+                    }
+                });
+
+        editMessageActivityResultLauncher  = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        // Можем менять только свои сообщения (&4)!=0
+                        if (result.getResultCode() == MessageActivity.MESSAGE_RESULT_OK && (g.MyDatabase.m_message_editing.acknowledged & 4) != 0) {
+                            Intent data = result.getData();
+                            if (data != null) {
+                                g.MyDatabase.m_message_editing.ver++;
+                                TextDatabase.SaveMessageSQL(getContentResolver(), g.MyDatabase, g.MyDatabase.m_message_editing, g.MyDatabase.m_message_editing_id);
+
+                                if (!g.MyDatabase.m_message_editing.fname.isEmpty()) {
+                                    File attachFileDir = Common.getMyStorageFileDir(MainActivity.this, "attaches");
+
+                                    File inFile = new File(g.MyDatabase.m_message_editing.fname);
+                                    File outFile = new File(attachFileDir, inFile.getName());
+
+                                    boolean bOutFileOpened = false;
+
+                                    InputStream in;
+                                    OutputStream out;
+                                    try {
+                                        in = new FileInputStream(inFile);
+                                        out = new FileOutputStream(outFile);
+                                        bOutFileOpened = true;
+                                        // Transfer bytes from in to out
+                                        byte[] buf = new byte[1024];
+                                        int len;
+                                        while ((len = in.read(buf)) > 0) {
+                                            out.write(buf, 0, len);
+                                        }
+                                        in.close();
+                                        out.close();
+                                    } catch (FileNotFoundException e) {
+                                        // TODO Auto-generated catch block
+                                        //e.printStackTrace();
+                                    } catch (IOException e) {
+                                        // TODO Auto-generated catch block
+                                        //e.printStackTrace();
+                                        if (bOutFileOpened) {
+                                            outFile.delete();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+        createCameraActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        // Можем менять только свои сообщения (&4)!=0
+                        if (result.getResultCode() == RESULT_OK) {
+                            Intent data = result.getData();
+    			/*
+    			Cursor mediaCursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[] {MediaStore.Images.ImageColumns.ORIENTATION, MediaStore.MediaColumns.SIZE }, null, null, null);
+    			if (mediaCursor!=null&&mediaCursor.moveToNext())
+    			{
+    				int rotation=mediaCursor.getInt(0);
+    				Toast.makeText(MainActivity.this, Integer.toString(rotation), Toast.LENGTH_LONG).show();
+    			}
+    			*/
+    			/*
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                //imageView.setImageBitmap(photo);
+                //MediaStore.Images.Media.insertImage(getContentResolver(), photo,
+                //        null, null);
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] b = baos.toByteArray();
+                */
+                /*
+                File outFile = new File(Environment.getExternalStorageDirectory(), "myname.jpeg");
+                FileOutputStream fos = new FileOutputStream(outFile);
+                photo.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                fos.flush();
+                fos.close();
+                */
+    			/*
+    			File inFile=new File(data.getExtras().get(MediaStore.EXTRA_OUTPUT).toString());
+    			try {
+					ExifInterface exif = new ExifInterface(inFile.getAbsolutePath());
+					exif_ORIENTATION = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				*/
+
+                            // Unfortunately there is a bug on some devices causing the Intend data parameter
+                            // in onActivityResult to be null when you use the MediaStore.EXTRA_OUTPUT flag
+                            // in your intent for the camera. A workaround is to keep the outputFileUri
+                            // variable global so that you can access it again in your onActivityResult method
+
+                            Date date = new Date();
+                            //String timeString=String.valueOf(System.currentTimeMillis());
+                            String timeString = Common.MyDateFormat("dd.MM.yyyy HH:mm:ss", date);
+
+                            String fileName = Common.getDateTimeAsString14(date).toString() + ".jpg";
+
+                            File photoDir = Common.getMyStorageFileDir(MainActivity.this, photoFolder);
+                            if (!photoDir.exists()) {
+                                photoDir.mkdirs();
+                            }
+
+                            boolean bSavedOk = false;
+
+                            File imgWithTime = new File(photoDir, fileName);
+                            ExifInterface exifInterface = null;
+
+                            if (data != null) {
+                                //if the intent data is not null, use it
+                                //puc_image = getImagePath(Uri.parse(data.toURI())); //update the image path accordingly
+                                //StoreImage(this, Uri.parse(data.toURI()), puc_img);
+                                if (data.getData() != null) {
+                                    bSavedOk = ImagePrinting.StoreImage(MainActivity.this, data.getData(), imgWithTime, timeString);
+                                    if (bSavedOk) {
+                                        // Удалим первый файл, созданный телефоном
+                                        String imgPath = ImagePrinting.getImagePath(MainActivity.this, data.getData());
+                                        File oldFile = new File(imgPath);
+                                        oldFile.delete();
+                                    }
+                                } else {
+                                    // Самсунг)
+                                    bSavedOk = ImagePrinting.StoreImage(MainActivity.this, outputPhotoFileUri, imgWithTime, timeString);
+                	  /*
+                	  // test
+                	  if (bSavedOk)
+                	  {
+                		  byte []textData=new byte[100*150*3];
+                		  int i;
+                		  for (i=0;i<100*150*3;i++)
+                		  {
+                			  textData[i]=0;
+                		  }
+                          File imgWithTime2=new File(photoDir, "!17!.jpg");
+                		  int ix=NativeCallsClass.convertJpegFile(imgWithTime.getAbsolutePath(), imgWithTime2.getAbsolutePath(), textData, 0, 0, 150, 100, 75, 1);
+                	  }
+                	  //
+                	  */
+                                }
+                            } else {
+                                //Use the outputFileUri global variable
+                                bSavedOk = ImagePrinting.StoreImage(MainActivity.this, outputPhotoFileUri, imgWithTime, timeString);
+                            }
+                            if (bSavedOk) {
+                                // И второй в первом случае или единственный во втором
+                                // До 21.08.2018
+                                //String imgPath=ImagePrinting.getImagePath(this, outputPhotoFileUri);
+                                //File oldFile = new File(imgPath);
+                                //try {
+                                //	  exifInterface = new ExifInterface(imgPath);
+                                // } catch (IOException e) {
+                                //		// TODO Auto-generated catch block
+                                //		//e.printStackTrace();
+                                // 	  exifInterface=null;
+                                //  }
+                                //  oldFile.delete();
+                                // После
+                                if (outputPhotoFileUri.getScheme().equals("content")) {
+                                    try {
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                            InputStream iStream = getContentResolver().openInputStream(outputPhotoFileUri);
+                                            exifInterface = new ExifInterface(iStream);
+                                        }
+                                    } catch (IOException e) {
+                                        exifInterface = null;
+                                    }
+                        /* TODO удалять файл
+                        FileProvider provider = new FileProvider();
+                        grantUriPermission(getApplicationContext().getPackageName(), outputPhotoFileUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        // Падает вот здесь
+                        provider.delete(outputPhotoFileUri, null, null);
+                        */
+                                } else {
+                                    String imgPath = ImagePrinting.getImagePath(MainActivity.this, outputPhotoFileUri);
+                                    File oldFile = new File(imgPath);
+                                    try {
+                                        exifInterface = new ExifInterface(imgPath);
+                                    } catch (IOException e) {
+                                        exifInterface = null;
+                                    }
+                                    oldFile.delete();
+                                }
+
+                                String exif_DATETIME = Common.MyDateFormat("yyyy:MM:dd HH:mm:ss", date);
+                                String exif_MODEL = "Android";
+                                String exif_MAKE = "";
+                                //String exif_IMAGE_LENGTH="";
+                                //String exif_IMAGE_WIDTH="";
+
+                                if (exifInterface != null) {
+                                    //exif_DATETIME = exifInterface.getAttribute(ExifInterface.TAG_DATETIME);
+                                    exif_MODEL = exifInterface.getAttribute(ExifInterface.TAG_MODEL);
+                                    exif_MAKE = exifInterface.getAttribute(ExifInterface.TAG_MAKE);
+                                    //String et=exifInterface.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
+                                    //exif_IMAGE_LENGTH = exifInterface.getAttribute(ExifInterface..TAG_IMAGE_LENGTH);
+                                    //exif_IMAGE_WIDTH = exifInterface.getAttribute(ExifInterface.TAG_IMAGE_WIDTH);
+                                }
+                                try {
+                                    ExifInterface exifInterface2 = new ExifInterface(imgWithTime.getAbsolutePath());
+                                    exifInterface2.setAttribute(ExifInterface.TAG_DATETIME, exif_DATETIME);
+                                    exifInterface2.setAttribute(ExifInterface.TAG_MODEL, exif_MODEL);
+                                    exifInterface2.setAttribute(ExifInterface.TAG_MAKE, exif_MAKE);
+                                    exifInterface2.saveAttributes();
+
+                                    JpegHeaders headers;
+                                    try {
+
+                                        // Initializes static data - not necessary as it is done
+                                        // automatically the first time it is needed.  However doing
+                                        // it explicitly means the first call to the library won't be
+                                        // slower than subsequent calls.
+                                        JpegHeaders.preheat();
+
+                                        // Parse the JPEG file
+                                        headers = new JpegHeaders(imgWithTime.getAbsolutePath());
+
+                                        // If the file isn't EXIF, convert it
+                                        if (headers.getApp1Header() == null)
+                                            headers.convertToExif();
+
+                                        App1Header app1Header = headers.getApp1Header();
+                                        //app1Header.setValue(new TagValue(Tag.IMAGEDESCRIPTION,"bla bla bla"));
+                                        app1Header.setValue(new TagValue(Tag.DATETIMEORIGINAL, exif_DATETIME));
+                                        app1Header.setValue(new TagValue(Tag.DATETIMEDIGITIZED, exif_DATETIME));
+                                        // set a field
+                                        //app1Header.setValue(new TagValue(Tag.IMAGEDESCRIPTION,
+                                        //			     "My new image description"));
+                                        //headers.save(true);
+                                        // Резервная копия не нужна
+                                        headers.save(false);
+                                    } catch (ExifFormatException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    } catch (TagFormatException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    } catch (JpegFormatException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
+                                } catch (IOException e) {
+                                    // TODO Auto-generated catch block
+                                    e.printStackTrace();
+                                }
+                                editMessage(0, imgWithTime.getAbsolutePath());
+                            }
+                        }
+                        }
+                    });
+        editPaymentActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == PaymentActivity.RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data != null) {
+                                g.MyDatabase.m_payment_editing.versionPDA++;
+                                TextDatabase.SavePaymentSQL(getContentResolver(), g.MyDatabase, g.MyDatabase.m_payment_editing, g.MyDatabase.m_payment_editing_id);
+                                if (!m_bNeedCoord && g.MyDatabase.m_payment_editing.accept_coord == 1) {
+                                    m_bNeedCoord = true;
+                                    startGPS();
+                                }
+                                // если режим маршрута, добавим туда платеж
+                                updateDocumentInRoute(g.MyDatabase.m_payment_editing.distr_point_id.toString(), g.MyDatabase.m_payment_editing);
+                            }
+                        }
+                    }
+                });
+        editRefundActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        int resultCode=result.getResultCode();
+                        if (resultCode == RefundActivity.RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data != null) {
+                                if (g.MyDatabase.m_refund_editing.accept_coord == 1) {
+                                    boolean gpsenabled = m_locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                                    g.MyDatabase.m_refund_editing.gpsstate = gpsenabled ? 1 : 0;
+                                }
+                                g.MyDatabase.m_refund_editing.versionPDA++;
+                                // Перед записью считаем вес документа
+                                g.MyDatabase.m_refund_editing.weightDoc = TextDatabase.GetOrderWeight(getContentResolver(), g.MyDatabase.m_order_editing, null, false);
+                                if (g.MyDatabase.m_refund_editing.state == E_REFUND_STATE.E_REFUND_STATE_BACKUP_NOT_SAVED) {
+                                    g.MyDatabase.m_refund_editing.state = E_REFUND_STATE.E_REFUND_STATE_CREATED;
+                                }
+                                TextDatabase.SaveRefundSQL(getContentResolver(), g.MyDatabase.m_refund_editing, g.MyDatabase.m_refund_editing_id);
+                                if (!m_bNeedCoord && g.MyDatabase.m_refund_editing.accept_coord == 1) {
+                                    m_bNeedCoord = true;
+                                    startGPS();
+                                }
+                                // Резервное сохрание возврата в текстовый файл, либо удаление этой копии
+                                // не выполняем, в отличие от заказа
+                                // TODO
+
+                                // если режим маршрута, добавим туда возврат
+                                updateDocumentInRoute(g.MyDatabase.m_refund_editing.distr_point_id.toString(), g.MyDatabase.m_refund_editing);
+                            }
+                        }
+                        if (resultCode == RefundActivity.REFUND_RESULT_CANCEL) {
+                            if (g.MyDatabase.m_refund_editing.state == E_REFUND_STATE.E_REFUND_STATE_BACKUP_NOT_SAVED && g.MyDatabase.m_refund_editing_id != 0) {
+                                Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.REFUNDS_CONTENT_URI, g.MyDatabase.m_refund_editing_id);
+                                getContentResolver().delete(singleUri, E_REFUND_STATE.getCanBeDeletedConditionWhere(), E_REFUND_STATE.getCanBeDeletedArgs());
+                            }
+                        }
+                    }
+                });
+        editDistribsActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == DistribsActivity.RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data != null) {
+                                if (g.MyDatabase.m_distribs_editing.accept_coord == 1) {
+                                    boolean gpsenabled = m_locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                                    g.MyDatabase.m_distribs_editing.gpsstate = gpsenabled ? 1 : 0;
+                                }
+                                g.MyDatabase.m_distribs_editing.versionPDA++;
+                                TextDatabase.SaveDistribsSQL(getContentResolver(), g.MyDatabase.m_distribs_editing, g.MyDatabase.m_distribs_editing_id);
+                                if (!m_bNeedCoord && g.MyDatabase.m_distribs_editing.accept_coord == 1) {
+                                    m_bNeedCoord = true;
+                                    startGPS();
+                                }
+                                // если режим маршрута, добавим туда дистрибьюцию
+                                updateDocumentInRoute(g.MyDatabase.m_distribs_editing.distr_point_id.toString(), g.MyDatabase.m_distribs_editing);
+                            }
+                        }
+                    }
+                });
+
+        editOrderPreActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        // TODO проверить, по-моему, это вызываться не должно
+                    }
+                });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create channel to show notifications.
@@ -937,7 +1449,7 @@ public class MainActivity extends AppCompatActivity
                     if (incoming == null || outgoing == null || !incoming.equals(outgoing)) {
                         // Реиндексация требуется
                         // В новом формате вопросов не задается
-                        if (g.Common.PHARAON || g.Common.NEW_BACKUP_FORMAT) {
+                        if (g.Common.PHARAOH || g.Common.NEW_BACKUP_FORMAT) {
                             //getContentResolver().insert(MTradeContentProvider.REINDEX_CONTENT_URI, null);
                             //TextDatabase.fillNomenclatureHierarchy(getContentResolver(), getResources(), "     0   ");
                             if (incoming != null && incoming.startsWith("UPGRADED") && MTradeContentProvider.DB_VERSION==67) {
@@ -1113,7 +1625,7 @@ public class MainActivity extends AppCompatActivity
         spec.setIndicator(getString(R.string.tab_exchange), getResources().getDrawable(android.R.drawable.ic_popup_sync));
         tabHost.addTab(spec);
 
-        //if (g.Common.PHARAON)
+        //if (g.Common.PHARAOH)
         //{
         //	// С сообщениями не работают
         //} else
@@ -1227,6 +1739,38 @@ public class MainActivity extends AppCompatActivity
 
         if (reindexNeeded == false)
             loadDataAfterStart();
+    }
+
+    void checkFirebaseToken() {
+        final SharedPreferences pref = getSharedPreferences("MTradePreferences", 0);
+
+        String fcm_instanceId=pref.getString("fcm_instanceId", "");
+
+        if (fcm_instanceId==null||fcm_instanceId.isEmpty()) {
+            // Запросим InstanceId
+
+            try {
+                FirebaseMessaging.getInstance().getToken()
+                        .addOnCompleteListener(task -> {
+                            if (!task.isSuccessful()) {
+                                //Could not get FirebaseMessagingToken
+                                Log.w(LOG_TAG, "getInstanceId failed", task.getException());
+                                return;
+                            }
+                            if (null != task.getResult()) {
+                                //Got FirebaseMessagingToken
+                                String firebaseMessagingToken = Objects.requireNonNull(task.getResult());
+                                //Use firebaseMessagingToken further
+                                SharedPreferences.Editor pref_editor = pref.edit();
+                                pref_editor.putString("fcm_instanceId", firebaseMessagingToken);
+                                pref_editor.commit();
+                            }
+                        });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     void checkSendImages() {
@@ -1978,7 +2522,8 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra("client_id", client_id);
         intent.putExtra("distr_point_id", distr_point_id);
         //intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivityForResult(intent, EDIT_ORDER_PRE_REQUEST);
+        //startActivityForResult(intent, EDIT_ORDER_PRE_REQUEST);
+        editOrderPreActivityResultLauncher.launch(intent);
     }
 
     public void editOrder(long id, boolean bCopyOrder, String client_id, String distr_point_id) {
@@ -1994,7 +2539,8 @@ public class MainActivity extends AppCompatActivity
 
         //getArguments().getStringArray(ARGUMENT_)
 
-        startActivityForResult(intent, EDIT_ORDER_REQUEST);
+        //startActivityForResult(intent, EDIT_ORDER_REQUEST);
+        editOrderActivityResultLauncher.launch(intent);
     }
 
     public void cancelOrder(long id)
@@ -2229,7 +2775,8 @@ public class MainActivity extends AppCompatActivity
             rec.stuff_agreement_debt_past = agreement_debt_past;
         }
 
-        startActivityForResult(intent, EDIT_PAYMENT_REQUEST);
+        //startActivityForResult(intent, EDIT_PAYMENT_REQUEST);
+        editPaymentActivityResultLauncher.launch(intent);
 
     }
 
@@ -2555,7 +3102,8 @@ public class MainActivity extends AppCompatActivity
 
         //getArguments().getStringArray(ARGUMENT_)
 
-        startActivityForResult(intent, EDIT_REFUND_REQUEST);
+        //startActivityForResult(intent, EDIT_REFUND_REQUEST);
+        editRefundActivityResultLauncher.launch(intent);
     }
 
 
@@ -2717,7 +3265,8 @@ public class MainActivity extends AppCompatActivity
 
         //getArguments().getStringArray(ARGUMENT_)
 
-        startActivityForResult(intent, EDIT_DISTRIBS_REQUEST);
+        //startActivityForResult(intent, EDIT_DISTRIBS_REQUEST);
+        editDistribsActivityResultLauncher.launch(intent);
     }
 
 
@@ -2756,7 +3305,8 @@ public class MainActivity extends AppCompatActivity
             if (!rec.fname.isEmpty()) {
                 rec.type_idx = E_MESSAGE_TYPES.E_MESSAGE_TYPE_PHOTO.value();
             }
-            startActivityForResult(intent, EDIT_MESSAGE_REQUEST);
+            //startActivityForResult(intent, EDIT_MESSAGE_REQUEST);
+            editMessageActivityResultLauncher.launch(intent);
         } else {
             boolean result = TextDatabase.ReadMessageBy_Id(getContentResolver(), g.MyDatabase, rec, g.MyDatabase.m_message_editing_id);
             if ((rec.acknowledged & (4 | 16)) == 0) {
@@ -2767,7 +3317,8 @@ public class MainActivity extends AppCompatActivity
                 getContentResolver().update(MTradeContentProvider.MESSAGES_CONTENT_URI, cv, "_id=?", new String[]{String.valueOf(g.MyDatabase.m_message_editing_id)});
             }
             if (result) {
-                startActivityForResult(intent, EDIT_MESSAGE_REQUEST);
+                //startActivityForResult(intent, EDIT_MESSAGE_REQUEST);
+                editMessageActivityResultLauncher.launch(intent);
             }
         }
     }
@@ -3216,7 +3767,7 @@ public class MainActivity extends AppCompatActivity
                                 ArrayList<String> conditionArgs = new ArrayList<String>();
 
                                 conditionString = Common.combineConditions(conditionString, conditionArgs, "not " + E_ORDER_STATE.getNotClosedConditionWhere(), E_ORDER_STATE.getNotClosedSelectionArgs());
-                                if (g.Common.PHARAON && m_filter_type == 1) {
+                                if (g.Common.PHARAOH && m_filter_type == 1) {
                                     // По дате обслуживания
                                     switch (m_filter_date_type) {
                                         case 0:
@@ -3329,7 +3880,7 @@ public class MainActivity extends AppCompatActivity
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle(R.string.message_sort_orders);
                 String[] sort_types_array;
-                if (g.Common.PHARAON) {
+                if (g.Common.PHARAOH) {
                     sort_types_array = getResources().getStringArray(R.array.sort_types_array_ph);
                 } else {
                     sort_types_array = getResources().getStringArray(R.array.sort_types_array);
@@ -4192,6 +4743,8 @@ public class MainActivity extends AppCompatActivity
 
         if (event.equals("ExchangeConnect"))
         {
+
+            checkFirebaseToken();
             checkSendImages();
             if (m_imagesToSendSize > 0) {
                 showDialog(IDD_QUERY_SEND_IMAGES, null);
@@ -4205,7 +4758,7 @@ public class MainActivity extends AppCompatActivity
         {
             MySingleton g = MySingleton.getInstance();
 
-            if (g.Common.PHARAON) {
+            if (g.Common.PHARAOH) {
                 g.MyDatabase.m_occupied_places_version = -1;
                 new MainActivity.ExchangeTask().execute(3, 0, null);
             } else {
@@ -4216,6 +4769,7 @@ public class MainActivity extends AppCompatActivity
                 m_bRefreshPressed = true;
 
                 // И обычный обмен
+                checkFirebaseToken();
                 checkSendImages();
                 if (m_imagesToSendSize > 0) {
                     showDialog(IDD_QUERY_SEND_IMAGES, null);
@@ -4242,7 +4796,7 @@ public class MainActivity extends AppCompatActivity
             new MainActivity.ExchangeTask().execute(3, 0, null);
         }
 
-        // Вообще пока только при стирании клиента это происходит
+        // Указали клиента, либо стерли
         if (event.equals("FilterClient"))
         {
             String client_id=parameters.getString("client_id");
@@ -4475,6 +5029,55 @@ public class MainActivity extends AppCompatActivity
             showDialog(IDD_QUERY_END_VISIT, parameters);
         }
 
+        if (event.equals("routeAndDateSelected"))
+        {
+            String route_id=parameters.getString("route_id");
+            if (route_id!=null)
+                m_route_id=new MyID(route_id);
+            else
+                m_route_id=new MyID();
+            m_route_date=parameters.getString("route_date");
+            m_route_descr=parameters.getString("route_descr");
+            if (fragment instanceof RoutesListFragment)
+            {
+                RoutesListFragment routesListFragment=(RoutesListFragment)fragment;
+                routesListFragment.onRouteSelected(m_route_id.toString(), m_route_date, m_route_descr);
+            }
+            /*
+        case SELECT_ROUTES_WITH_DATES_REQUEST:
+        if (data != null) {
+            long id = data.getLongExtra("id", 0);
+            Uri singleUri = ContentUris.withAppendedId(MTradeContentProvider.ROUTES_DATES_LIST_CONTENT_URI, id);
+            //Cursor cursor=getContentResolver().query(singleUri, mProjection, "", selectionArgs, null);
+            Cursor cursor = getContentResolver().query(singleUri, new String[]{"route_id", "route_date", "descr"}, null, null, null);
+            if (cursor.moveToNext()) {
+                int indexRouteId = cursor.getColumnIndex("route_id");
+                int indexRouteDate = cursor.getColumnIndex("route_date");
+                int indexRouteDescr = cursor.getColumnIndex("descr");
+
+                m_route_date = cursor.getString(indexRouteDate);
+                m_route_descr = cursor.getString(indexRouteDescr);
+                m_route_id = new MyID(cursor.getString(indexRouteId));
+                if (m_route_descr==null)
+                {
+                    m_route_descr="{"+m_route_id+"}";
+                }
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                Fragment fragment=fragmentManager.findFragmentById(R.id.content_frame);
+                if (fragment instanceof RoutesListFragment)
+                {
+                    RoutesListFragment routesListFragment=(RoutesListFragment)fragment;
+                    routesListFragment.onRouteSelected(m_route_id.toString(), m_route_date, m_route_descr);
+                }
+
+            }
+            cursor.close();
+        }
+        break;
+             */
+        }
+
+
     }
 
 
@@ -4522,7 +5125,7 @@ public class MainActivity extends AppCompatActivity
                         conditionString = Common.combineConditions(conditionString, conditionArgs, E_ORDER_STATE.getNotClosedConditionWhere(), E_ORDER_STATE.getNotClosedSelectionArgs());
                     }
 
-                    if (g.Common.PHARAON) {
+                    if (g.Common.PHARAOH) {
                         //conditionString=Common.combineConditions(conditionString, conditionArgs, "(shipping_date between ? and ?)", new String[]{m_date, m_date+"Z"});
                         switch (m_filter_date_type) {
                             case 0:
@@ -4682,7 +5285,7 @@ public class MainActivity extends AppCompatActivity
                     checkBoxRefunds.setVisibility(View.GONE);
                     checkBoxDistribs.setVisibility(View.GONE);
                 }
-                if (g.Common.PHARAON) {
+                if (g.Common.PHARAOH) {
                     spinnerFilterType.setVisibility(View.VISIBLE);
                 } else {
                     spinnerFilterType.setVisibility(View.GONE);
@@ -5369,7 +5972,8 @@ public class MainActivity extends AppCompatActivity
             cameraIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
 
-        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+        //startActivityForResult(cameraIntent, CAMERA_REQUEST);
+        createCameraActivityResultLauncher.launch(cameraIntent);
     }
 
     void doActionBackup() {
@@ -5541,6 +6145,7 @@ public class MainActivity extends AppCompatActivity
                     unregisterInstallStateUpdListener();
                 }
                 break;
+                /*
             case SELECT_CLIENT_REQUEST:
                 if (data != null) {
                     long id = data.getLongExtra("id", 0);
@@ -5645,30 +6250,6 @@ public class MainActivity extends AppCompatActivity
                             fileOrderImage2.renameTo(fileOrderImage2Dest);
                         }
 
-    				/*
-					if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
-					{
-						attachFileDir=new File(Environment.getExternalStorageDirectory(), "/mtrade/attaches");
-					} else
-					{
-						attachFileDir=new File(Environment.getDataDirectory(), "/data/"+ getBaseContext().getPackageName()+"/attaches");
-					}
-		            if (!attachFileDir.exists()) {
-		            	attachFileDir.mkdirs();
-		            }
-	    			File fileOrderImage1=new File(Environment.getExternalStorageDirectory() + "/mtrade/photo/order_image_1.jpg");
-	    			if (fileOrderImage1.exists())
-	    			{
-	    				File fileOrderImage1Dest=new File(attachFileDir, "order_image_1_"+g.MyDatabase.m_order_editing.uid.toString().replace("{", "").replace("}", "")+".jpg");
-	    				fileOrderImage1.renameTo(fileOrderImage1Dest);
-	    			}
-	    			File fileOrderImage2=new File(Environment.getExternalStorageDirectory() + "/mtrade/photo/order_image_2.jpg");
-	    			if (fileOrderImage2.exists())
-	    			{
-	    				File fileOrderImage2Dest=new File(attachFileDir, "order_image_2_"+g.MyDatabase.m_order_editing.uid.toString().replace("{", "").replace("}", "")+".jpg");
-	    				fileOrderImage2.renameTo(fileOrderImage2Dest);
-	    			}
-	    			*/
                     }
                     //
                     if (!m_bNeedCoord && g.MyDatabase.m_order_editing.accept_coord == 1) {
@@ -5704,7 +6285,7 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
 
-                    if (g.Common.PHARAON && g.MyDatabase.m_order_editing.dont_need_send == 0) {
+                    if (g.Common.PHARAOH && g.MyDatabase.m_order_editing.dont_need_send == 0) {
                         // и запускаем обмен
                         new ExchangeTask().execute(3, 0, "");
                     }
@@ -5798,18 +6379,7 @@ public class MainActivity extends AppCompatActivity
 
                     if (!g.MyDatabase.m_message_editing.fname.isEmpty()) {
                         File attachFileDir = Common.getMyStorageFileDir(MainActivity.this, "attaches");
-                        /*
-                        // Копируем файл в папку attaches
-                        File attachFileDir;
-                        if (android.os.Build.VERSION.SDK_INT<Build.VERSION_CODES.Q&&Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                            attachFileDir = new File(Environment.getExternalStorageDirectory(), "/mtrade/attaches");
-                        } else {
-                            attachFileDir = new File(Environment.getDataDirectory(), "/data/" + getBaseContext().getPackageName() + "/attaches");
-                        }
-                        if (!attachFileDir.exists()) {
-                            attachFileDir.mkdirs();
-                        }
-                         */
+
                         File inFile = new File(g.MyDatabase.m_message_editing.fname);
                         File outFile = new File(attachFileDir, inFile.getName());
 
@@ -5846,41 +6416,6 @@ public class MainActivity extends AppCompatActivity
             //	break;
             case CAMERA_REQUEST:
                 if (resultCode == RESULT_OK) {
-    			/*
-    			Cursor mediaCursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[] {MediaStore.Images.ImageColumns.ORIENTATION, MediaStore.MediaColumns.SIZE }, null, null, null);
-    			if (mediaCursor!=null&&mediaCursor.moveToNext())
-    			{
-    				int rotation=mediaCursor.getInt(0);
-    				Toast.makeText(MainActivity.this, Integer.toString(rotation), Toast.LENGTH_LONG).show();
-    			}
-    			*/
-    			/*
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                //imageView.setImageBitmap(photo);
-                //MediaStore.Images.Media.insertImage(getContentResolver(), photo,
-                //        null, null);
-
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] b = baos.toByteArray();
-                */
-                /*
-                File outFile = new File(Environment.getExternalStorageDirectory(), "myname.jpeg");
-                FileOutputStream fos = new FileOutputStream(outFile);
-                photo.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                fos.flush();
-                fos.close();
-                */
-    			/*
-    			File inFile=new File(data.getExtras().get(MediaStore.EXTRA_OUTPUT).toString());
-    			try {
-					ExifInterface exif = new ExifInterface(inFile.getAbsolutePath());
-					exif_ORIENTATION = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				*/
 
                     // Unfortunately there is a bug on some devices causing the Intend data parameter
                     // in onActivityResult to be null when you use the MediaStore.EXTRA_OUTPUT flag
@@ -5918,21 +6453,6 @@ public class MainActivity extends AppCompatActivity
                         } else {
                             // Самсунг)
                             bSavedOk = ImagePrinting.StoreImage(this, outputPhotoFileUri, imgWithTime, timeString);
-                	  /*
-                	  // test
-                	  if (bSavedOk)
-                	  {
-                		  byte []textData=new byte[100*150*3];
-                		  int i;
-                		  for (i=0;i<100*150*3;i++)
-                		  {
-                			  textData[i]=0;
-                		  }
-                          File imgWithTime2=new File(photoDir, "!17!.jpg");
-                		  int ix=NativeCallsClass.convertJpegFile(imgWithTime.getAbsolutePath(), imgWithTime2.getAbsolutePath(), textData, 0, 0, 150, 100, 75, 1);
-                	  }
-                	  //
-                	  */
                         }
                     } else {
                         //Use the outputFileUri global variable
@@ -5961,12 +6481,6 @@ public class MainActivity extends AppCompatActivity
                             } catch (IOException e) {
                                 exifInterface = null;
                             }
-                        /* TODO удалять файл
-                        FileProvider provider = new FileProvider();
-                        grantUriPermission(getApplicationContext().getPackageName(), outputPhotoFileUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        // Падает вот здесь
-                        provider.delete(outputPhotoFileUri, null, null);
-                        */
                         } else {
                             String imgPath = ImagePrinting.getImagePath(this, outputPhotoFileUri);
                             File oldFile = new File(imgPath);
@@ -6043,6 +6557,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
                 break;
+                 */
         }
     }
 
@@ -6056,9 +6571,9 @@ public class MainActivity extends AppCompatActivity
         } else {
             finish();
         }
-        //if (BuildConfig.DEBUG) {
-        //    System.exit(0);
-        //}
+        if (BuildConfig.DEBUG) {
+            System.exit(0);
+        }
     }
 
     @Override
@@ -6696,8 +7211,6 @@ public class MainActivity extends AppCompatActivity
                         this.image_height=image_height;
                         this.image_file_name=image_file_name;
                     }
-
-
 
                 };
 
@@ -7431,35 +7944,6 @@ public class MainActivity extends AppCompatActivity
                         final SharedPreferences pref = getSharedPreferences("MTradePreferences", 0);
                         //SharedPreferences.Editor pref_editor = pref.edit();
 
-                        String fcm_instanceId=pref.getString("fcm_instanceId", "");
-
-                        if (fcm_instanceId==null||fcm_instanceId.isEmpty()) {
-                            // Запросим InstanceId
-
-                            FirebaseInstanceId.getInstance().getInstanceId()
-                                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                                        @Override
-                                        public void onComplete(@NonNull com.google.android.gms.tasks.Task<InstanceIdResult> task) {
-                                            if (!task.isSuccessful()) {
-                                                Log.w(LOG_TAG, "getInstanceId failed", task.getException());
-                                                return;
-                                            }
-
-                                            // Get new Instance ID token
-                                            String token = task.getResult().getToken();
-                                            // Log and toast
-                                            //String msg = getString(R.string.msg_token_fmt, token);
-                                            //Log.d(TAG, msg);
-                                            //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-
-                                            SharedPreferences.Editor pref_editor = pref.edit();
-                                            pref_editor.putString("fcm_instanceId", token);
-                                            pref_editor.commit();
-
-                                        }
-                                    });
-                        }
-
                         // отправляем данные
                         publishProgress(FTP_STATE_SEND_EOUTF, 0);
                         // удаляем предыдущий файл, если он был
@@ -7556,7 +8040,7 @@ public class MainActivity extends AppCompatActivity
                                 bytes.reset();
                                 bw.write("##MISC##\r\n");
                                 bw.write(String.format("DeviceName=%s\r\n", Common.getDeviceName()));
-                                fcm_instanceId=pref.getString("fcm_instanceId", "");
+                                String fcm_instanceId=pref.getString("fcm_instanceId", "");
                                 if (fcm_instanceId!=null&&!fcm_instanceId.isEmpty())
                                 {
                                     bw.write(String.format("FCM_InstanceId=%s\r\n", fcm_instanceId));
@@ -7653,6 +8137,7 @@ public class MainActivity extends AppCompatActivity
 
                                     ze = new ZipEntry("misc.xml");
                                     zipStream.putNextEntry(ze);
+                                    String fcm_instanceId=pref.getString("fcm_instanceId", "");
                                     TextDatabase.SaveSendMiscXML(zipStream, fcm_instanceId);
                                     zipStream.closeEntry();
                                     zipStream.flush();
@@ -8209,7 +8694,7 @@ public class MainActivity extends AppCompatActivity
         Button btnNomenclaturePhotos = (Button) findViewById(R.id.btnNomenclaturePhotos); // 2
         Button btnExchangeWebService = (Button) findViewById(R.id.btnExchangeWebService);
 
-        if (g.Common.PHARAON) {
+        if (g.Common.PHARAOH) {
             btnConnect.setVisibility(View.GONE);
             btnRefresh.setVisibility(View.VISIBLE);
             btnRefresh.setText(R.string.exchange_ws_all);

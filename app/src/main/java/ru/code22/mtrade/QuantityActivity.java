@@ -475,7 +475,7 @@ public class QuantityActivity extends AppCompatActivity
 
 		setContentView(R.layout.quantity);
 		
-	    if (g.Common.PHARAON)
+	    if (g.Common.PHARAOH)
 	    {
 	    	getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 	    }
@@ -661,7 +661,7 @@ public class QuantityActivity extends AppCompatActivity
 		TextView tvCommentInLine=(TextView)findViewById(R.id.textViewComment);
 		EditText etCommentInLine=(EditText)findViewById(R.id.etComment);
 		
-		if (g.Common.PHARAON)
+		if (g.Common.PHARAOH)
 		{
 			EditText etQuantityTime=(EditText)findViewById(R.id.etQuantityTime);
 			if (m_shipping_time.isEmpty())
@@ -817,7 +817,7 @@ public class QuantityActivity extends AppCompatActivity
 				m_price_ed_izm_id=cursorNomenclature.getString(edizm_1_id_Index);
 				m_price_edIzm=cursorNomenclature.getString(quant_1_Index);
 			} else
-			if (g.Common.TITAN||g.Common.PHARAON||g.Common.ISTART||g.Common.FACTORY)
+			if (g.Common.TITAN||g.Common.PHARAOH||g.Common.ISTART||g.Common.FACTORY)
 			{
 			   	Cursor cursorPrice=getContentResolver().query(MTradeContentProvider.PRICES_CONTENT_URI, new String[]{"ed_izm_id", "edIzm", "price", "priceProcent", "k"}, "nomenclature_id=? and price_type_id=?", new String[]{m_nomenclature_id.toString(), m_price_type_id.toString()}, null);
 			   	double price=0.0;
