@@ -11587,7 +11587,8 @@ public class TextDatabase {
 		if (MySingleton.getInstance().Common.PHARAOH) {
 			cursor = contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "order_for_sorting, descr");
 		} else {
-			cursor = contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "descr");
+			// 24.11.2022 добавлен order_for_sorting, ранее не использовался
+			cursor = contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "order_for_sorting, descr");
 		}
 		if (cursor != null) {
 			int indexDescr = cursor.getColumnIndex("descr");
