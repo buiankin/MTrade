@@ -7074,8 +7074,9 @@ public class MainActivity extends AppCompatActivity
 
             // http://chizztectep.blogspot.ru/2011/07/java-ftp-ftp-client.html
             FTPClient ftpClient = new FTPClient();
-            ftpClient.setControlKeepAliveTimeout(120); // раз в 2 минуты отправлять пустую команду
-            ftpClient.setControlKeepAliveReplyTimeout(120); // чем они отличаются, не знаю
+            // 29.11.2022 убрал эти таймауты - это не то, что я думал, похоже))))
+            //ftpClient.setControlKeepAliveTimeout(120); // раз в 2 минуты отправлять пустую команду
+            //ftpClient.setControlKeepAliveReplyTimeout(120); // чем они отличаются, не знаю
 
         	/*
         	HostnameResolver resolver=new HostnameResolver() {
@@ -8175,58 +8176,6 @@ public class MainActivity extends AppCompatActivity
                             if (!m_bExcludeImageMessages) {
                                 // сначала отправляем вложенные файлы и архив
                                 // вложенные файлы
-                                /*
-                                if (!bDontUseExternalStorage && Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                                    File attachesFileDir = new File(Environment.getExternalStorageDirectory(), "/mtrade/attaches");
-                                    if (attachesFileDir.exists()) {
-                                        // отправляем все файлы из папки на флэшке
-                                        File[] tempFileNames = attachesFileDir.listFiles();
-                                        if (tempFileNames != null) {
-                                            for (File tempFile : tempFileNames) {
-                                                if (!tempFile.isDirectory()) {
-                                                    InputStream inFile = new FileInputStream(tempFile);
-                                                    file_length = tempFile.length();
-                                                    Common.ftpEnterMove(ftpClient, !g.Common.VK);
-                                                    ftpClient.setCopyStreamListener(streamListener);
-                                                    ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-                                                    if (ftpClient.storeFile(tempFile.getName(), inFile)) {
-                                                        tempFile.delete();
-                                                    } else {
-                                                        bSuccessSend = false;
-                                                        // Не удалось отправить файл
-                                                        textToLog.add(getString(R.string.message_file_not_sent));
-                                                        publishProgress(-2, textToLog.size());
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                File attachesFileDir = new File(Environment.getDataDirectory(), "/data/" + getBaseContext().getPackageName() + "/attaches");
-                                if (attachesFileDir.exists()) {
-                                    // отправляем все файлы из папки в памяти устройства
-                                    File[] tempFileNames = attachesFileDir.listFiles();
-                                    if (tempFileNames != null) {
-                                        for (File tempFile : tempFileNames) {
-                                            if (!tempFile.isDirectory()) {
-                                                InputStream inFile = new FileInputStream(tempFile);
-                                                file_length = tempFile.length();
-                                                Common.ftpEnterMove(ftpClient, !g.Common.VK);
-                                                ftpClient.setCopyStreamListener(streamListener);
-                                                ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-                                                if (ftpClient.storeFile(tempFile.getName(), inFile)) {
-                                                    tempFile.delete();
-                                                } else {
-                                                    bSuccessSend = false;
-                                                    // Не удалось отправить файл
-                                                    textToLog.add(getString(R.string.message_file_not_sent));
-                                                    publishProgress(-2, textToLog.size());
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                 */
 
                                 File attachesFileDir = Common.getMyStorageFileDir(MainActivity.this, "attaches");
                                 // отправляем все файлы из папки в памяти устройства
@@ -8239,6 +8188,7 @@ public class MainActivity extends AppCompatActivity
                                             Common.ftpEnterMode(ftpClient, !g.Common.VK);
                                             ftpClient.setCopyStreamListener(streamListener);
                                             ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+
                                             if (ftpClient.storeFile(tempFile.getName(), inFile)) {
                                                 tempFile.delete();
                                             } else {
