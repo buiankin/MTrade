@@ -11583,13 +11583,13 @@ public class TextDatabase {
 				};
 		m_list2 = new ArrayList<Tree>();
 
-		Cursor cursor;
-		if (MySingleton.getInstance().Common.PHARAOH) {
-			cursor = contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "order_for_sorting, descr");
-		} else {
-			// 24.11.2022 добавлен order_for_sorting, ранее не использовался
-			cursor = contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "order_for_sorting, descr");
-		}
+		Cursor cursor = contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "order_for_sorting, descr");
+//		if (MySingleton.getInstance().Common.PHARAOH) {
+//			cursor = contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "order_for_sorting, descr");
+//		} else {
+//			// 24.11.2022 добавлен order_for_sorting, ранее не использовался
+//			cursor = contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "order_for_sorting, descr");
+//		}
 		if (cursor != null) {
 			int indexDescr = cursor.getColumnIndex("descr");
 			int indexId = cursor.getColumnIndex("id");

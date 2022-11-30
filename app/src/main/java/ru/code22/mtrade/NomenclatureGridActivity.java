@@ -825,14 +825,14 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
         m_list2 = new ArrayList<MyNomenclatureGroupAdapter.Tree>();
 
 
-        Cursor cursor;
-        if (g.Common.PHARAOH)
-        {
-            cursor=contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "order_for_sorting, descr");
-        } else
-        {
-            cursor=contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "descr");
-        }
+        Cursor cursor=contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "order_for_sorting, descr");
+//        if (g.Common.PHARAOH)
+//        {
+//            cursor=contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "order_for_sorting, descr");
+//        } else
+//        {
+//            cursor=contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "descr");
+//        }
         if (cursor!=null)
         {
             int indexDescr = cursor.getColumnIndex("descr");
