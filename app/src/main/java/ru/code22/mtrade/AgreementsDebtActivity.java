@@ -17,7 +17,9 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 
 public class AgreementsDebtActivity extends AppCompatActivity {
-		
+
+	private static final int AGREEMENTS_DEBT_RESULT_OK = 1;
+
 	AgreementsDebtExpListAdapter mAdapter;
 	    
     ExpandableListView lvAgreements;
@@ -154,7 +156,7 @@ public class AgreementsDebtActivity extends AppCompatActivity {
 		    intent.putExtra("manager_id", data.manager_id);
 		    intent.putExtra("manager_descr", data.manager_descr);
 		    
-		    setResult(RESULT_OK, intent);
+		    setResult(AGREEMENTS_DEBT_RESULT_OK, intent);
 		    finish();				
 			
 			return true;
@@ -187,7 +189,7 @@ public class AgreementsDebtActivity extends AppCompatActivity {
 			    intent.putExtra("sum", data.debt);
 		    }
 		    
-		    setResult(RESULT_OK, intent);
+		    setResult(AGREEMENTS_DEBT_RESULT_OK, intent);
 		    finish();
 		    
 			return true;

@@ -187,7 +187,7 @@ public class DistribsPageFragment extends Fragment implements onDistribsLinesDat
 				  new ActivityResultCallback<ActivityResult>() {
 					  @Override
 					  public void onActivityResult(ActivityResult result) {
-						  if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+						  if (result.getResultCode() == ClientsActivity.CLIENTS_RESULT_OK) {
 							  Intent data = result.getData();
 							  if (data != null) {
 								  if (bHeaderPage)
@@ -210,7 +210,7 @@ public class DistribsPageFragment extends Fragment implements onDistribsLinesDat
 				  new ActivityResultCallback<ActivityResult>() {
 					  @Override
 					  public void onActivityResult(ActivityResult result) {
-						  if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+						  if (result.getResultCode() == ClientsActivity.CLIENTS_RESULT_OK) {
 							  Intent data = result.getData();
 							  if (data != null) {
 								  if (bHeaderPage)
@@ -253,7 +253,7 @@ public class DistribsPageFragment extends Fragment implements onDistribsLinesDat
 				  new ActivityResultCallback<ActivityResult>() {
 					  @Override
 					  public void onActivityResult(ActivityResult result) {
-						  if (result.getResultCode() == QuantitySimpleActivity.RESULT_OK) {
+						  if (result.getResultCode() == QuantitySimpleActivity.QUANTITY_SIMPLE_RESULT_OK) {
 							  Intent data = result.getData();
 							  if (data != null) {
 								  if (bLinesPage) {

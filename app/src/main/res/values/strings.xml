@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- tools:ignore="MissingTranslation" -->
 <resources xmlns:tools="http://schemas.android.com/tools" >
-    <string translatable="false" name="app_name">Mobile Trade 3.96</string>
-    <string translatable="false" name="app_label">Mobile Trade 3.96</string>
-    <string translatable="false" name="nav_header_title">MTrade 3.96</string>
+    <string translatable="false" name="app_name">Mobile Trade 3.97</string>
+    <string translatable="false" name="app_label">Mobile Trade 3.97</string>
+    <string translatable="false" name="nav_header_title">MTrade 3.97</string>
     <string translatable="false" name="nav_header_subtitle">denisbds71@gmail.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="search_hint">Search hint!</string>

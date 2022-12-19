@@ -18,6 +18,8 @@ import ru.code22.mtrade.MyDatabase.MyID;
 
 public class Agreements30Activity extends AppCompatActivity
 	implements LoaderManager.LoaderCallbacks<Cursor> {
+
+	static final int AGREEMENTS30_RESULT_OK=1;
 		
 	SimpleCursorAdapter mAdapter;
 	    
@@ -109,7 +111,7 @@ public class Agreements30Activity extends AppCompatActivity
 				//Toast.makeText(ClientsActivity.this, "" + position, Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent();
 			    intent.putExtra("id", id);
-			    setResult(RESULT_OK, intent);
+			    setResult(AGREEMENTS30_RESULT_OK, intent);
 			    finish();				
 			}
         });

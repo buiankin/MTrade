@@ -21,7 +21,9 @@ import androidx.loader.content.Loader;
 
 public class VicariousPowersActivity extends AppCompatActivity
 	implements LoaderManager.LoaderCallbacks<Cursor> {
-	
+
+	static final int VICARIOUS_POWERS_RESULT_OK=1;
+
 	SimpleCursorAdapter mAdapter;
     
 	private static final int LOADER_ID = 1;
@@ -79,7 +81,7 @@ public class VicariousPowersActivity extends AppCompatActivity
 					long id) {
 				Intent intent = new Intent();
 			    intent.putExtra("id", id);
-			    setResult(RESULT_OK, intent);
+			    setResult(VICARIOUS_POWERS_RESULT_OK, intent);
 			    finish();				
 			}
         });

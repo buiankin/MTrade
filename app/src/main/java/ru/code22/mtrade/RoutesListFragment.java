@@ -121,7 +121,7 @@ public class RoutesListFragment extends Fragment {
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == RoutesWithDatesActivity.RESULT_OK) {
+                        if (result.getResultCode() == RoutesWithDatesActivity.ROUTES_WITH_DATES_RESULT_OK) {
                             Intent data = result.getData();
                             if (data != null) {
                                 long id = data.getLongExtra("id", 0);

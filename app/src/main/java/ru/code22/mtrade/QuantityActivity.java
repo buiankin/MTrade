@@ -484,7 +484,7 @@ public class QuantityActivity extends AppCompatActivity
 	    boolean bRecreationActivity=false; 
 		
 	   	Intent intent=getIntent();
-		final String mode=intent.getStringExtra("MODE");
+		String mode=intent.getStringExtra("MODE");
 		if (mode==null)
 			m_mode="";
 		else
@@ -578,7 +578,7 @@ public class QuantityActivity extends AppCompatActivity
 		
 		ListView listViewQuantitySalesHistory=(ListView)findViewById(R.id.listViewQuantitySalesHistory);
 
-		if (g.Common.PRODLIDER||g.Common.TANDEM||g.Common.PRAIT||g.Common.TITAN||g.Common.ISTART||g.Common.FACTORY)
+		if (g.Common.hasHistory())
 		{
 		
 	        String[] fromColumns = {"numdoc", "price", "quantity"};

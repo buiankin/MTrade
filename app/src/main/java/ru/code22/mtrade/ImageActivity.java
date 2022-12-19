@@ -13,6 +13,8 @@ import android.widget.ImageView;
 
 public class ImageActivity extends Activity {
 
+	static final int IMAGE_RESULT_OK=1;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

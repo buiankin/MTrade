@@ -883,7 +883,7 @@ public class MainActivity extends AppCompatActivity
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+                        if (result.getResultCode() == ClientsActivity.CLIENTS_RESULT_OK) {
                             Intent data = result.getData();
                             if (data != null) {
 
@@ -1285,7 +1285,7 @@ public class MainActivity extends AppCompatActivity
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == PaymentActivity.RESULT_OK) {
+                        if (result.getResultCode() == PaymentActivity.PAYMENT_RESULT_OK) {
                             Intent data = result.getData();
                             if (data != null) {
                                 g.MyDatabase.m_payment_editing.versionPDA++;
@@ -1306,7 +1306,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onActivityResult(ActivityResult result) {
                         int resultCode=result.getResultCode();
-                        if (resultCode == RefundActivity.RESULT_OK) {
+                        if (resultCode == RefundActivity.REFUND_RESULT_OK) {
                             Intent data = result.getData();
                             if (data != null) {
                                 if (g.MyDatabase.m_refund_editing.accept_coord == 1) {
@@ -1345,7 +1345,7 @@ public class MainActivity extends AppCompatActivity
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == DistribsActivity.RESULT_OK) {
+                        if (result.getResultCode() == DistribsActivity.DISTRIBS_RESULT_OK) {
                             Intent data = result.getData();
                             if (data != null) {
                                 if (g.MyDatabase.m_distribs_editing.accept_coord == 1) {
@@ -1370,7 +1370,11 @@ public class MainActivity extends AppCompatActivity
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
-                        // TODO проверить, по-моему, это вызываться не должно
+                        if (result.getResultCode() == OrderPreActivity.ORDER_PRE_ACTION_RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data != null)
+                                editOrder(0, false, data.getStringExtra("client_id"), data.getStringExtra("distr_point_id"));
+                        }
                     }
                 });
 
@@ -6146,6 +6150,11 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
                 /*
+            case EDIT_ORDER_PRE_REQUEST:
+                if (resultCode == OrderPreActivity.ORDER_PRE_ACTION_RESULT_OK) {
+                    editOrder(0, false, data.getStringExtra("client_id"), data.getStringExtra("distr_point_id"));
+                }
+                break;
             case SELECT_CLIENT_REQUEST:
                 if (data != null) {
                     long id = data.getLongExtra("id", 0);
@@ -6209,11 +6218,6 @@ public class MainActivity extends AppCompatActivity
 
                     }
                     cursor.close();
-                }
-                break;
-            case EDIT_ORDER_PRE_REQUEST:
-                if (resultCode == OrderPreActivity.ORDER_PRE_ACTION_RESULT_OK) {
-                    editOrder(0, false, data.getStringExtra("client_id"), data.getStringExtra("distr_point_id"));
                 }
                 break;
             case EDIT_ORDER_REQUEST:
@@ -8757,7 +8761,7 @@ public class MainActivity extends AppCompatActivity
                     // The current activity making the update request.
                     this,
                     // Include a request code to later monitor this update request.
-                    MainActivity.REQ_CODE_VERSION_UPDATE);
+                    REQ_CODE_VERSION_UPDATE);
         } catch (IntentSender.SendIntentException e) {
             e.printStackTrace();
         }
@@ -8771,7 +8775,7 @@ public class MainActivity extends AppCompatActivity
                     // The current activity making the update request.
                     this,
                     // Include a request code to later monitor this update request.
-                    MainActivity.REQ_CODE_VERSION_UPDATE);
+                    REQ_CODE_VERSION_UPDATE);
         } catch (IntentSender.SendIntentException e) {
             e.printStackTrace();
             unregisterInstallStateUpdListener();

@@ -18,7 +18,9 @@ import android.widget.ListView;
 
 public class AgreementsActivity extends AppCompatActivity
 	implements LoaderManager.LoaderCallbacks<Cursor> {
-		
+
+	static final int AGREEMENTS_RESULT_OK=1;
+
 	SimpleCursorAdapter mAdapter;
 	    
 	private static final int LOADER_ID = 1;
@@ -127,7 +129,7 @@ public class AgreementsActivity extends AppCompatActivity
 				//Toast.makeText(ClientsActivity.this, "" + position, Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent();
 			    intent.putExtra("id", id);
-			    setResult(RESULT_OK, intent);
+			    setResult(AGREEMENTS_RESULT_OK, intent);
 			    finish();				
 			}
         });

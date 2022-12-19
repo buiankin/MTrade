@@ -17,7 +17,9 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class TradePointsActivity extends AppCompatActivity
 	implements LoaderManager.LoaderCallbacks<Cursor> {
-	
+
+	static final int TRADE_POINTS_RESULT_OK=1;
+
 	SimpleCursorAdapter mAdapter;
     
 	private static final int LOADER_ID = 1;
@@ -68,7 +70,7 @@ public class TradePointsActivity extends AppCompatActivity
 					long id) {
 				Intent intent = new Intent();
 			    intent.putExtra("id", id);
-			    setResult(RESULT_OK, intent);
+			    setResult(TRADE_POINTS_RESULT_OK, intent);
 			    finish();				
 			}
         });

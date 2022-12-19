@@ -258,7 +258,7 @@ public class MessageActivity extends AppCompatActivity {
 				new ActivityResultCallback<ActivityResult>() {
 					@Override
 					public void onActivityResult(ActivityResult result) {
-						if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+						if (result.getResultCode() == ClientsActivity.CLIENTS_RESULT_OK) {
 							Intent data = result.getData();
 
 							if (data != null) {
@@ -300,7 +300,7 @@ public class MessageActivity extends AppCompatActivity {
 				new ActivityResultCallback<ActivityResult>() {
 					@Override
 					public void onActivityResult(ActivityResult result) {
-						if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+						if (result.getResultCode() == ClientsActivity.CLIENTS_RESULT_OK) {
 							Intent data = result.getData();
 
 							if (data != null) {
@@ -339,7 +339,7 @@ public class MessageActivity extends AppCompatActivity {
 				new ActivityResultCallback<ActivityResult>() {
 					@Override
 					public void onActivityResult(ActivityResult result) {
-						if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+						if (result.getResultCode() == ClientsActivity.CLIENTS_RESULT_OK) {
 							Intent data = result.getData();
 
 							if (data != null) {

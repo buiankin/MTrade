@@ -18,7 +18,9 @@ import androidx.loader.content.Loader;
 
 public class CuratorsActivity extends AppCompatActivity
 	implements LoaderManager.LoaderCallbacks<Cursor> {
-	
+
+	private static final int CURATORS_RESULT_OK = 1;
+
 	SimpleCursorAdapter mAdapter;
     
 	private static final int LOADER_ID = 1;
@@ -72,7 +74,7 @@ public class CuratorsActivity extends AppCompatActivity
 			    intent.putExtra("id", id);
 			    //!!!!!!!!!!!!!!!!!!!!!!
 			    //intent.putExtra("manager_id", adapter.getCu manager_id);
-			    setResult(RESULT_OK, intent);
+			    setResult(CURATORS_RESULT_OK, intent);
 			    finish();				
 			}
         });

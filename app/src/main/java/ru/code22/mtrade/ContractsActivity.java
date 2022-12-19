@@ -373,7 +373,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 				new ActivityResultCallback<ActivityResult>() {
 					@Override
 					public void onActivityResult(ActivityResult result) {
-						if (result.getResultCode() == ImageActivity.RESULT_OK) {
+						if (result.getResultCode() == ImageActivity.IMAGE_RESULT_OK) {
 							Intent data = result.getData();
 							if (data != null) {
 								// TODO обработчика не было, наверное, он и не нужен тут

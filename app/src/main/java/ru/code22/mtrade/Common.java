@@ -108,6 +108,11 @@ public class Common {
 		return false;
 	}
 
+	public boolean hasHistory()
+	{
+		return PRODLIDER||TANDEM||PRAIT||TITAN||ISTART||FACTORY;
+	}
+
 	// убирает из строки лишние нули справа
 	static public String DoubleToStringFormat(double d, String formatString)
 	{

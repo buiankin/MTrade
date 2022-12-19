@@ -16,6 +16,8 @@ import androidx.loader.content.Loader;
 
 public class DiscountsActivity extends AppCompatActivity
 	implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    static final int DISCOUNTS_RESULT_OK=1;
 		
 	SimpleCursorAdapter mAdapter;
 	    
@@ -59,7 +61,7 @@ public class DiscountsActivity extends AppCompatActivity
 				//Toast.makeText(ClientsActivity.this, "" + position, Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent();
 			    intent.putExtra("id", id);
-			    setResult(RESULT_OK, intent);
+			    setResult(DISCOUNTS_RESULT_OK, intent);
 			    finish();				
 			}
         });

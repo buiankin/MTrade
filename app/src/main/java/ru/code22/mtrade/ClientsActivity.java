@@ -45,8 +45,11 @@ import com.andraskindler.quickscroll.Scrollable;
 
 public class ClientsActivity extends AppCompatActivity
 implements LoaderManager.LoaderCallbacks<Cursor> {
-	
-    ClientsAdapter mAdapter;
+
+	static final int CLIENTS_RESULT_OK=1;
+
+
+	ClientsAdapter mAdapter;
     
     private static final int LOADER_ID = 1;
 
@@ -235,7 +238,7 @@ implements LoaderManager.LoaderCallbacks<Cursor> {
 				{
 					Intent intent = new Intent();
 				    intent.putExtra("id", id);
-				    setResult(RESULT_OK, intent);
+				    setResult(CLIENTS_RESULT_OK, intent);
 				    finish();
 				} else
 				{
@@ -247,7 +250,7 @@ implements LoaderManager.LoaderCallbacks<Cursor> {
 						public void onClick(DialogInterface dialog, int id) {
 							Intent intent = new Intent();
 						    intent.putExtra("id", m_client_id);
-						    setResult(RESULT_OK, intent);
+						    setResult(CLIENTS_RESULT_OK, intent);
 						    finish();
 						}
 					});

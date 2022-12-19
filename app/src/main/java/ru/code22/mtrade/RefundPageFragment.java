@@ -450,7 +450,7 @@ public class RefundPageFragment extends Fragment {
 				  new ActivityResultCallback<ActivityResult>() {
 					  @Override
 					  public void onActivityResult(ActivityResult result) {
-						  if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+						  if (result.getResultCode() == ClientsActivity.CLIENTS_RESULT_OK) {
 							  Intent data = result.getData();
 							  if (data != null && bHeaderPage) {
 								  View view0=m_view;
@@ -496,7 +496,7 @@ public class RefundPageFragment extends Fragment {
 				  new ActivityResultCallback<ActivityResult>() {
 					  @Override
 					  public void onActivityResult(ActivityResult result) {
-						  if (result.getResultCode() == AgreementsActivity.RESULT_OK) {
+						  if (result.getResultCode() == AgreementsActivity.AGREEMENTS_RESULT_OK) {
 							  Intent data = result.getData();
 							  if (data != null && bHeaderPage) {
 								  View view0=m_view;
@@ -518,7 +518,7 @@ public class RefundPageFragment extends Fragment {
 				  new ActivityResultCallback<ActivityResult>() {
 					  @Override
 					  public void onActivityResult(ActivityResult result) {
-						  if (result.getResultCode() == NomenclatureActivity.RESULT_OK) {
+						  if (result.getResultCode() == NomenclatureActivity.NOMENCLATURE_RESULT_DOCUMENT_CHANGED) {
 							  Intent data = result.getData();
 							  if (data != null && bLinesPage) {
 								  // 12.06.2018 в связи с изменениями в коде, считываем изменения
@@ -544,7 +544,7 @@ public class RefundPageFragment extends Fragment {
 				  new ActivityResultCallback<ActivityResult>() {
 					  @Override
 					  public void onActivityResult(ActivityResult result) {
-						  if (result.getResultCode() == TradePointsActivity.RESULT_OK) {
+						  if (result.getResultCode() == TradePointsActivity.TRADE_POINTS_RESULT_OK) {
 							  Intent data = result.getData();
 							  if (data != null && bHeaderPage) {
 								  View view0=m_view;

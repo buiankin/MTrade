@@ -819,7 +819,7 @@ public class OrderPageFragment extends Fragment {
 				new ActivityResultCallback<ActivityResult>() {
 					@Override
 					public void onActivityResult(ActivityResult result) {
-						if (result.getResultCode() == ClientsActivity.RESULT_OK) {
+						if (result.getResultCode() == ClientsActivity.CLIENTS_RESULT_OK) {
 							Intent data = result.getData();
 							if (data != null) {
 								if (bHeaderPage) {
@@ -910,7 +910,7 @@ public class OrderPageFragment extends Fragment {
 				new ActivityResultCallback<ActivityResult>() {
 					@Override
 					public void onActivityResult(ActivityResult result) {
-						if (result.getResultCode() == AgreementsActivity.RESULT_OK) {
+						if (result.getResultCode() == AgreementsActivity.AGREEMENTS_RESULT_OK) {
 							Intent data = result.getData();
 							if (data != null) {
 								if (bHeaderPage)
@@ -936,7 +936,7 @@ public class OrderPageFragment extends Fragment {
 				new ActivityResultCallback<ActivityResult>() {
 					@Override
 					public void onActivityResult(ActivityResult result) {
-						if (result.getResultCode() == Agreements30Activity.RESULT_OK) {
+						if (result.getResultCode() == Agreements30Activity.AGREEMENTS30_RESULT_OK) {
 							Intent data = result.getData();
 							if (data != null) {
 								if (bHeaderPage)
@@ -1003,7 +1003,7 @@ public class OrderPageFragment extends Fragment {
 				new ActivityResultCallback<ActivityResult>() {
 					@Override
 					public void onActivityResult(ActivityResult result) {
-						if (result.getResultCode() == TradePointsActivity.RESULT_OK) {
+						if (result.getResultCode() == TradePointsActivity.TRADE_POINTS_RESULT_OK) {
 							Intent data = result.getData();
 							if (data != null) {
 								if (bHeaderPage)
@@ -1082,7 +1082,7 @@ public class OrderPageFragment extends Fragment {
 				new ActivityResultCallback<ActivityResult>() {
 					@Override
 					public void onActivityResult(ActivityResult result) {
-						if (result.getResultCode() == DiscountsActivity.RESULT_OK) {
+						if (result.getResultCode() == DiscountsActivity.DISCOUNTS_RESULT_OK) {
 							Intent data = result.getData();
 
 							if (data != null) {

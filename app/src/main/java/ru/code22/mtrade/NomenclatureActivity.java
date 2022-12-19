@@ -519,7 +519,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 				new ActivityResultCallback<ActivityResult>() {
 					@Override
 					public void onActivityResult(ActivityResult result) {
-						if (result.getResultCode() == ImageActivity.RESULT_OK) {
+						if (result.getResultCode() == ImageActivity.IMAGE_RESULT_OK) {
 							Intent data = result.getData();
 							if (data != null) {
 								// TODO обработчика не было, наверное, он и не нужен тут
@@ -816,6 +816,9 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 			//}
 
 			// 07.06.2018: окно может быть уничтожено и создано заново
+			// 30.11.2022 TODO здесь Null Pointer Exception в версии 3.94 (вероятно, эта ошибка сохраняется
+			//  и в более поздних версиях, при этом не восстановление состояния тут должно быть, а просто обычное создание,
+			//  но почему-то в m_order_editing_created будет null)
 			if (!bRecreationActivity && g.MyDatabase.m_order_editing_created)
 			//if (g.MyDatabase.m_order_editing_id==0)
 			{

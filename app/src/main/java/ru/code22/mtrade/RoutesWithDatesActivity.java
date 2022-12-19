@@ -18,6 +18,8 @@ import androidx.loader.content.Loader;
 
 public class RoutesWithDatesActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
+    static final int ROUTES_WITH_DATES_RESULT_OK=1;
+
     SimpleCursorAdapter mAdapter;
 
     private static final int LOADER_ID = 1;
@@ -77,7 +79,7 @@ public class RoutesWithDatesActivity extends AppCompatActivity implements Loader
                                     long id) {
                 Intent intent = new Intent();
                 intent.putExtra("id", id);
-                setResult(RESULT_OK, intent);
+                setResult(ROUTES_WITH_DATES_RESULT_OK, intent);
                 finish();
             }
         });
