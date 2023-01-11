@@ -4491,20 +4491,22 @@ public class TextDatabase {
 					if (bUpdateMode)
 					{
 						// запись с указанным ID надо удалить
-						contentResolver.delete(MTradeContentProvider.SALDO_EXTENDED_CONTENT_URI, "client_id=?", new String[]{xpp.getAttributeValue(null, "client_id")});
-
-						// запись с указанным ID надо удалить
-						ContentProviderOperation operation = ContentProviderOperation
-								.newDelete(MTradeContentProvider.SALDO_EXTENDED_CONTENT_URI)
-								.withSelection("client_id=? and agreement_id=? and document_id=? and manager_id=?", new String[]{xpp.getAttributeValue(null, "client_id"), xpp.getAttributeValue(null, "agreement_id"), xpp.getAttributeValue(null, "document_id"), xpp.getAttributeValue(null, "manager_id")})
-								.build();
-						operations.add(operation);
-						bulk_delete_idx++;
-						if (bulk_delete_idx >= BULK_SIZE) {
-							contentResolver.applyBatch(MTradeContentProvider.AUTHORITY, operations);
-							bulk_delete_idx = 0;
+						if (xpp.getAttributeValue(null, "agreement_id")==null) {
+							// Прайм
+							contentResolver.delete(MTradeContentProvider.SALDO_EXTENDED_CONTENT_URI, "client_id=?", new String[]{xpp.getAttributeValue(null, "client_id")});
+						} else {
+							// Продлидер
+							ContentProviderOperation operation = ContentProviderOperation
+									.newDelete(MTradeContentProvider.SALDO_EXTENDED_CONTENT_URI)
+									.withSelection("client_id=? and agreement_id=? and document_id=? and manager_id=?", new String[]{xpp.getAttributeValue(null, "client_id"), xpp.getAttributeValue(null, "agreement_id"), xpp.getAttributeValue(null, "document_id"), xpp.getAttributeValue(null, "manager_id")})
+									.build();
+							operations.add(operation);
+							bulk_delete_idx++;
+							if (bulk_delete_idx >= BULK_SIZE) {
+								contentResolver.applyBatch(MTradeContentProvider.AUTHORITY, operations);
+								bulk_delete_idx = 0;
+							}
 						}
-
 					}
 				} else if (xmlmode == XMLMode.E_MODE_DEBTS_EXT && name.equals("DebtsExtRecord")) {
 					xmlmode = XMLMode.E_MODE_DEBT_EXT_RECORD;

@@ -10,13 +10,9 @@ import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -27,12 +23,8 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.TypedArray;
 import android.os.Build;
-import android.os.Environment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
-
-import com.google.android.material.snackbar.Snackbar;
 
 import org.apache.commons.net.ftp.FTPClient;
 
@@ -58,22 +50,11 @@ public class Common {
 	// Должен быть включен всегда (кроме Меги)
 	public boolean SNEGOROD=false;
 
-    //public static final int MAX_VALUE = 300;
-    //public static final int MIN_VALUE = 100;
-    
-    //public static boolean PRODLIDER = true;
 	public boolean PRODLIDER = false;
 	public boolean VK = false;
-	//public static final String UserFtpHomeDir="pda001"; // Prestigio
-    //public static final String UserFtpHomeDir="pda003"; // Алексей, телефон Star
-    //public static final String UserFtpHomeDir="pda004"; // Отладка, локальный комп
-    
-    //public static boolean PRAIT = false;
+
 	public boolean PRAIT = false;
-	//public static final String UserFtpHomeDir="002";
-	//public static final String UserFtpHomeDir="004";
-	//public static final String UserFtpHomeDir="";
-	
+
 	public boolean TITAN = false;
 	public boolean PHARAOH = false;
 	public boolean TANDEM = false;
@@ -94,9 +75,7 @@ public class Common {
 
     public boolean isDataFormatWithTradePoints()
     {
-        if (MEGA||PHARAOH||TANDEM||TITAN||FACTORY)
-            return false;
-        return true;
+        return !(MEGA||PHARAOH||TANDEM||TITAN||FACTORY);
     }
 
     public boolean isNomenclatureSurfing()

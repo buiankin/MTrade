@@ -2,8 +2,6 @@ package ru.code22.mtrade;
 
 import java.sql.Date;
 
-import org.apache.commons.net.ftp.FTPClient;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
