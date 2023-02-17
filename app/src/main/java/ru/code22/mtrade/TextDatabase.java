@@ -5190,7 +5190,7 @@ public class TextDatabase {
 					or.stuff_organization_name=xpp.getAttributeValue(null, "stuff_organization_name");
 
 					or.vicarious_power_id=new MyID(StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "vicarious_power_id"), Constants.emptyID));
-					or.vicarious_power_descr=StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "vicarious_power_id"), "");
+					or.vicarious_power_descr=StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "vicarious_power_descr"), "");
 
 					// Не используется
 					//or.distr_point_id=new MyID(xpp.getAttributeValue(null, "distr_point_id"));
