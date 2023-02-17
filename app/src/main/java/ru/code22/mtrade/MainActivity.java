@@ -5911,6 +5911,10 @@ public class MainActivity extends AppCompatActivity
                 doActionBackup();
                 break;
 
+            case R.id.action_vacuum_database:
+                doVacuumDatabase();
+                break;
+
             //Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
         }
 
@@ -5990,6 +5994,11 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             Snackbar.make(findViewById(android.R.id.content), e.toString(), Snackbar.LENGTH_LONG).show();
         }
+    }
+
+    void doVacuumDatabase()
+    {
+        getContentResolver().insert(MTradeContentProvider.VACUUM_CONTENT_URI, null);
     }
 
     //@Override

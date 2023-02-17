@@ -4,6 +4,7 @@
 	<string name="action_settings">Настройки</string>
 	<string name="action_exit">Выход</string>
 	<string name="action_backup">Скопировать на SD</string>
+	<string name="action_acuum_database">Сжать базу данных</string>
 	<string name="action_create_order">Создать заказ</string>
 	<string name="action_create_refund">Создать возврат</string>
 	<string name="action_create_distribs">Создать дистрибьюции</string>

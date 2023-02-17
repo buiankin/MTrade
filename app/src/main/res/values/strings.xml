@@ -10,6 +10,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_exit">Exit</string>
     <string name="action_backup">Backup to SD card</string>
+    <string name="action_acuum_database">Pack database</string>
     <string name="action_create_order">Create order</string>
     <string name="action_create_refund">Create refund</string>
     <string name="action_create_distribs">Create distibution</string>

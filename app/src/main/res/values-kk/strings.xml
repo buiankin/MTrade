@@ -3,6 +3,7 @@
 	<string name="search_hint">Iзденіс</string>
 	<string name="action_settings">Күйтте-</string>
 	<string name="action_backup">SD деген көшіріп ал-</string>
+	<string name="action_acuum_database">Дерекқорды қысқарту</string>
 	<string name="action_create_order">Жаса- тапсырыс</string>
 	<string name="action_create_refund">Жаса- қайтарым</string>
 	<string name="action_create_distribs">Бөлу жасаңыз</string>

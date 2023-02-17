@@ -377,6 +377,7 @@ public class MTradeContentProvider extends ContentProvider {
     private static final String SEANCES_INCOMING_PATH = "seancesIncoming";
     private static final String SEANCES_OUTGOING_PATH = "seancesOutgoing";
     private static final String REINDEX_PATH = "reindex";
+    private static final String VACUUM_PATH = "vacuum";
     private static final String SORT_PATH = "sort";
     private static final String VICARIOUS_POWER_PATH = "vicarious_power";
     private static final String MESSAGES_PATH = "messages";
@@ -511,6 +512,8 @@ public class MTradeContentProvider extends ContentProvider {
   	      + AUTHORITY + "/" + SEANCES_OUTGOING_PATH);
     public static final Uri REINDEX_CONTENT_URI = Uri.parse("content://"
     	      + AUTHORITY + "/" + REINDEX_PATH);
+    public static final Uri VACUUM_CONTENT_URI = Uri.parse("content://"
+            + AUTHORITY + "/" + VACUUM_PATH);
     public static final Uri SORT_CONTENT_URI = Uri.parse("content://"
   	      + AUTHORITY + "/" + SORT_PATH);
     public static final Uri VICARIOUS_POWER_CONTENT_URI = Uri.parse("content://"
@@ -795,6 +798,8 @@ public class MTradeContentProvider extends ContentProvider {
     private static final int URI_REAL_ROUTES_DATES = 156;
     private static final int URI_REAL_ROUTES_DATES_ID = 1157;
     private static final int URI_REAL_ROUTES_LINES = 158;
+
+    private static final int URI_VACUUM = 159;
 
     private static HashMap<String, String> ordersProjectionMap;
     private static HashMap<String, String> cashPaymentsProjectionMap;
@@ -3095,6 +3100,12 @@ public class MTradeContentProvider extends ContentProvider {
 			    
 			    db.execSQL("delete from journal where isUsed=0");
 		    }
+
+            public void Vacuum() {
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                db.execSQL("vacuum");
+            }
+
 	}
 	
 	private DBHelper dbHelper;
@@ -3829,6 +3840,12 @@ public class MTradeContentProvider extends ContentProvider {
                 dbHelper.Reindex();
                 return null;
             }
+            case URI_VACUUM: {
+                Log.d(LOG_TAG, "URI_VACUUM");
+                dbHelper.Vacuum();
+                return null;
+            }
+
 
             case URI_SORT: {
                 Log.d(LOG_TAG, "URI_SORT");
@@ -6619,6 +6636,7 @@ public class MTradeContentProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, SEANCES_INCOMING_PATH, URI_SEANCES_INCOMING);
         sUriMatcher.addURI(AUTHORITY, SEANCES_OUTGOING_PATH, URI_SEANCES_OUTGOING);
         sUriMatcher.addURI(AUTHORITY, REINDEX_PATH, URI_REINDEX);
+        sUriMatcher.addURI(AUTHORITY, VACUUM_PATH, URI_VACUUM);
         sUriMatcher.addURI(AUTHORITY, SORT_PATH, URI_SORT);
         sUriMatcher.addURI(AUTHORITY, VICARIOUS_POWER_PATH, URI_VICARIOUS_POWER);
         sUriMatcher.addURI(AUTHORITY, VICARIOUS_POWER_PATH + "/#", URI_VICARIOUS_POWER_ID);

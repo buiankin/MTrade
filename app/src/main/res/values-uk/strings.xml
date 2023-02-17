@@ -3,6 +3,7 @@
 	<string name="search_hint">Пошук</string>
 	<string name="action_settings">Налаштування</string>
 	<string name="action_backup">Скопіювати на SD</string>
+	<string name="action_acuum_database">Стиснути базу даних</string>
 	<string name="action_create_order">Створити замовлення</string>
 	<string name="action_create_refund">Створити повернення</string>
 	<string name="action_create_distribs">Створити дистрибуції</string>
