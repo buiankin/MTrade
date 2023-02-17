@@ -143,5 +143,13 @@
         android:title="@string/action_backup"
         android:icon="@android:drawable/ic_menu_save"
         sabd:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_vacuum_database"
+        android:orderInCategory="201"
+        android:title="@string/action_acuum_database"
+        android:icon="@android:drawable/ic_menu_crop"
+        sabd:showAsAction="never" />
+
     
 </menu>
