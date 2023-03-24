@@ -209,7 +209,7 @@ public class MTradeContentProvider extends ContentProvider {
 	// БД
 	//private static final String DIR = "/sdcard";
     public static final String DB_NAME = "mdata.db";
-    public static final int DB_VERSION = 71;
+    public static final int DB_VERSION = 72;
     
     // Таблица
     private static final String ORDERS_TABLE = "orders";
@@ -1162,6 +1162,7 @@ public class MTradeContentProvider extends ContentProvider {
                     "image_width INT,"+
                     "image_height INT,"+
                     "image_file_size INT,"+
+                    "compose_with text," +
 		    		"isUsed int default 0,"+
 		    		"UNIQUE ('id')" +
 		    		");");
@@ -2905,6 +2906,11 @@ public class MTradeContentProvider extends ContentProvider {
                 if (oldVersion<71) {
                     db.execSQL("alter table settings add column agent_price_type_id text null");
                 }
+
+                if (oldVersion<72) {
+                    db.execSQL("alter table nomenclature add column compose_with text null");
+                }
+
 
 		    	/*
 		    	if (oldVersion<43)
@@ -6905,6 +6911,7 @@ public class MTradeContentProvider extends ContentProvider {
         nomenclatureProjectionMap.put("image_width", "image_width");
         nomenclatureProjectionMap.put("image_height", "image_height");
         nomenclatureProjectionMap.put("image_file_size", "image_file_size");
+        nomenclatureProjectionMap.put("compose_with", "compose_with");
 
         // Номенклатура
         nomenclatureListProjectionMap = new HashMap<String, String>();
@@ -6934,6 +6941,7 @@ public class MTradeContentProvider extends ContentProvider {
             tempNomenclatureListProjectionMap.put("discount", "discount");
             tempNomenclatureListProjectionMap.put("flags", "flags");
             tempNomenclatureListProjectionMap.put("nomenclature_color", "nomenclature_color");
+            tempNomenclatureListProjectionMap.put("compose_with", "compose_with");
 
             tempNomenclatureListProjectionMap.put("image_width", "image_width");
             tempNomenclatureListProjectionMap.put("image_height", "image_height");

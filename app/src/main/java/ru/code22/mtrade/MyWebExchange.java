@@ -575,7 +575,8 @@ public class MyWebExchange{
 				cv_nomenclature.put("image_width", 0);
 				cv_nomenclature.put("image_height", 0);
 				cv_nomenclature.put("image_file_size", 0);
-				cv_nomenclature.put("order_for_sorting", Integer.parseInt(myGetPropertyAsString(obj, "order_for_sorting"))); 
+				cv_nomenclature.put("order_for_sorting", Integer.parseInt(myGetPropertyAsString(obj, "order_for_sorting")));
+				cv_nomenclature.put("compose_with", "");
 				cv_nomenclature.put("isUsed", 1);
     		 	//context.getContentResolver().insert(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, cv);
 				

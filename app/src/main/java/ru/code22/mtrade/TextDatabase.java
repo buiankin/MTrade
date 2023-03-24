@@ -422,6 +422,7 @@ public class TextDatabase {
 					cv.put("image_height", 0);
 					cv.put("image_file_size", 0);
 
+					cv.put("compose_with", nr.compose_with.m_id);
 
 					//if (db.update("nomenclature", cv, "id=", new String[]{nr.id.m_id})==0)
 					//{
@@ -555,6 +556,7 @@ public class TextDatabase {
 						nr.multiplicity = 0.0;
 						nr.flags = 0;
 						nr.nomenclature_color = 0;
+						nr.compose_with=new MyID();
 						break;
 					case 18:
 						// Минимальное количество для продажи
@@ -636,6 +638,7 @@ public class TextDatabase {
 			cv.put("image_height", 0);
 			cv.put("image_file_size", 0);
 
+			cv.put("compose_with", nr.compose_with.m_id);
 
 			//if (db.update("nomenclature", cv, "id=", new String[]{nr.id.m_id})==0)
 			//{
@@ -4859,6 +4862,7 @@ public class TextDatabase {
 					cv.put("image_width", 0);
 					cv.put("image_height", 0);
 					cv.put("image_file_size", 0);
+					cv.put("compose_with", StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "compose_with"), Constants.emptyID));
 
 					values[bulk_idx] = cv;
 					bulk_idx++;
@@ -4992,7 +4996,7 @@ public class TextDatabase {
 					or.agreement_id=new MyID(xpp.getAttributeValue(null, "agreement_id"));
 					or.agreement30_id=new MyID(StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "agreement30_id"), Constants.emptyID));
 
-					or.distr_point_id=new MyID(xpp.getAttributeValue(null, "distr_point_id"));
+					or.distr_point_id=new MyID(StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "distr_point_id"), Constants.emptyID));
 
 				} else
 				if (xmlmode == XMLMode.E_MODE_ORDERS_M_RECORD && name.equals("Line")) {

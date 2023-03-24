@@ -730,6 +730,7 @@ public class MyDatabase
 	    
 	    public int group_of_analogs;
 	    public int nomenclature_color;
+		public MyID compose_with;
 		
 		public NomenclatureRecord()
 		{
@@ -737,6 +738,7 @@ public class MyDatabase
 			id=new MyID();
 			edizm_1_id=new MyID();
 			edizm_2_id=new MyID();
+			compose_with=new MyID();
 		}
 		
 		public void clear()
@@ -768,6 +770,7 @@ public class MyDatabase
     	    order_for_sorting=0;
     	    group_of_analogs=0;
     	    nomenclature_color=0;
+			compose_with=new MyID();
 		}
 	}
 	

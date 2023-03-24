@@ -8072,7 +8072,7 @@ public class MainActivity extends AppCompatActivity
                             zipStream.closeEntry();
                             zipStream.flush();
 
-                            if (g.Common.PRODLIDER||g.Common.VK) {
+                            if (g.Common.PRODLIDER||g.Common.VK||g.Common.PRAIT||g.Common.FACTORY) {
                                 // XML файл
                                 ze = new ZipEntry("versions.xml");
                                 zipStream.putNextEntry(ze);
