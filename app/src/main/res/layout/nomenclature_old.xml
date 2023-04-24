@@ -1,0 +1,64 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayoutNomenclatureList"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".NomenclatureActivity" >
+
+	<include layout="@layout/toobar" />
+
+	<LinearLayout
+		android:id="@+id/LinearLayoutNomenclatureListButtons"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+
+		<ToggleButton
+			android:id="@+id/toggleButtonNomenclatureInStock"
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:textOff="@string/toggle_button_nomenclature_in_stock"
+			android:textOn="@string/toggle_button_nomenclature_in_stock" />
+		<ToggleButton
+			android:id="@+id/toggleButtonNomenclaturePacks"
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:textOff="@string/toggle_button_nomenclature_packs"
+			android:textOn="@string/toggle_button_nomenclature_packs" />
+
+		<Spinner
+			android:id="@+id/spinnerGroupNomenclature"
+			android:layout_width="match_parent"
+			android:layout_height="fill_parent" />
+	</LinearLayout>
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		>
+
+    <ListView
+        android:id="@+id/lvNomenclature"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@color/greydivider"
+        android:dividerHeight="@dimen/twodp"
+        android:drawSelectorOnTop="false"
+        android:fastScrollEnabled="true"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false"
+        android:scrollbarAlwaysDrawVerticalTrack="false"
+        android:textFilterEnabled="true">
+
+    </ListView>
+    
+	<TextView android:id="@android:id/empty" 
+  		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+  		android:text="@string/list_is_empty" />
+
+	</RelativeLayout>
+    
+</LinearLayout>
