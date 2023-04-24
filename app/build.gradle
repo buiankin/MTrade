@@ -1,4 +1,6 @@
 
+import org.gradle.internal.os.OperatingSystem
+
 plugins {
     id 'com.android.application'
 }
@@ -9,7 +11,14 @@ android {
     signingConfigs {
         config {
             keyAlias 'androiddebugkey'
-            storeFile file('/home/denis/Android/mykeys/debug.keystore')
+            switch (OperatingSystem.current()) {
+                case OperatingSystem.LINUX:
+                    storeFile file('/home/denis/Android/mykeys/debug.keystore')
+                    break
+                case OperatingSystem.WINDOWS:
+                    storeFile file('c:/Android/workspace/keys/debug.keystore')
+                    break
+            }
             keyPassword 'android'
             storePassword 'android'
         }
@@ -110,7 +119,7 @@ dependencies {
     //implementation "com.google.firebase:firebase-database"
 
     //implementation 'android.arch.work:work-runtime:1.0.1'
-    implementation 'androidx.work:work-runtime:2.8.0'
+    implementation 'androidx.work:work-runtime:2.8.1'
     implementation 'androidx.preference:preference:1.2.0'
 
     // хотя пока не используется
