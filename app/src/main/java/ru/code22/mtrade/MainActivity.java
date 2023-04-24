@@ -817,23 +817,22 @@ public class MainActivity extends AppCompatActivity
             m_exchangeLogText = savedInstanceState.getStringArrayList("EXCHANGE_LOG_TEXT");
             m_exchangeState = savedInstanceState.getString("EXCHANGE_STATE");
             // Отбор клиентов
-            String client_id=savedInstanceState.getString("client_id");
-            if (client_id!=null)
+            String client_id = savedInstanceState.getString("client_id");
+            if (client_id != null)
                 m_client_id = new MyID(client_id);
             else
                 m_client_id = new MyID();
             m_client_descr = savedInstanceState.getString("client_descr");
             // Отбор маршрута
-            String route_id=savedInstanceState.getString("route_id");
-            if (route_id!=null)
-                m_route_id=new MyID(route_id);
+            String route_id = savedInstanceState.getString("route_id");
+            if (route_id != null)
+                m_route_id = new MyID(route_id);
             else
                 m_route_id = new MyID();
-            m_route_date=savedInstanceState.getString("route_date");
-            m_route_descr=savedInstanceState.getString("route_descr");
-        } else
-        {
-            m_exchangeLogText=new ArrayList<>();
+            m_route_date = savedInstanceState.getString("route_date");
+            m_route_descr = savedInstanceState.getString("route_descr");
+        } else {
+            m_exchangeLogText = new ArrayList<>();
             m_exchangeState = getString(R.string.exchange_not_executed);
             m_client_id = null;
             m_client_descr = "";
@@ -888,15 +887,13 @@ public class MainActivity extends AppCompatActivity
                                     //getSupportLoaderManager().restartLoader(ORDERS_LOADER_ID, null, MainActivity.this);
                                     //getSupportLoaderManager().restartLoader(PAYMENTS_LOADER_ID, null, MainActivity.this);
                                     FragmentManager fragmentManager = getSupportFragmentManager();
-                                    Fragment fragment=fragmentManager.findFragmentById(R.id.content_frame);
-                                    if (fragment instanceof OrdersListFragment)
-                                    {
-                                        OrdersListFragment ordersListFragment=(OrdersListFragment)fragment;
+                                    Fragment fragment = fragmentManager.findFragmentById(R.id.content_frame);
+                                    if (fragment instanceof OrdersListFragment) {
+                                        OrdersListFragment ordersListFragment = (OrdersListFragment) fragment;
                                         ordersListFragment.onFilterClientSelected(clientId, newWord);
                                     }
-                                    if (fragment instanceof PaymentsListFragment)
-                                    {
-                                        PaymentsListFragment paymentsListFragment=(PaymentsListFragment)fragment;
+                                    if (fragment instanceof PaymentsListFragment) {
+                                        PaymentsListFragment paymentsListFragment = (PaymentsListFragment) fragment;
                                         paymentsListFragment.onFilterClientSelected(clientId, newWord);
                                     }
 
@@ -912,7 +909,7 @@ public class MainActivity extends AppCompatActivity
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
-                        int resultCode=result.getResultCode();
+                        int resultCode = result.getResultCode();
                         Intent data = result.getData();
                         if (data != null && resultCode == OrderActivity.ORDER_RESULT_OK) {
                             if (g.MyDatabase.m_order_editing.accept_coord == 1) {
@@ -1009,7 +1006,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
 
-        editMessageActivityResultLauncher  = registerForActivityResult(
+        editMessageActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
@@ -1262,8 +1259,8 @@ public class MainActivity extends AppCompatActivity
                                 editMessage(0, imgWithTime.getAbsolutePath());
                             }
                         }
-                        }
-                    });
+                    }
+                });
         editPaymentActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
@@ -1289,7 +1286,7 @@ public class MainActivity extends AppCompatActivity
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
-                        int resultCode=result.getResultCode();
+                        int resultCode = result.getResultCode();
                         if (resultCode == RefundActivity.REFUND_RESULT_OK) {
                             Intent data = result.getData();
                             if (data != null) {
@@ -1364,7 +1361,7 @@ public class MainActivity extends AppCompatActivity
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create channel to show notifications.
-            String channelId  = getString(R.string.default_notification_channel_id);
+            String channelId = getString(R.string.default_notification_channel_id);
             String channelName = getString(R.string.default_notification_channel_name);
             NotificationManager notificationManager =
                     getSystemService(NotificationManager.class);
@@ -1386,9 +1383,9 @@ public class MainActivity extends AppCompatActivity
 
         mTitle = getTitle();
 
-        m_current_frame_type=(g.Common.PRODLIDER&&!g.Common.DEMO)?FRAME_TYPE_ROUTES:FRAME_TYPE_ORDERS;
-        if (savedInstanceState!=null)
-            m_current_frame_type=savedInstanceState.getInt("current_frame_type", FRAME_TYPE_ORDERS);
+        m_current_frame_type = (g.Common.PRODLIDER && !g.Common.DEMO) ? FRAME_TYPE_ROUTES : FRAME_TYPE_ORDERS;
+        if (savedInstanceState != null)
+            m_current_frame_type = savedInstanceState.getInt("current_frame_type", FRAME_TYPE_ORDERS);
 
         /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -1440,12 +1437,11 @@ public class MainActivity extends AppCompatActivity
                         if (g.Common.PHARAOH || g.Common.NEW_BACKUP_FORMAT) {
                             //getContentResolver().insert(MTradeContentProvider.REINDEX_CONTENT_URI, null);
                             //TextDatabase.fillNomenclatureHierarchy(getContentResolver(), getResources(), "     0   ");
-                            if (incoming != null && incoming.startsWith("UPGRADED") && MTradeContentProvider.DB_VERSION==67) {
+                            if (incoming != null && incoming.startsWith("UPGRADED") && MTradeContentProvider.DB_VERSION == 67) {
                                 // 66 это версия базы, когда изменилась у андроида работа с файлами на флэшке
                                 // поэтому попытаемся скопировать
                                 new ServiceOperationsTask().execute(Integer.toString(ServiceOperationsTask.SERVICE_TASK_STATE_REINDEX_INCORRECT_CLOSED), "66", "");
-                            } else
-                            {
+                            } else {
                                 new ServiceOperationsTask().execute(Integer.toString(ServiceOperationsTask.SERVICE_TASK_STATE_REINDEX_INCORRECT_CLOSED), "", "");
                             }
                         } else {
@@ -1455,7 +1451,7 @@ public class MainActivity extends AppCompatActivity
                             } else if (incoming != null && incoming.startsWith("UPGRADED")) {
                                 // 66 это версия базы, когда изменилась у андроида работа с файлами на флэшке
                                 // поэтому попытаемся скопировать
-                                if (MTradeContentProvider.DB_VERSION==67)
+                                if (MTradeContentProvider.DB_VERSION == 67)
                                     showDialog(IDD_REINDEX_UPGRADED66);
                                 else
                                     showDialog(IDD_REINDEX_UPGRADED);
@@ -1545,7 +1541,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Menu navMenu=navigationView.getMenu();
+        Menu navMenu = navigationView.getMenu();
 
         // Здесь также установится название клиента из отбора
         afterCreate(reindexNeeded);
@@ -1553,16 +1549,21 @@ public class MainActivity extends AppCompatActivity
         setCheckedMode(m_current_frame_type);
         attachFrameType(m_current_frame_type);
 
-        // взято отсюда
-        // https://github.com/commonsguy/cw-omnibus/blob/master/Location/Classic/app/src/main/java/com/commonsware/android/weather2/AbstractPermissionActivity.java
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            onReady(savedInstanceState);
-        } else {
-            if (!isInPermission) {
-                isInPermission = true;
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_STORAGE);
+        // Проверка добавлена 24.04.2023
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU)
+        {
+            // взято отсюда
+            // https://github.com/commonsguy/cw-omnibus/blob/master/Location/Classic/app/src/main/java/com/commonsware/android/weather2/AbstractPermissionActivity.java
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                onReady(savedInstanceState);
+            } else {
+                if (!isInPermission) {
+                    isInPermission = true;
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_STORAGE);
+                }
             }
         }
+
         checkForAppUpdate();
     }
 

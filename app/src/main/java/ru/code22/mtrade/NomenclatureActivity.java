@@ -68,9 +68,13 @@ import android.widget.ToggleButton;
 import com.recyclertreeview_lib.TreeNode;
 import com.recyclertreeview_lib.TreeViewAdapter;
 
+
 public class NomenclatureActivity extends AppCompatActivity
 implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListener {
-	
+
+	// В разработке
+	static boolean bNewHierarchyVariant=false;
+
 	//static final int QUANTITY_REQUEST = 1;
 	//static final int OPEN_IMAGE_REQUEST = 2;
 	private ActivityResultLauncher<Intent> openImageActivityResultLauncher;
@@ -105,13 +109,13 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
     	"zero"};
     
     ListView lvNomenclature;
-    //ListView lvNomenclatureGroup;
+	ListView lvNomenclatureGroup; // используется только если bNewHierarchyVariant==false
 	RecyclerView rvNomenclatureGroup;
 	private TreeViewAdapter adapter;
 
     Spinner sNomenclatureGroup;
 
-    //class Tree {String _id; String id; String parent_id; String descr; int level;};
+	// class Tree {String _id; String id; String parent_id; String descr; int level;};
     List<String> m_list_groups;
     ArrayList<MyNomenclatureGroupAdapter.Tree> m_list2;
     MyDatabase.MyID m_group_id;
@@ -489,7 +493,10 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 		MySingleton g=MySingleton.getInstance();
 		g.checkInitByDataAndSetTheme(this);
 
-		setContentView(R.layout.nomenclature);
+		if (bNewHierarchyVariant)
+			setContentView(R.layout.nomenclature);
+		else
+			setContentView(R.layout.nomenclature_old);
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -876,19 +883,18 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 		lvNomenclature = (ListView)findViewById(R.id.lvNomenclature);
 		lvNomenclature.setEmptyView(findViewById(android.R.id.empty));
 
-		/*
-		lvNomenclatureGroup = (ListView)findViewById(R.id.lvNomenclatureGroup);
-		if (lvNomenclatureGroup!=null)
-		{
-			lvNomenclatureGroup.setEmptyView(findViewById(R.id.emptyGroup));
+		if (!bNewHierarchyVariant) {
+			lvNomenclatureGroup = (ListView) findViewById(R.id.lvNomenclatureGroup);
+			if (lvNomenclatureGroup != null) {
+				lvNomenclatureGroup.setEmptyView(findViewById(R.id.emptyGroup));
+			}
 		}
-		 */
 
 		sNomenclatureGroup=(Spinner)findViewById(R.id.spinnerGroupNomenclature);
 		
 		String[] fromColumns = {"h_groupDescr", "descr", "price", "nom_quantity", "zero", "quantity_saled", "nom_quantity_saled_now", "zero", "zero", "zero"};
         int[] toViews = {R.id.tvNomenclatureGroup, R.id.tvNomenclatureLineDescr, R.id.tvNomenclatureLinePrice, R.id.tvNomenclatureLineRests, R.id.tvNomenclatureLineSales, R.id.tvNomenclatureLineSalesHistoryPeriod, R.id.tvNomenclatureLineSalesNowPeriod, R.id.ibtnNomenclatureLine, R.id.ibtnNomenclatureGroup, R.id.tvNomenclatureGroupSales};
-        
+
         if (g.Common.TANDEM) {
             mAdapter = new MySimpleCursorAdapter(this,
                     R.layout.nomenclature_line_item_ta, null,
@@ -1458,26 +1464,40 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
         
         setNomenclatureSpinnerData(Constants.emptyID);
 
-		mGroupAdapter = new MyNomenclatureGroupAdapter(this);
-		mGroupAdapter.setMyListGroups(m_list_groups, m_list2, m_group_id, m_group_ids);
-		mGroupAdapter.setOnRedrawListListener(new MyNomenclatureGroupAdapter.RedrawListLisnener() {
-			@Override
-			public void onRestartLoader() {
-				LoaderManager.getInstance(NomenclatureActivity.this).restartLoader(LOADER_ID, null, NomenclatureActivity.this);
+		if (!bNewHierarchyVariant) {
+
+			mGroupAdapter = new MyNomenclatureGroupAdapter(this);
+			mGroupAdapter.setMyListGroups(m_list_groups, m_list2, m_group_id, m_group_ids);
+			mGroupAdapter.setOnRedrawListListener(new MyNomenclatureGroupAdapter.RedrawListLisnener() {
+				@Override
+				public void onRestartLoader() {
+					// Заляп, из-за того, что пришлось вернуть на место старый вариант иерархии
+					m_group_id=mGroupAdapter.m_group_id;
+					m_group_ids=mGroupAdapter.m_group_ids;
+					//
+					LoaderManager.getInstance(NomenclatureActivity.this).restartLoader(LOADER_ID, null, NomenclatureActivity.this);
+				}
+			});
+
+			if (lvNomenclatureGroup != null) {
+				lvNomenclatureGroup.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+				lvNomenclatureGroup.setAdapter(mGroupAdapter);
 			}
-		});
+		} else {
 
-		rvNomenclatureGroup = (RecyclerView)findViewById(R.id.rvNomenclatureGroup);
-		initData();
+			mGroupAdapter = new MyNomenclatureGroupAdapter(this);
+			mGroupAdapter.setMyListGroups(m_list_groups, m_list2, m_group_id, m_group_ids);
+			mGroupAdapter.setOnRedrawListListener(new MyNomenclatureGroupAdapter.RedrawListLisnener() {
+				@Override
+				public void onRestartLoader() {
+					LoaderManager.getInstance(NomenclatureActivity.this).restartLoader(LOADER_ID, null, NomenclatureActivity.this);
+				}
+			});
 
-		/*
-		if (lvNomenclatureGroup!=null)
-        {
-        	lvNomenclatureGroup.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        	lvNomenclatureGroup.setAdapter(mGroupAdapter);
-        }
-		 */
-        
+			rvNomenclatureGroup = (RecyclerView) findViewById(R.id.rvNomenclatureGroup);
+			initData();
+		}
+
         // устанавливаем обработчик нажатия
         if (sNomenclatureGroup!=null)
         {
