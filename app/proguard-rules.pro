@@ -5,6 +5,20 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
+# Add any project specific keep options here:
+#-keep public class com.sails.engine.patterns.IconPatterns
+-dontwarn org.apache.**
+-keep class org.kobjects.** {*;}
+-keep class org.ksoap2.** {*;}
+-dontwarn org.kxml2.**
+-keep class org.kxml2.** { *;}
+-dontwarn org.xmlpull.v1.**
+-keep class org.xmlpull.v1.** {*;}
+-dontwarn org.conscrypt.*
+
+
+
+
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:
@@ -52,8 +66,11 @@
 -keep class android.support.v4.** { *; }
 -keep class android.support.v7.** { *; }
 
+
+
 -keep public class org.apache.commons.** { *; }
 -keep class net.sourceforge.jheader.** { *; }
+-keep class ru.code22.mtrade.MyDatabase$OrderRecord { *; }
 
 -assumenosideeffects class android.util.Log {
     public static *** v(...);
