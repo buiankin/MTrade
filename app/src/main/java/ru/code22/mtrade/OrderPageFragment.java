@@ -2802,7 +2802,7 @@ public class OrderPageFragment extends Fragment {
 	        TextView tvShippingTime=(TextView)m_view.findViewById(R.id.tvShippingTime);
 	        View layoutShippingTime=(View)m_view.findViewById(R.id.layoutShippingTime);
 	        
-		    if (g.Common.PRODLIDER||g.Common.TANDEM)
+		    if (g.Common.PRODLIDER||g.Common.TANDEM||g.Common.FACTORY)
 		    {
 		    	//bw.write(String.format("PL:%d;%d;%s;%s\r\n", orderRecord.shipping_type, orderRecord.shipping_time, orderRecord.shipping_begin_time, orderRecord.shipping_end_time));
 		    	if (g.MyDatabase.m_order_editing.shipping_time==0)
