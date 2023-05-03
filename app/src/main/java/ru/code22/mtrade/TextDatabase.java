@@ -9397,7 +9397,6 @@ public class TextDatabase {
 		// version_ack (если подтверждение он не получал), то отправка будет еще раз
 		// 21 версия на КПК подтвержденная
 		serializer.attribute(null, "versionPDA_ack", String.format("%d", orderRecord.versionPDA_ack));
-		// зарезервированные поля
 		serializer.attribute(null, "shipping_type", String.format("%d", orderRecord.shipping_type));
 		serializer.attribute(null, "shipping_time", String.format("%d", orderRecord.shipping_time));
 		serializer.attribute(null, "shipping_begin_time", orderRecord.shipping_begin_time);
