@@ -37,8 +37,8 @@ android {
         applicationId "ru.code22.mtrade"
         minSdkVersion 19
         targetSdkVersion 33
-        versionCode 399
-        versionName "3.99"
+        versionCode 400
+        versionName "4.00"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk{
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'

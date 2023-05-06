@@ -4517,7 +4517,8 @@ public class TextDatabase {
 					ContentValues cv = new ContentValues();
 					cv.clear();
 					cv.put("client_id", xpp.getAttributeValue(null, "client_id"));
-					cv.put("agreement30_id", xpp.getAttributeValue(null, "agreement30_id"));
+					// тут может быть любое значение, главное, чтобы не NULL, в противном случае условие ключа перестает работать и записи дублируются при добавлении
+					cv.put("agreement30_id", StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "agreement30_id"), "0"));
 					cv.put("agreement_id", xpp.getAttributeValue(null, "agreement_id"));
 					cv.put("document_id", xpp.getAttributeValue(null, "document_id"));
 					cv.put("manager_id", xpp.getAttributeValue(null, "manager_id"));
