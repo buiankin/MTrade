@@ -749,9 +749,14 @@ public class Common {
 
 	public static void ftpEnterMode(FTPClient ftpClient, boolean passiveMode) {
 		//if (passiveMode)
-			ftpClient.enterLocalPassiveMode();
-		//else
-		//	ftpClient.enterLocalActiveMode();
+		//{
+			if (ftpClient.getDataConnectionMode()!=FTPClient.PASSIVE_REMOTE_DATA_CONNECTION_MODE)
+				ftpClient.enterLocalPassiveMode();
+		//}
+		//else {
+		//	if (ftpClient.getDataConnectionMode()!=FTPClient.ACTIVE_LOCAL_DATA_CONNECTION_MODE)
+		//		ftpClient.enterLocalActiveMode();
+		//}
 	}
 
 

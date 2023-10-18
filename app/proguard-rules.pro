@@ -58,6 +58,24 @@
 
 -dontwarn javax.xml.stream.**
 
+-keep class org.xmlpull.v1.** { *; }
+
+-dontwarn org.xmlpull.v1.**
+-dontwarn org.kxml2.io.**
+-dontwarn android.content.res.**
+#-dontwarn org.slf4j.impl.StaticLoggerBinder
+-keep class org.xmlpull.** { *; }
+-keepclassmembers class org.xmlpull.** { *; }
+
+-dontwarn okhttp3.internal.InternalCache
+-dontwarn okhttp3.internal.Platform
+-dontwarn okhttp3.internal.http.HttpEngine
+-dontwarn okhttp3.internal.http.OkHeaders
+-dontwarn okhttp3.internal.http.RequestException
+-dontwarn okhttp3.internal.http.RetryableSink
+-dontwarn okhttp3.internal.http.RouteException
+-dontwarn okhttp3.internal.http.StreamAllocation
+
 -keepattributes *Annotation*
 
 -dontwarn net.sourceforge.jheader.**
