@@ -8363,6 +8363,7 @@ public class MainActivity extends AppCompatActivity
                             //File zipFile=null;
                             FTPFile[] fileList = null;
                             publishProgress(FTP_STATE_RECEIVE_IMAGE, 0);
+                            Common.ftpEnterMode(ftpClient, !g.Common.VK);
                             fileList = ftpClient.listFiles();
                             for (FTPFile ftpFile : fileList) {
                                 String ftpName = ftpFile.getName();

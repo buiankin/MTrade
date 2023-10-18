@@ -38,7 +38,7 @@ android {
         compileSdk 34
         versionCode 400
         versionName "4.00"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        //testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk{
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
@@ -91,7 +91,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.11.0-alpha01'
+    implementation 'com.google.android.material:material:1.11.0-alpha03'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     //implementation 'com.androidessence:recyclerviewcursoradapter:1.0.0'
 
@@ -112,7 +112,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-core:21.1.1'
     implementation 'com.google.firebase:firebase-iid:21.1.0'
-    implementation 'com.google.firebase:firebase-messaging:23.2.0'
+    implementation 'com.google.firebase:firebase-messaging:23.2.1'
 
     //implementation platform("com.google.firebase:firebase-bom:28.4.1")
     //implementation "com.google.firebase:firebase-analytics"

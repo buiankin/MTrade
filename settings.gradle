@@ -5,6 +5,7 @@ pluginManagement {
         mavenCentral()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -13,5 +14,7 @@ dependencyResolutionManagement {
         maven { url 'https://oss.sonatype.org/content/repositories/ksoap2-android-releases/' }
     }
 }
+
+
 rootProject.name = "MTrade"
 include ':app'
