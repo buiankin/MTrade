@@ -168,7 +168,6 @@ import com.google.android.play.core.install.InstallStateUpdatedListener;
 import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.InstallStatus;
 import com.google.android.play.core.install.model.UpdateAvailability;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.nostra13.universalimageloader.utils.L;
 
 public class MainActivity extends AppCompatActivity
@@ -1730,6 +1729,7 @@ public class MainActivity extends AppCompatActivity
             loadDataAfterStart();
     }
 
+    /*
     void checkFirebaseToken() {
         final SharedPreferences pref = getSharedPreferences("MTradePreferences", 0);
 
@@ -1759,8 +1759,8 @@ public class MainActivity extends AppCompatActivity
                 //e.printStackTrace();
             }
         }
-
     }
+     */
 
     void checkSendImages() {
         m_imagesToSendSize = 0;
@@ -4733,7 +4733,7 @@ public class MainActivity extends AppCompatActivity
         if (event.equals("ExchangeConnect"))
         {
 
-            checkFirebaseToken();
+            //checkFirebaseToken();
             checkSendImages();
             if (m_imagesToSendSize > 0) {
                 showDialog(IDD_QUERY_SEND_IMAGES, null);
@@ -4758,7 +4758,7 @@ public class MainActivity extends AppCompatActivity
                 m_bRefreshPressed = true;
 
                 // И обычный обмен
-                checkFirebaseToken();
+                //checkFirebaseToken();
                 checkSendImages();
                 if (m_imagesToSendSize > 0) {
                     showDialog(IDD_QUERY_SEND_IMAGES, null);

@@ -36,8 +36,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 34
         compileSdk 34
-        versionCode 400
-        versionName "4.00"
+        versionCode 3100
+        versionName "3.100"
         //testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk{
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
@@ -107,16 +107,6 @@ dependencies {
     // чуть не воспользовался WildcardFileFilter от апача из commons.io, но там минимальные требования api 24
     // поэтому ставим версию 2.6 (я ее скопировал в lib)
     //implementation "commons-io:commons-io:2.7"
-    // add SDKs for desired Firebase products
-    // https://firebase.google.com/docs/android/setup#available-libraries
-
-    implementation 'com.google.firebase:firebase-core:21.1.1'
-    implementation 'com.google.firebase:firebase-iid:21.1.0'
-    implementation 'com.google.firebase:firebase-messaging:23.2.1'
-
-    //implementation platform("com.google.firebase:firebase-bom:28.4.1")
-    //implementation "com.google.firebase:firebase-analytics"
-    //implementation "com.google.firebase:firebase-database"
 
     //implementation 'android.arch.work:work-runtime:1.0.1'
     implementation 'androidx.work:work-runtime:2.8.1'
@@ -130,7 +120,7 @@ dependencies {
 
     implementation 'com.google.android.play:core:1.10.3'
 
-    implementation 'com.google.gms:google-services:4.3.15'
+    //implementation 'com.google.gms:google-services:4.3.15'
 
     implementation 'com.google.code.ksoap2-android:ksoap2-android:3.6.2'
 
