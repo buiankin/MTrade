@@ -7072,6 +7072,7 @@ public class MainActivity extends AppCompatActivity
 
             // http://chizztectep.blogspot.ru/2011/07/java-ftp-ftp-client.html
             FTPClient ftpClient = new FTPClient();
+
             // 29.11.2022 убрал эти таймауты - это не то, что я думал, похоже))))
             //ftpClient.setControlKeepAliveTimeout(120); // раз в 2 минуты отправлять пустую команду
             //ftpClient.setControlKeepAliveReplyTimeout(120); // чем они отличаются, не знаю
@@ -8132,15 +8133,12 @@ public class MainActivity extends AppCompatActivity
                                 }
 
                                 // Раздел "Разное"
-                                if (g.Common.PRODLIDER) {
-
-                                    ze = new ZipEntry("misc.xml");
-                                    zipStream.putNextEntry(ze);
-                                    String fcm_instanceId=pref.getString("fcm_instanceId", "");
-                                    TextDatabase.SaveSendMiscXML(zipStream, fcm_instanceId);
-                                    zipStream.closeEntry();
-                                    zipStream.flush();
-                                }
+                                ze = new ZipEntry("misc.xml");
+                                zipStream.putNextEntry(ze);
+                                String fcm_instanceId=pref.getString("fcm_instanceId", "");
+                                TextDatabase.SaveSendMiscXML(zipStream, fcm_instanceId);
+                                zipStream.closeEntry();
+                                zipStream.flush();
 
                                 if (g.Common.PRODLIDER || g.Common.TANDEM) {
                                     // GPS координаты

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.multidex.MultiDex;
 
 public class Globals extends Application {
 
@@ -25,6 +26,12 @@ public class Globals extends Application {
 
 	public static Context getAppContext() {
 		return Globals.context;
+	}
+
+	@Override
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(base);
+		MultiDex.install(this);
 	}
 	
 }
