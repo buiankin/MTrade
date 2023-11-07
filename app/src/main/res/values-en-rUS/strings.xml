@@ -564,6 +564,7 @@
     <string name="no_email"><![CDATA[<no email>]]></string>
     <string name="message_settings_loaded">Settings loaded</string>
     <string name="message_settings_not_changed">Settings not changed</string>
+    <string name="message_ftp_server_refused_connection">FTP server refused connection</string>
 
 
 </resources>

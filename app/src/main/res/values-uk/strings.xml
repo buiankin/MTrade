@@ -535,5 +535,6 @@
     <string name="no_email"><![CDATA[<no email>]]></string>
     <string name="message_settings_loaded">Налаштування завантажено</string>
     <string name="message_settings_not_changed">Налаштування не змінено</string>
+    <string name="message_ftp_server_refused_connection">FTP-сервер відмовився підключитися</string>
 
 </resources>

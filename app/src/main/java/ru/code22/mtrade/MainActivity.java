@@ -76,6 +76,7 @@ import net.sourceforge.jheader.TagValue;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.io.CopyStreamAdapter;
 
 import androidx.activity.result.ActivityResult;
@@ -7149,13 +7150,17 @@ public class MainActivity extends AppCompatActivity
     			publishProgress(-2, textToLog.size());
     			*/
 
-                //ftpClient.login("forftp", "lkzrgr");
-                //String test=decodeLoginOrPassword(m_FTP_server_user, m_FTP_server_directory);
                 if (!ftpClient.login(decodeLoginOrPassword(g.m_FTP_server_user, g.m_FTP_server_directory), decodeLoginOrPassword(g.m_FTP_server_password, g.m_FTP_server_directory)))
                     throw new Exception(getString(R.string.message_cannot_authorize_on_server));
                 if (!g.m_FTP_server_directory.isEmpty()) {
                     if (!ftpClient.changeWorkingDirectory(g.m_FTP_server_directory))
                         throw new Exception(getString(R.string.message_cannot_enter_ftp_user_directory));
+                }
+
+                int reply = ftpClient.getReplyCode();
+                if(!FTPReply.isPositiveCompletion(reply)) {
+                    ftpClient.disconnect();
+                    throw new Exception(getString(R.string.message_ftp_server_refused_connection));
                 }
                 //EditText et1=(EditText)findViewById(R.id.etTest);
     	        /*
@@ -7946,6 +7951,7 @@ public class MainActivity extends AppCompatActivity
 
                         // отправляем данные
                         publishProgress(FTP_STATE_SEND_EOUTF, 0);
+                        Common.ftpEnterMode(ftpClient, !g.Common.VK);
                         // удаляем предыдущий файл, если он был
                         ftpClient.deleteFile("arch.zip");
                         File zipFile;
@@ -8312,6 +8318,7 @@ public class MainActivity extends AppCompatActivity
                     case 2: {
                         // Синхронизируем изображения
                         try {
+                            Common.ftpEnterMode(ftpClient, !g.Common.VK);
                             if (!ftpClient.changeWorkingDirectory("images")) {
                                 if (g.Common.TANDEM) {
                                     // если каталог не задан, значит мы зашли собственным пользователем

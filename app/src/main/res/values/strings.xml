@@ -234,6 +234,8 @@
     <string name="message_file_not_sent_reply_code">File not sent, reply code: %d</string>
 	<string name="message_cannot_authorize_on_server">Can\'t authorize on server</string>
 	<string name="message_cannot_enter_ftp_user_directory">Can\'t enter FTP user directory</string>
+    <string name="message_ftp_server_refused_connection">FTP server refused connection</string>
+
 
     <string name="title_exchange">Exchange</string>
 	<string name="ftp_message_connection_error">Connection error</string>

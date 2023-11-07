@@ -540,5 +540,6 @@
     <string name="no_email"><![CDATA[<no email>]]></string>
     <string name="message_settings_loaded">Параметрлер жүктелді</string>
     <string name="message_settings_not_changed">Параметрлер өзгертілмеген</string>
+    <string name="message_ftp_server_refused_connection">FTP сервері қосылудан бас тартты</string>
 
 </resources>
