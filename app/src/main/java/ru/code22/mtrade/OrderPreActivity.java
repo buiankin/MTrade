@@ -1,5 +1,6 @@
 package ru.code22.mtrade;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -212,6 +213,9 @@ public class OrderPreActivity extends Activity {
     			String fileName = "order_image_1.jpg";
     			if (requestCode==CAMERA_REQUEST2)
     				fileName = "order_image_2.jpg";
+				// Временный файл, будет использоваться не всегда, а только у самсунгов
+				String fileNameIntermediate = "S"+fileName;
+
     			
     			/*
     			File photoDir = new File(Environment.getExternalStorageDirectory() + photoFolder);
@@ -224,6 +228,7 @@ public class OrderPreActivity extends Activity {
                 boolean bSavedOk=false;
                 
                 File imgWithTime=new File(photoDir, fileName);
+
                 ExifInterface exifInterface=null;
     			
                 if(data != null)
@@ -244,7 +249,24 @@ public class OrderPreActivity extends Activity {
                   } else
                   {
                 	  // Самсунг)
-                	  bSavedOk=ImagePrinting.StoreImage(this, outputPhotoFileUri, imgWithTime, timeString);
+					  if (!ImagePrinting.checkImagePath(this, outputPhotoFileUri))
+					  {
+						  // реального имени файла нет, данные в потоке
+						  // заберем их оттуда в промежуточный файл
+						  File intermegiateFile=new File(photoDir, fileNameIntermediate);
+						  try {
+							  InputStream input = getContentResolver().openInputStream(outputPhotoFileUri);
+							  if (Common.myCopyStreamToFile(input, intermegiateFile))
+							  {
+								  outputPhotoFileUri=Uri.fromFile(intermegiateFile);
+							  }
+
+						  } catch (FileNotFoundException e) {
+							  throw new RuntimeException(e);
+						  }
+					  }
+					  bSavedOk=ImagePrinting.StoreImage(this, outputPhotoFileUri, imgWithTime, timeString);
+
                   }
                 }
                 else

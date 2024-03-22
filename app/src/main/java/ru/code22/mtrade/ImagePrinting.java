@@ -242,6 +242,7 @@ public class ImagePrinting {
                     .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
             selectedImagePath = cursor.getString(column_index);
+			cursor.close();
         } else {
             selectedImagePath = null;
         }
@@ -251,6 +252,19 @@ public class ImagePrinting {
             selectedImagePath = uri.getPath();
         }
         return selectedImagePath;
-    }    
+    }
+
+	public static boolean checkImagePath(Activity activity, Uri uri) {
+		String[] projection = { MediaStore.Images.Media.DATA };
+		Cursor cursor = activity.managedQuery(uri, projection, null, null, null);
+		if (cursor != null) {
+			int column_index = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+			cursor.close();
+			return column_index>0;
+		}
+
+		return true;
+	}
+
 
 }

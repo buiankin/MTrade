@@ -1109,6 +1109,8 @@ public class MainActivity extends AppCompatActivity
                             String timeString = Common.MyDateFormat("dd.MM.yyyy HH:mm:ss", date);
 
                             String fileName = Common.getDateTimeAsString14(date).toString() + ".jpg";
+                            // Временный файл, будет использоваться не всегда, а только у самсунгов
+                            String fileNameIntermediate = "S"+Common.getDateTimeAsString14(date).toString() + ".jpg";
 
                             File photoDir = Common.getMyStorageFileDir(MainActivity.this, photoFolder);
                             if (!photoDir.exists()) {
@@ -1134,6 +1136,22 @@ public class MainActivity extends AppCompatActivity
                                     }
                                 } else {
                                     // Самсунг)
+                                    if (!ImagePrinting.checkImagePath(MainActivity.this, outputPhotoFileUri))
+                                    {
+                                        // реального имени файла нет, данные в потоке
+                                        // заберем их оттуда в промежуточный файл
+                                        File intermegiateFile=new File(photoDir, fileNameIntermediate);
+                                        try {
+                                            InputStream input = getContentResolver().openInputStream(outputPhotoFileUri);
+                                            if (Common.myCopyStreamToFile(input, intermegiateFile))
+                                            {
+                                                outputPhotoFileUri=Uri.fromFile(intermegiateFile);
+                                            }
+
+                                        } catch (FileNotFoundException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    }
                                     bSavedOk = ImagePrinting.StoreImage(MainActivity.this, outputPhotoFileUri, imgWithTime, timeString);
                 	  /*
                 	  // test
@@ -1214,8 +1232,12 @@ public class MainActivity extends AppCompatActivity
                                     exifInterface2.setAttribute(ExifInterface.TAG_DATETIME, exif_DATETIME);
                                     exifInterface2.setAttribute(ExifInterface.TAG_MODEL, exif_MODEL);
                                     exifInterface2.setAttribute(ExifInterface.TAG_MAKE, exif_MAKE);
+                                    exifInterface2.setAttribute(ExifInterface.TAG_DATETIME_ORIGINAL, exif_DATETIME);
+                                    exifInterface2.setAttribute(ExifInterface.TAG_DATETIME_DIGITIZED, exif_DATETIME);
                                     exifInterface2.saveAttributes();
 
+
+                                    /*
                                     JpegHeaders headers;
                                     try {
 
@@ -1242,6 +1264,7 @@ public class MainActivity extends AppCompatActivity
                                         //headers.save(true);
                                         // Резервная копия не нужна
                                         headers.save(false);
+
                                     } catch (ExifFormatException e) {
                                         // TODO Auto-generated catch block
                                         e.printStackTrace();
@@ -1252,6 +1275,7 @@ public class MainActivity extends AppCompatActivity
                                         // TODO Auto-generated catch block
                                         e.printStackTrace();
                                     }
+                                     */
                                 } catch (IOException e) {
                                     // TODO Auto-generated catch block
                                     e.printStackTrace();

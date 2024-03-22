@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.util.Arrays;
@@ -26,6 +28,7 @@ import android.os.Build;
 import android.util.Log;
 import android.util.TypedValue;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
 
 public class Common {
@@ -603,6 +606,28 @@ public class Common {
 		}
         return context.getString(R.string.currency_format_default);
     }
+
+
+	public static boolean myCopyStreamToFile(InputStream scrFileInputStream, File destFile)
+	{
+		try {
+
+			OutputStream outStream = new FileOutputStream(destFile);
+
+			byte[] buffer = new byte[8 * 1024];
+			int bytesRead;
+			while ((bytesRead = scrFileInputStream.read(buffer)) != -1) {
+				outStream.write(buffer, 0, bytesRead);
+			}
+			IOUtils.closeQuietly(scrFileInputStream);
+			IOUtils.closeQuietly(outStream);
+
+		} catch (IOException e) {
+			return false;
+		}
+
+		return true;
+	}
 
     public static boolean myCopyFile(File scrFile, File destFile, boolean deleteSrcFile)
     {

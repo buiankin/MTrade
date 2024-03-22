@@ -6,7 +6,10 @@ public class NativeCallsClass
 {
     // Used to load the 'native-lib' library on application startup.
     static {
-        System.loadLibrary("native-lib");
+        // Так было бы, если бы файл назывался libnativelib.so
+        //System.loadLibrary("native-lib");
+        // соответствующий файл библиотеки называется libmain.so
+        System.loadLibrary("main");
     }
 
     //native public static int inputInt();

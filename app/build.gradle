@@ -33,7 +33,7 @@ android {
 
     defaultConfig {
         applicationId "ru.code22.mtrade"
-        minSdkVersion 19
+        minSdkVersion 24
         targetSdkVersion 34
         compileSdk 34
         versionCode 3106
@@ -45,7 +45,6 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        android.ndkVersion '21.0.6113669'
         multiDexEnabled true
     }
     buildTypes {
