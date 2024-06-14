@@ -36,9 +36,9 @@
     </EditTextPreference>
     
     <EditTextPreference
-        android:key="server_address_for_wifi_connection"
-        android:title="@string/preferences_ftp_server_address_for_wifi_connection_title"
-        android:summary="@string/preferences_server_address_for_wifi_connection_summary"
+        android:key="server_address_spare"
+        android:title="@string/preferences_ftp_server_address_spare_title"
+        android:summary="@string/preferences_server_address_spare_summary"
         android:singleLine="true" >
     </EditTextPreference>
     

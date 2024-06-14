@@ -30,6 +30,7 @@ public class MySingleton {
     // в настройках приложения
     String m_DataFormat;
     String m_FTP_server_address;
+	String m_FTP_server_address_spare;
     String m_FTP_server_user;
     String m_FTP_server_password;
     String m_FTP_server_directory;
@@ -62,6 +63,7 @@ public class MySingleton {
             int line_num=0;
             BufferedReader br;
             String strFtpAddress=null;
+			String strFtpAddressSpare=null;
             String strFtpUser=null;
             String strFtpPassword=null;
             // Домашний каталог может быть в файле не указан, считаем что он должен быть пустым
@@ -91,6 +93,9 @@ public class MySingleton {
 		        	case 4:
 		        		strDataFormat=line;
 		        		break;
+					case 5:
+						strFtpAddressSpare=line;
+						break;
 		        	}
 		        	line_num++;
 		        }
@@ -103,6 +108,8 @@ public class MySingleton {
 			{
 				m_preferences_from_ini=true;
 				if (!strFtpAddress.equals("#")&&!sharedPreferences.getString("server_address", "").equals(strFtpAddress))
+					bSettingsChanged=true;
+				if (!strFtpAddressSpare.equals("#")&&!sharedPreferences.getString("server_address_spare", "").equals(strFtpAddress))
 					bSettingsChanged=true;
 				if (!strFtpUser.equals("#")&&!sharedPreferences.getString("server_user", "").equals(strFtpUser))
 					bSettingsChanged=true;
@@ -124,6 +131,8 @@ public class MySingleton {
 		        SharedPreferences.Editor editor = sharedPreferences.edit();
 		        if (!strFtpAddress.equals("#"))
 		        	editor.putString("server_address", strFtpAddress);
+				if (!strFtpAddress.equals("#"))
+					editor.putString("server_address_spare", strFtpAddressSpare);
 		        if (!strFtpUser.equals("#"))
 		        	editor.putString("server_user", strFtpUser);
 		        if (!strFtpPassword.equals("#"))
@@ -145,6 +154,7 @@ public class MySingleton {
     	updateCommonDataFormat(strFormat);
     	m_DataFormat=strFormat;
         m_FTP_server_address=sharedPreferences.getString("server_address", "");
+		m_FTP_server_address_spare=sharedPreferences.getString("server_address_spare", "");
         m_FTP_server_user=sharedPreferences.getString("server_user", "");
         m_FTP_server_password=sharedPreferences.getString("server_password", "");
         m_FTP_server_directory=sharedPreferences.getString("server_directory", "");

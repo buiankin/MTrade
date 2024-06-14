@@ -332,9 +332,9 @@
 	<string name="title_nomenclature_pref">Настройки номенклатуры</string>
 	<string name="preferences_server_address_summary">Адрес сервера</string>
 	<string name="start_date_for_occupied_places">Начальная дата для занятых столов</string>
-	<string name="preferences_server_address_for_wifi_connection_summary">Адрес сервера при WiFi соединении</string>
+	<string name="preferences_server_address_spare_summary">Адрес сервера (резервного)</string>
 	<string name="preferences_ftp_server_address_title">Адрес FTP сервера</string>
-	<string name="preferences_ftp_server_address_for_wifi_connection_title">Адрес FTP сервера при WiFi соединении</string>
+	<string name="preferences_ftp_server_address_spare_title">Адрес FTP сервера (резервного)</string>
 	<string name="preferences_web_server_address_title">Адрес WEB сервера</string>
 	<string name="data_format_summary">Формат данных</string>
 	<string name="data_format_title">Формат данных</string>

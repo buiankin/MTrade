@@ -6845,8 +6845,6 @@ public class MainActivity extends AppCompatActivity
         int prevProgress;
         //boolean bDontUseExternalStorage = false;//(android.os.Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q);
 
-        String m_wifi_ftp_address;
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -6855,8 +6853,6 @@ public class MainActivity extends AppCompatActivity
             bStopped = false;
             bIniFileReaded = false;
             cancelIsVisible = true;
-
-            m_wifi_ftp_address = "";
 
             //EditText etLog = (EditText) findViewById(R.id.etTest);
 
@@ -6912,15 +6908,6 @@ public class MainActivity extends AppCompatActivity
             }
             progressDialog.show();
 
-            String wifiDescr = WifiConnection.getWifiConnection(MainActivity.this);
-            if (wifiDescr != null) {
-                Cursor cursor = getContentResolver().query(MTradeContentProvider.SERVERS_WHEN_WIFI_CONTENT_URI, new String[]{"server_address"}, "wifi_name=?", new String[]{wifiDescr}, null);
-                if (cursor.moveToNext()) {
-                    //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                    m_wifi_ftp_address = cursor.getString(0);
-                }
-                cursor.close();
-            }
         }
 
         @Override
@@ -7154,18 +7141,27 @@ public class MainActivity extends AppCompatActivity
                 return null;
             }
 
+            boolean connectedImmediately=false;
+            // Если указан резервный сервер, то сначала пытаемся подключиться к основному серверу
+            // Потом к резервному
+            // А потом еще раз к основному, уже в следующей попытке-исключении
+            if (!g.m_FTP_server_address_spare.isEmpty()) {
+                for (int i = 0; i < 2; i++) {
+                    try {
+                        String ftp_address = i == 0 ? g.m_FTP_server_address : g.m_FTP_server_address_spare;
+                        int portIndex = ftp_address.indexOf(':');
+                        if (portIndex < 0) {
+                            ftpClient.connect(ftp_address);
+                        } else {
+                            ftpClient.connect(ftp_address.substring(0, portIndex), Integer.parseInt(ftp_address.substring(portIndex + 1)));
+                        }
+                        connectedImmediately = true;
+                        break;
+                    } catch (Exception e) {
+                    }
+                }
+            }
             try {
-                String wifi_address = g.m_FTP_server_address;
-                if (!m_wifi_ftp_address.isEmpty()) {
-                    wifi_address = m_wifi_ftp_address;
-                }
-                int portIndex = g.m_FTP_server_address.indexOf(':');
-                if (portIndex < 0) {
-                    ftpClient.connect(wifi_address);
-                } else {
-                    ftpClient.connect(wifi_address.substring(0, portIndex), Integer.parseInt(wifi_address.substring(portIndex + 1)));
-                }
-
        			/*
        			// read the initial response (aka "Welcome message")
        			String[] welcomeMessage = ftpClient.getReplyStrings();
@@ -7173,6 +7169,18 @@ public class MainActivity extends AppCompatActivity
     			textToLog.add(welcomeMessageStr);
     			publishProgress(-2, textToLog.size());
     			*/
+
+                // Если выше не было успешного подключения, то подключаемся к основному, на этот раз
+                // с сообщением об ошибке
+                if (!connectedImmediately) {
+                    String ftp_address = g.m_FTP_server_address;
+                    int portIndex = ftp_address.indexOf(':');
+                    if (portIndex < 0) {
+                        ftpClient.connect(ftp_address);
+                    } else {
+                        ftpClient.connect(ftp_address.substring(0, portIndex), Integer.parseInt(ftp_address.substring(portIndex + 1)));
+                    }
+                }
 
                 if (!ftpClient.login(decodeLoginOrPassword(g.m_FTP_server_user, g.m_FTP_server_directory), decodeLoginOrPassword(g.m_FTP_server_password, g.m_FTP_server_directory)))
                     throw new Exception(getString(R.string.message_cannot_authorize_on_server));

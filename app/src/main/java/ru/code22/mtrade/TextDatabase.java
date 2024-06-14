@@ -445,6 +445,7 @@ public class TextDatabase {
 					nr.IsInPrice = 0;
 					nr.weight_k_1 = 0.0;
 					nr.weight_k_2 = 0.0;
+					nr.flags = 0;
 				}
 				nom_idx = 0;
 			} else if (bUpdateMode && sc.length() > 4 && sc.substring(0, 4).equals("@@@#")) {
@@ -11573,6 +11574,7 @@ public class TextDatabase {
 			String parent_id;
 			String descr;
 			int level;
+			int dont_use_in_hierarchy;
 		}
 		;
 		List<String> m_list_groups = new ArrayList<String>();
@@ -11580,13 +11582,14 @@ public class TextDatabase {
 
 		contentResolver.delete(MTradeContentProvider.NOMENCLATURE_HIERARCHY_CONTENT_URI, null, null);
 
-		String[] projection =
-				{
-						"_id",
-						"id",
-						"parent_id",
-						"descr"
-				};
+		String[] projection = {
+				"_id",
+				"id",
+				"parent_id",
+				"descr",
+				"flags"
+		};
+
 		m_list2 = new ArrayList<Tree>();
 
 		Cursor cursor = contentResolver.query(MTradeContentProvider.NOMENCLATURE_CONTENT_URI, projection, "isFolder=1", null, "order_for_sorting, descr");
@@ -11601,6 +11604,8 @@ public class TextDatabase {
 			int indexId = cursor.getColumnIndex("id");
 			int indexParentId = cursor.getColumnIndex("parent_id");
 			int index_Id = cursor.getColumnIndex("_id");
+			int index_flags = cursor.getColumnIndex("flags");
+
 			Tree t = new Tree();
 			t.descr = resources.getString(R.string.catalogue_all);
 			t.id = null;
@@ -11612,6 +11617,7 @@ public class TextDatabase {
 			t.id = "     0   ";
 			t.parent_id = "";
 			t.level = 0;
+			t.dont_use_in_hierarchy = 0;
 			m_list2.add(t);
 			// Сначала просто заполняем список
 			while (cursor.moveToNext()) {
@@ -11628,6 +11634,7 @@ public class TextDatabase {
 				//
 				t._id = cursor.getString(index_Id);
 				t.level = 0;
+				t.dont_use_in_hierarchy = cursor.getInt(index_flags)&0x01;
 				m_list2.add(t);
 			}
 			// А потом сортируем его
@@ -11695,6 +11702,9 @@ public class TextDatabase {
 					cv.put("level6_id", t.level >= 6 ? level_ids[6] : null);
 					cv.put("level7_id", t.level >= 7 ? level_ids[7] : null);
 					cv.put("level8_id", t.level >= 8 ? level_ids[8] : null);
+					cv.put("level8_id", t.level >= 8 ? level_ids[8] : null);
+
+					cv.put("dont_use_in_hierarchy", t.dont_use_in_hierarchy);
 
 					//contentResolver.insert(MTradeContentProvider.NOMENCLATURE_HIERARCHY_CONTENT_URI, cv);
 					values[i - 1] = cv;

@@ -300,9 +300,9 @@
 	<string name="title_nomenclature_pref">Жиынтықтың күйтте-</string>
 	<string name="preferences_server_address_summary">Сервердің мекенжайы</string>
 	<string name="start_date_for_occupied_places">Алғы күні занятых үстелдер үшін</string>
-	<string name="preferences_server_address_for_wifi_connection_summary">Сервердің мекенжайы при WiFi құралымда</string>
+	<string name="preferences_server_address_spare_summary">Сервердің мекенжайы қосалқы</string>
 	<string name="preferences_ftp_server_address_title">Сервердің FTP мекенжайы</string>
-	<string name="preferences_ftp_server_address_for_wifi_connection_title">Сервердің мекенжайы при WiFi құралымда</string>
+	<string name="preferences_ftp_server_address_spare_title">Сервердің мекенжайы қосалқы</string>
 	<string name="preferences_web_server_address_title">Сервердің WEB мекенжайы</string>
 	<string name="data_format_summary">Деректердің форматы</string>
 	<string name="data_format_title">Деректердің форматы</string>

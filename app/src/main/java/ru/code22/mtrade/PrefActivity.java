@@ -1,19 +1,12 @@
 package ru.code22.mtrade;
 
 import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
@@ -69,10 +62,8 @@ public class PrefActivity extends AppCompatActivity{
 		Preference removedPreferenceServerUser;
 		Preference removedPreferenceServerPassword;
 		Preference removedPreferenceServerDirectory;
-		Preference removedPreferenceServerAddressForWifiConnection;
+		Preference removedPreferenceServerAddressSpare;
 		Preference removedPreferenceCurrency;
-
-		String m_wifiDescr;
 
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
@@ -85,10 +76,7 @@ public class PrefActivity extends AppCompatActivity{
 			removedPreferenceServerUser=null;
 			removedPreferenceServerPassword=null;
 			removedPreferenceServerDirectory=null;
-			removedPreferenceServerAddressForWifiConnection=null;
-
-			m_wifiDescr=WifiConnection.getWifiConnection(getActivity());
-			updatePrefServerWhenWifiFromBase();
+			removedPreferenceServerAddressSpare=null;
 
 			PreferenceManager.getDefaultSharedPreferences(getActivity()).registerOnSharedPreferenceChangeListener(this);
 
@@ -157,9 +145,9 @@ public class PrefActivity extends AppCompatActivity{
 					rootPreferences.addPreference(removedPreferenceStartDateForOccupiedPlaces);
 					removedPreferenceStartDateForOccupiedPlaces = null;
 				}
-				customPref = (Preference) findPreference("server_address_for_wifi_connection");
+				customPref = (Preference) findPreference("server_address_spare");
 				if (customPref != null) {
-					removedPreferenceServerAddressForWifiConnection = customPref;
+					removedPreferenceServerAddressSpare = customPref;
 					rootPreferences.removePreference(customPref);
 				}
 
@@ -191,22 +179,6 @@ public class PrefActivity extends AppCompatActivity{
 					removedPreferenceServerDirectory = null;
 				}
 
-				if (m_wifiDescr != null) {
-					// и установим значение
-					//updatePrefServerWhenWifiFromBase();
-					// сделать видимым
-					if (removedPreferenceServerAddressForWifiConnection != null) {
-						rootPreferences.addPreference(removedPreferenceServerAddressForWifiConnection);
-						removedPreferenceServerAddressForWifiConnection = null;
-					}
-				} else {
-					// сделать невидимым
-					customPref = (Preference) findPreference("server_address_for_wifi_connection");
-					if (customPref != null) {
-						removedPreferenceServerAddressForWifiConnection = customPref;
-						rootPreferences.removePreference(customPref);
-					}
-				}
 				if (m_bCurrency) {
 					if (removedPreferenceCurrency != null) {
 						rootPreferences.addPreference(removedPreferenceCurrency);
@@ -225,30 +197,8 @@ public class PrefActivity extends AppCompatActivity{
 
 		@Override
 		public void onResume() {
-			m_wifiDescr=WifiConnection.getWifiConnection(getActivity());
 			updatePrefVisibility();
 			super.onResume();
-		}
-
-		void updatePrefServerWhenWifiFromBase() {
-			if (m_wifiDescr != null) {
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-				String serverSetting = prefs.getString("server_address_for_wifi_connection", "");
-				String serverSettingInBase = "";
-
-				Cursor cursor = getActivity().getContentResolver().query(MTradeContentProvider.SERVERS_WHEN_WIFI_CONTENT_URI, new String[]{"server_address"}, "wifi_name=?", new String[]{m_wifiDescr}, null);
-				if (cursor.moveToNext()) {
-					serverSettingInBase = cursor.getString(0);
-				}
-				cursor.close();
-
-				if (!serverSetting.equals(serverSettingInBase)) {
-					// в это время сработает еще и onSharedPreferenceChanged, но ничего страшного не произойдет
-					SharedPreferences.Editor editor = prefs.edit();
-					editor.putString("server_address_for_wifi_connection", serverSettingInBase);
-					editor.commit();
-				}
-			}
 		}
 
 		@Override
@@ -269,19 +219,6 @@ public class PrefActivity extends AppCompatActivity{
                 MySingleton g=MySingleton.getInstance();
                 g.Common.m_currency=prefs.getString("currency", "DEFAULT");
             }
-			if (key.equals("server_address_for_wifi_connection")) {
-				String ftpServerAddress = prefs.getString("server_address_for_wifi_connection", "");
-				if (m_wifiDescr != null) {
-					ContentValues cv = new ContentValues();
-					cv.put("wifi_name", m_wifiDescr);
-					cv.put("server_address", ftpServerAddress);
-					// getActivity() здесь может вернуть null, поэтому используем такой контекст
-					Context context=Globals.getAppContext();
-					ContentResolver contentResolver=context.getContentResolver();
-					contentResolver.insert(MTradeContentProvider.SERVERS_WHEN_WIFI_CONTENT_URI, cv);
-					//
-				}
-			}
 
 		}
 	}

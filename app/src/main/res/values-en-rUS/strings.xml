@@ -350,9 +350,9 @@
     
     <string name="preferences_server_address_summary">Server address</string>
     <string name="start_date_for_occupied_places">Start date for occupied places</string>
-    <string name="preferences_server_address_for_wifi_connection_summary">Server address for WiFi connection</string>
+    <string name="preferences_server_address_spare_summary">Server address (spare)</string>
     <string name="preferences_ftp_server_address_title">Address of FTP server</string>
-    <string name="preferences_ftp_server_address_for_wifi_connection_title">Address of FTP server for WiFi connection</string>
+    <string name="preferences_ftp_server_address_spare_title">Address of FTP server (spare)</string>
     <string name="preferences_web_server_address_title">Address of WEB server</string>
     <string name="data_format_summary">Data format</string>
     <string name="data_format_title">Data format</string>

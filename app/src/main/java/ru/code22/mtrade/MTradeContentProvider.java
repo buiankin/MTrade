@@ -19,7 +19,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 
 public class MTradeContentProvider extends ContentProvider {
 	
@@ -209,7 +208,7 @@ public class MTradeContentProvider extends ContentProvider {
 	// БД
 	//private static final String DIR = "/sdcard";
     public static final String DB_NAME = "mdata.db";
-    public static final int DB_VERSION = 72;
+    public static final int DB_VERSION = 73;
     
     // Таблица
     private static final String ORDERS_TABLE = "orders";
@@ -321,8 +320,6 @@ public class MTradeContentProvider extends ContentProvider {
     private static final String ORDERS_PLACES_TABLE = "ordersPlaces";
     private static final String ORDERS_PLACES_LIST_TABLE = "orders join ordersPlaces on ordersPlaces.order_id=orders._id";
     
-    private static final String SERVERS_WHEN_WIFI_TABLE = "servers_when_wifi";
-    
     private static final String DISTRIBS_CONTRACTS_TABLE = "distribsContracts";
     private static final String DISTRIBS_CONTRACTS_LIST_TABLE = "distribsContractsList"; // TODO
     private static final String DISTRIBS_LINES_TABLE = "distribsLines";
@@ -410,8 +407,7 @@ public class MTradeContentProvider extends ContentProvider {
     private static final String OCCUPIED_PLACES_PATH = "occupiedPlaces";
     private static final String ORDERS_PLACES_PATH = "ordersPlaces";
     private static final String ORDERS_PLACES_LIST_PATH = "ordersPlacesList";
-    private static final String SERVERS_WHEN_WIFI_PATH = "serversWhenWifi";
-    
+
     private static final String GPS_COORD_PATH = "gps_coord";
     
     private static final String DISTRIBS_CONTRACTS_PATH = "distribsContracts";
@@ -599,9 +595,6 @@ public class MTradeContentProvider extends ContentProvider {
     public static final Uri ORDERS_PLACES_LIST_CONTENT_URI = Uri.parse("content://"
     	      + AUTHORITY + "/" + ORDERS_PLACES_LIST_PATH);
     
-    public static final Uri SERVERS_WHEN_WIFI_CONTENT_URI = Uri.parse("content://"
-  	      + AUTHORITY + "/" + SERVERS_WHEN_WIFI_PATH);
-    
     public static final Uri GPS_COORD_CONTENT_URI = Uri.parse("content://"
     	      + AUTHORITY + "/" + GPS_COORD_PATH);
     
@@ -748,8 +741,6 @@ public class MTradeContentProvider extends ContentProvider {
     
     private static final int URI_SALES_L2 = 109;
     
-    private static final int URI_SERVERS_WHEN_WIFI = 110;
-    
     private static final int URI_SORT = 111;
     
     private static final int URI_VICARIOUS_POWER = 112;
@@ -856,8 +847,6 @@ public class MTradeContentProvider extends ContentProvider {
     private static HashMap<String, String> occupiedPlacesProjectionMap;
     private static HashMap<String, String> ordersPlacesProjectionMap;
     private static HashMap<String, String> ordersPlacesListProjectionMap;
-    
-    private static HashMap<String, String> serversWhenWifiProjectionMap;
     
     private static HashMap<String, String> gpsCoordProjectionMap;
     
@@ -1578,6 +1567,7 @@ public class MTradeContentProvider extends ContentProvider {
 			    		"level6_id text,"+
 			    		"level7_id text,"+
 			    		"level8_id text,"+
+                        "dont_use_in_hierarchy int,"+
 			    		"UNIQUE ('id')"+
 			    		");");
 			    
@@ -1713,13 +1703,6 @@ public class MTradeContentProvider extends ContentProvider {
 				        "update journal set uid=new.uid, id=new.id, iddocdef=3, numdoc=new.numdoc, datedoc=new.datedoc, shipping_date='', client_id=new.client_id, client_descr=\"{\"||new.client_id||\"}\", state=new.state, sum_doc=0, sum_shipping=-1, color="+JOURNAL_DISTRIBS_COLOR_FOR_TRIGGER+" where distribs_id=new._id; " +
 				        "END;");
 				
-	    		db.execSQL("CREATE TABLE servers_when_wifi (" +
-	    				"_id integer primary key autoincrement, " +
-	    				"wifi_name text," +
-	    				"server_address text," +
-	    				"UNIQUE ('wifi_name')" +
-	    				");");
-	    		
 	    		db.execSQL("create table gps_coord (" +
 			    		"datecoord text," +
 			    		"latitude double," +
@@ -2252,23 +2235,6 @@ public class MTradeContentProvider extends ContentProvider {
 		    		
 		    		db.execSQL("alter table agreements add column flags int");
 		    		db.execSQL("update agreements set flags=0");
-		    		
-		    	}
-		    	
-		    	if (oldVersion<29)
-		    	{
-		    		db.execSQL("CREATE TABLE servers_when_wifi (" +
-		    				"_id integer primary key autoincrement, " +
-		    				"wifi_name text," +
-		    				"server_address text," +
-		    				"UNIQUE ('wifi_name')" +
-		    				");");
-		    		
-		    	}
-		    	if (oldVersion<30)
-		    	{
-		    		//db.execSQL("update journal set shipping_date=(select shipping_date from orders where orders._id=journal.order_id)");
-		    		//db.execSQL("update journal set shipping_date='' where shipping_date is null");
 		    		
 		    	}
 		    	
@@ -2911,6 +2877,12 @@ public class MTradeContentProvider extends ContentProvider {
                     db.execSQL("alter table nomenclature add column compose_with text null");
                 }
 
+                if (oldVersion<73) {
+                    // есть подозрение, что там может быть null
+                    // при загрузке из текстовых файлов, в случае, когда это группа
+                    db.execSQL("update nomenclature set flags=0");
+                }
+
 
 		    	/*
 		    	if (oldVersion<43)
@@ -2977,6 +2949,7 @@ public class MTradeContentProvider extends ContentProvider {
 			    		"level6_id text,"+
 			    		"level7_id text,"+
 			    		"level8_id text,"+
+                        "dont_use_in_hierarchy int,"+
 			    		"UNIQUE ('id')"+
 			    		");");
 
@@ -4774,22 +4747,6 @@ public class MTradeContentProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(resultUri, null);
                 return resultUri;
             }
-            case URI_SERVERS_WHEN_WIFI: {
-                Log.d(LOG_TAG, "URI_SERVERS_WHEN_WIFI");
-                SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-                //Do an update if the constraints match
-                db.update(SERVERS_WHEN_WIFI_TABLE, values, "wifi_name=?", new String[]{values.getAsString("wifi_name")});
-
-                //This will return the id of the newly inserted row if no conflict
-                //It will also return the offending row without modifying it if in conflict
-                long rowID = db.insertWithOnConflict(SERVERS_WHEN_WIFI_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
-
-                Uri resultUri = ContentUris.withAppendedId(SERVERS_WHEN_WIFI_CONTENT_URI, rowID);
-
-                return resultUri;
-
-            }
             case URI_GPS_COORD: {
                 Log.d(LOG_TAG, "URI_GPS_COORD");
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -5945,10 +5902,6 @@ public class MTradeContentProvider extends ContentProvider {
                 qb.setTables(ORDERS_PLACES_LIST_TABLE);
                 qb.setProjectionMap(ordersPlacesListProjectionMap);
             	break;
-            case URI_SERVERS_WHEN_WIFI:
-                qb.setTables(SERVERS_WHEN_WIFI_TABLE);
-                qb.setProjectionMap(serversWhenWifiProjectionMap);
-            	break;
             case URI_GPS_COORD:
                 qb.setTables(GPS_COORD_TABLE);
                 qb.setProjectionMap(gpsCoordProjectionMap);
@@ -6526,11 +6479,6 @@ public class MTradeContentProvider extends ContentProvider {
 		    }
 			return numUpdated;
 		}
-		case URI_SERVERS_WHEN_WIFI:
-		{
-			SQLiteDatabase db = dbHelper.getWritableDatabase();
-		    return db.update(SERVERS_WHEN_WIFI_TABLE, cv, where, selectionArgs);
-		}
 		case URI_GPS_COORD:
 		{
 			SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -6678,8 +6626,6 @@ public class MTradeContentProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, OCCUPIED_PLACES_PATH, URI_OCCUPIED_PLACES);
         sUriMatcher.addURI(AUTHORITY, ORDERS_PLACES_PATH, URI_ORDERS_PLACES);
         sUriMatcher.addURI(AUTHORITY, ORDERS_PLACES_LIST_PATH, URI_ORDERS_PLACES_LIST);
-        
-        sUriMatcher.addURI(AUTHORITY, SERVERS_WHEN_WIFI_PATH, URI_SERVERS_WHEN_WIFI);
         
         sUriMatcher.addURI(AUTHORITY, GPS_COORD_PATH, URI_GPS_COORD);
         
@@ -6984,6 +6930,8 @@ public class MTradeContentProvider extends ContentProvider {
         nomenclatureHierarchyProjectionMap.put("level6_id", "level6_id");
         nomenclatureHierarchyProjectionMap.put("level7_id", "level7_id");
         nomenclatureHierarchyProjectionMap.put("level8_id", "level8_id");
+        nomenclatureHierarchyProjectionMap.put("dont_use_in_hierarchy", "dont_use_in_hierarchy");
+
         
         restsProjectionMap = new HashMap<String, String>();
         restsProjectionMap.put("stock_id", "stock_id");
@@ -7451,11 +7399,6 @@ public class MTradeContentProvider extends ContentProvider {
         ordersPlacesListProjectionMap.put("state", "state");
         ordersPlacesListProjectionMap.put("shipping_date", "shipping_date");
         ordersPlacesListProjectionMap.put("shipping_time", "shipping_time");
-        
-        serversWhenWifiProjectionMap = new HashMap<String, String>();
-        serversWhenWifiProjectionMap.put("_id", "_id");
-        serversWhenWifiProjectionMap.put("wifi_name", "wifi_name");
-        serversWhenWifiProjectionMap.put("server_address", "server_address");
         
         vicariousPowerProjectionMap = new HashMap<String, String>();
         vicariousPowerProjectionMap.put("_id", "_id");

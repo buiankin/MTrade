@@ -296,9 +296,9 @@
 	<string name="title_nomenclature_pref">Налаштування номенклатури</string>
 	<string name="preferences_server_address_summary">Адреса сервера</string>
 	<string name="start_date_for_occupied_places">Початкова дата для зайнятих столів</string>
-	<string name="preferences_server_address_for_wifi_connection_summary">Адреса сервера при WiFi з\'єднанні</string>
+	<string name="preferences_server_address_spare_summary">Адреса сервера запасний</string>
 	<string name="preferences_ftp_server_address_title">Адреса FTP сервера</string>
-	<string name="preferences_ftp_server_address_for_wifi_connection_title">Адреса FTP сервера при WiFi з\'єднанні</string>
+	<string name="preferences_ftp_server_address_spare_title">Адреса FTP сервера запасний</string>
 	<string name="preferences_web_server_address_title">Адреса WEB сервера</string>
 	<string name="data_format_summary">формат даних</string>
 	<string name="data_format_title">формат даних</string>
