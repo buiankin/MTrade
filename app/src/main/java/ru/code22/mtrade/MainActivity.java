@@ -157,8 +157,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Spinner;
-import com.google.android.play.core.tasks.OnSuccessListener;
-import com.google.android.play.core.tasks.Task;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
@@ -7151,9 +7152,9 @@ public class MainActivity extends AppCompatActivity
                         String ftp_address = i == 0 ? g.m_FTP_server_address : g.m_FTP_server_address_spare;
                         int portIndex = ftp_address.indexOf(':');
                         if (portIndex < 0) {
-                            ftpClient.connect(ftp_address);
+                            ftpClient.connect(ftp_address.trim());
                         } else {
-                            ftpClient.connect(ftp_address.substring(0, portIndex), Integer.parseInt(ftp_address.substring(portIndex + 1)));
+                            ftpClient.connect(ftp_address.substring(0, portIndex).trim(), Integer.parseInt(ftp_address.substring(portIndex + 1)));
                         }
                         connectedImmediately = true;
                         break;
@@ -7176,9 +7177,9 @@ public class MainActivity extends AppCompatActivity
                     String ftp_address = g.m_FTP_server_address;
                     int portIndex = ftp_address.indexOf(':');
                     if (portIndex < 0) {
-                        ftpClient.connect(ftp_address);
+                        ftpClient.connect(ftp_address.trim());
                     } else {
-                        ftpClient.connect(ftp_address.substring(0, portIndex), Integer.parseInt(ftp_address.substring(portIndex + 1)));
+                        ftpClient.connect(ftp_address.substring(0, portIndex).trim(), Integer.parseInt(ftp_address.substring(portIndex + 1)));
                     }
                 }
 
