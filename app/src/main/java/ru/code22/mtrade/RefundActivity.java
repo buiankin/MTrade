@@ -14,6 +14,7 @@ import ru.code22.mtrade.MyDatabase.MyID;
 import ru.code22.mtrade.MyDatabase.RefundLineRecord;
 import ru.code22.mtrade.MyDatabase.RefundRecord;
 import ru.code22.mtrade.RefundPageFragment.onSomeRefundEventListener;
+import ru.code22.mtrade.preferences.DatePreference;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -31,7 +32,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -383,6 +384,7 @@ public class RefundActivity extends AppCompatActivity implements onSomeRefundEve
 		}
 	    
 	    SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(this);
+
 		m_work_date=DatePreference.getDateFor(sharedPreferences, "work_date");
 
 		if (bCreatedInSingleton)
@@ -1273,9 +1275,9 @@ public void someRefundEvent(String s) {
 		SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(this);
 		//String str_work_date=sharedPreferences.getString("work_date", DatePreference.defaultCalendarString());
 		MySingleton g=MySingleton.getInstance();
-		
-		Calendar work_date=DatePreference.getDateFor(sharedPreferences, "work_date");
-		
+
+		Calendar work_date= DatePreference.getDateFor(sharedPreferences, "work_date");
+
 		if (!m_work_date.equals(work_date))
 		{
 			// изменили рабочую дату - изменим дату заказа

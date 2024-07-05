@@ -42,12 +42,12 @@ public class NomenclatureHierarchyHelper {
 		int index_level_6_id=cursor.getColumnIndex("level6_id");
 		int index_level_7_id=cursor.getColumnIndex("level7_id");
 		int index_level_8_id=cursor.getColumnIndex("level8_id");
-		int index_dont_use_in_hierarchy=cursor.getColumnIndex("dont_use_in_hierarchy");
+//		int index_dont_use_in_hierarchy=cursor.getColumnIndex("dont_use_in_hierarchy");
 
 		while (cursor.moveToNext())
 		{
-			if (cursor.getInt(index_dont_use_in_hierarchy)==1)
-				continue;
+//			if (cursor.getInt(index_dont_use_in_hierarchy)==1)
+//				continue;
 			HierarchyRecord rec=new HierarchyRecord();
 			
 			rec.level=cursor.getInt(index_level);

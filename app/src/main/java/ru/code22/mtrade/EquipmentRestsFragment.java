@@ -18,6 +18,8 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
+import java.util.Date;
+
 public class EquipmentRestsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	static final int EQUIPMENT_RESTS_LOADER_ID = 1;
@@ -91,7 +93,7 @@ public class EquipmentRestsFragment extends Fragment implements LoaderManager.Lo
 	        String[] fromColumns = {"nomenclature_descr", MySingleton.getInstance().Common.PRODLIDER?"empty":"sum", "quantity", "doc_descr", "date"};
 	        int[] toViews = {R.id.textViewEquipmentLineNomenclature, R.id.textViewEquipmentLineSum, R.id.textViewEquipmentLineQuantity, R.id.textViewEquipmentLineDocDescr, R.id.textViewEquipmentLineDate};
 	        
-    		java.util.Date date=new java.util.Date();
+    		Date date=new Date();
     		m_datepast=Common.MyDateFormat("yyyyMMdd", date);
 	        
 	        equipmentRestsAdapter = new SimpleCursorAdapter(getActivity(), R.layout.quantity_equipment_line_item, null, fromColumns, toViews, 0);

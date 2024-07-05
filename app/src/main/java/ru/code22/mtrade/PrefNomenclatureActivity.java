@@ -1,23 +1,34 @@
 package ru.code22.mtrade;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
-import android.widget.Toast;
 
-public class PrefNomenclatureActivity extends PreferenceActivity {
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceFragmentCompat;
+
+public class PrefNomenclatureActivity extends AppCompatActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		MySingleton g=MySingleton.getInstance();
 		g.checkInitByDataAndSetTheme(this);
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.pref_nomenclature);
+
+		getSupportFragmentManager()
+				.beginTransaction()
+				.replace(android.R.id.content, new SettingsNomenclatureFragment())
+				.commit();
+
 			
 	}
+
+	public static class SettingsNomenclatureFragment extends PreferenceFragmentCompat {
+		@Override
+		public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
+			addPreferencesFromResource(R.xml.pref_nomenclature);
+		}
+	}
+
 
 	@Override
 	protected void onResume() {

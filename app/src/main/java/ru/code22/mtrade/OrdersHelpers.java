@@ -2,6 +2,7 @@ package ru.code22.mtrade;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
@@ -10,6 +11,8 @@ import ru.code22.mtrade.MyDatabase.CuratorPriceRecord;
 import ru.code22.mtrade.MyDatabase.MyID;
 import ru.code22.mtrade.MyDatabase.OrderLineRecord;
 import ru.code22.mtrade.MyDatabase.OrderRecord;
+import ru.code22.mtrade.preferences.DatePreference;
+
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -21,7 +24,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -314,9 +317,10 @@ public class OrdersHelpers {
 			rec.uid=UUID.randomUUID();
 			rec.numdoc=activity.getString(R.string.numdoc_new);// "НОВЫЙ";
 			
-			java.util.Date date=new java.util.Date();
+			Date date=new java.util.Date();
 			SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(activity);
-			java.util.Date work_date=DatePreference.getDateFor(sharedPreferences, "work_date").getTime();
+
+			Date work_date=DatePreference.getDateFor(sharedPreferences, "work_date").getTime();
 			if (android.text.format.DateFormat.format("yyyyMMdd", date).equals(android.text.format.DateFormat.format("yyyyMMdd", work_date)))
 			{
 				// День совпал - берем текущее время
@@ -1364,10 +1368,14 @@ public class OrdersHelpers {
 
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		// Если текущая дата больше установленной рабочей даты, используем ее
-		java.util.Date work_date = DatePreference.getDateFor(sharedPreferences, "work_date").getTime();
-		if (work_date.compareTo(date) < 0)
-			work_date=date;
-		c.setTime(date);
+		// TODO проверить, что корректная установка (немного поправил 01.07.2024)
+		Date work_date = DatePreference.getDateFor(sharedPreferences, "work_date").getTime();
+		if (work_date.compareTo(date) < 0) {
+			c.setTime(date);
+		} else {
+			c.setTime(work_date);
+		}
+
 		// Хотя время не обязательно выставлять
 		c.set(Calendar.AM_PM, Calendar.AM);
 		c.set(Calendar.HOUR, 0);

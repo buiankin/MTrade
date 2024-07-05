@@ -42,7 +42,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -1695,7 +1695,8 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 	    	"_id",
 	    	"id",
 	    	"parent_id",
-	        "descr"
+	        "descr",
+			"flags"
 	    };
 	    m_list2 = new ArrayList<MyNomenclatureGroupAdapter.Tree>();
 	    
@@ -1712,17 +1713,21 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 		int indexId = cursor.getColumnIndex("id");
 		int indexParentId = cursor.getColumnIndex("parent_id");
 		int index_Id = cursor.getColumnIndex("_id");
+		int index_flags = cursor.getColumnIndex("flags");
+
 		MyNomenclatureGroupAdapter.Tree t = new MyNomenclatureGroupAdapter.Tree();
 		t.descr=getResources().getString(R.string.catalogue_all);
 		t.id=null;
 		t.parent_id=null;
 		t.level=0;
+		t.dont_use_in_hierarchy=false;
 		m_list2.add(t);
 		t = new MyNomenclatureGroupAdapter.Tree();
 		t.descr=getResources().getString(R.string.catalogue_node);
 		t.id="     0   ";
 		t.parent_id="";
 		t.level=0;
+		t.dont_use_in_hierarchy=false;
 		m_list2.add(t);
 		// Сначала просто заполняем список
 		while (cursor.moveToNext())
@@ -1733,6 +1738,7 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 			t.parent_id=cursor.getString(indexParentId);
 			t._id=cursor.getString(index_Id);
 			t.level=0;
+			t.dont_use_in_hierarchy=((cursor.getInt(index_flags)&1)==1);
 			m_list2.add(t);
 		}
 		// А потом сортируем его
@@ -1754,6 +1760,14 @@ implements LoaderManager.LoaderCallbacks<Cursor>, OnSharedPreferenceChangeListen
 				}
 			}
 		}
+		// 20.06.2024 удалим элементы, которые не надо отображать
+		for (i=m_list2.size()-1; i>=0; i--)
+		{
+			if (m_list2.get(i).dont_use_in_hierarchy) {
+				m_list2.remove(i);
+			}
+		}
+		//
 		for (i=0; i<m_list2.size(); i++)
 		{
 			String spaces="";

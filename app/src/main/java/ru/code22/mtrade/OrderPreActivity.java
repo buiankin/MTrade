@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 
 import net.sourceforge.jheader.App1Header;
 import net.sourceforge.jheader.ExifFormatException;
@@ -206,7 +207,7 @@ public class OrderPreActivity extends Activity {
                 // in your intent for the camera. A workaround is to keep the outputFileUri 
                 // variable global so that you can access it again in your onActivityResult method
     			
-    			java.util.Date date=new java.util.Date();
+    			Date date=new java.util.Date();
     			//String timeString=String.valueOf(System.currentTimeMillis());
     			String timeString=Common.MyDateFormat("dd.MM.yyyy HH:mm:ss", date);
     			//String fileName = android.text.format.DateFormat.format("yyyyMMddkkmmss", date).toString() + ".jpg";

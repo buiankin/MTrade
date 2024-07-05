@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:key="root_preferences">
-    
+
     <ListPreference
         android:key="app_theme"
         android:summary="@string/app_theme"
@@ -21,12 +21,12 @@
         android:singleLine="true" >
     </EditTextPreference>
     
-    <ru.code22.mtrade.DatePreference
+    <ru.code22.mtrade.preferences.DatePreference
         android:key="start_date_for_occupied_places"
         android:title="@string/start_date_for_occupied_places"
         android:defaultValue="2014.01.01"
         >
-    </ru.code22.mtrade.DatePreference>
+    </ru.code22.mtrade.preferences.DatePreference>
     
     <EditTextPreference
         android:key="server_address"
@@ -47,6 +47,7 @@
         android:key="server_user"
         android:summary="@string/preferences_server_user_summary"
         android:title="@string/preferences_server_user_title"
+        android:inputType="textNoSuggestions"
         android:singleLine="true"  >
     </EditTextPreference>
     

@@ -1,12 +1,14 @@
 package ru.code22.mtrade;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import androidx.appcompat.app.AppCompatActivity;
 import ru.code22.mtrade.MyDatabase.OrderPlaceRecord;
+import ru.code22.mtrade.preferences.DatePreference;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -17,7 +19,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -358,7 +360,7 @@ public class PlacesActivity extends AppCompatActivity {
 						order_date=android.text.format.DateFormat.format("yyyyMMddkkmmss", work_date).toString();
 					}
 					*/
-					java.util.Date work_date=DatePreference.getDateFor(prefs, "work_date").getTime();
+					Date work_date=DatePreference.getDateFor(prefs, "work_date").getTime();
 					order_date=Common.MyDateFormat("yyyyMMdd", work_date);
 				}
 				if (order_date.length()>=8)

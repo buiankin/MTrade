@@ -12,7 +12,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -27,6 +27,7 @@ import android.widget.ListView;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
@@ -566,7 +567,7 @@ public class RoutesListFragment extends Fragment {
                 if (cursorRealRoutesLines.moveToNext())
                 {
                     Calendar c = Calendar.getInstance();
-                    java.util.Date date = c.getTime();
+                    Date date = c.getTime();
                     String visitTime=Common.getDateTimeAsString14(date);
 
                     ContentValues cv=new ContentValues();
@@ -610,7 +611,7 @@ public class RoutesListFragment extends Fragment {
             if (cursorRealRoutesLines.moveToNext())
             {
                 Calendar c = Calendar.getInstance();
-                java.util.Date date = c.getTime();
+                Date date = c.getTime();
                 String visitTime=Common.getDateTimeAsString14(date);
 
                 ContentValues cv=new ContentValues();
@@ -648,7 +649,7 @@ public class RoutesListFragment extends Fragment {
             if (cursorRealRoutesLines.moveToNext())
             {
                 Calendar c = Calendar.getInstance();
-                java.util.Date date = c.getTime();
+                Date date = c.getTime();
                 String visitTime=Common.getDateTimeAsString14(date);
 
                 ContentValues cv=new ContentValues();

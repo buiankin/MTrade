@@ -3,6 +3,7 @@ package ru.code22.mtrade;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
@@ -19,6 +20,8 @@ import ru.code22.mtrade.MyDatabase.MyID;
 import ru.code22.mtrade.MyDatabase.OrderLineRecord;
 import ru.code22.mtrade.MyDatabase.OrderPlaceRecord;
 import ru.code22.mtrade.MyDatabase.OrderRecord;
+import ru.code22.mtrade.preferences.DatePreference;
+
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
@@ -26,7 +29,7 @@ import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.RemoteException;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 
 public class MyWebExchange{
@@ -925,7 +928,8 @@ public class MyWebExchange{
     	request.addProperty("Ver", myDatabase.m_occupied_places_version);
     	
     	SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(context);
-		java.util.Date start_date_for_occupied_places=DatePreference.getDateFor(pref, "start_date_for_occupied_places").getTime();
+
+		Date start_date_for_occupied_places= DatePreference.getDateFor(pref, "start_date_for_occupied_places").getTime();
 		String startDate=Common.MyDateFormat("yyyyMMdd", start_date_for_occupied_places);
     	request.addProperty("start_date", startDate);
     	envelope.setOutputSoapObject(request);

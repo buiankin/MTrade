@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     
-    <ru.code22.mtrade.DatePreference
+    <ru.code22.mtrade.preferences.DatePreference
         android:key="work_date"
         android:title="@string/preferences_work_date_title"
-        android:defaultValue="1991.01.01"
         >
-    </ru.code22.mtrade.DatePreference>
+    </ru.code22.mtrade.preferences.DatePreference>
     
 </PreferenceScreen>        

@@ -21,6 +21,7 @@ import ru.code22.mtrade.MyDatabase.MyID;
 import ru.code22.mtrade.MyDatabase.OrderLineRecord;
 import ru.code22.mtrade.MyDatabase.OrderRecord;
 import ru.code22.mtrade.OrderPageFragment.onSomeEventListener;
+import ru.code22.mtrade.preferences.DatePreference;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -45,7 +46,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import androidx.core.app.ActivityCompat;
 
 import android.text.Html;
@@ -668,8 +669,9 @@ public class OrderActivity extends AppCompatActivity implements onSomeEventListe
 	    g.MyDatabase.m_orderLinesAdapter=null;
 	    
 	    SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(this);
-		m_work_date=DatePreference.getDateFor(sharedPreferences, "work_date");
-		
+
+		m_work_date= DatePreference.getDateFor(sharedPreferences, "work_date");
+
 		//
 		if (bCreatedInSingleton)
 		{
@@ -2522,10 +2524,9 @@ public void someEvent(String s) {
 		MySingleton g=MySingleton.getInstance();
 		
 		SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(this);
-		//String str_work_date=sharedPreferences.getString("work_date", DatePreference.defaultCalendarString());
-		
+
 		Calendar work_date=DatePreference.getDateFor(sharedPreferences, "work_date");
-		
+
 		if (!m_work_date.equals(work_date))
 		{
 			// изменили рабочую дату - изменим дату заказа

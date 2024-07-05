@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 import android.annotation.SuppressLint;
@@ -11,6 +14,7 @@ import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -19,6 +23,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 public class MTradeContentProvider extends ContentProvider {
 	
@@ -2881,6 +2887,33 @@ public class MTradeContentProvider extends ContentProvider {
                     // есть подозрение, что там может быть null
                     // при загрузке из текстовых файлов, в случае, когда это группа
                     db.execSQL("update nomenclature set flags=0");
+
+//                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+//                    // В старом формате это была строка, в новом - Long
+//                    String oldDate=sharedPreferences.getString("work_date", "");
+//                    if (!oldDate.isEmpty()) {
+//                        SharedPreferences.Editor editor = sharedPreferences.edit();
+//                        editor.remove("work_date");
+//                        try {
+//                            Date newDate=new SimpleDateFormat("yyyy.MM.dd").parse(oldDate);
+//                            editor.putLong("work_date_l", newDate.getTime());
+//                        } catch (ParseException e) {
+//                        }
+//                        editor.commit();
+//                    }
+//
+//                    String oldDate2=sharedPreferences.getString("start_date_for_occupied_places", "");
+//                    if (!oldDate2.isEmpty()) {
+//                        SharedPreferences.Editor editor = sharedPreferences.edit();
+//                        editor.remove("start_date_for_occupied_places");
+//                        try {
+//                            Date newDate=new SimpleDateFormat("yyyy.MM.dd").parse(oldDate2);
+//                            editor.putLong("start_date_for_occupied_places_l", newDate.getTime());
+//                        } catch (ParseException e) {
+//                        }
+//                        editor.commit();
+//                    }
+
                 }
 
 

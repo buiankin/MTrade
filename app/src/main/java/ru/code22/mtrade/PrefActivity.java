@@ -5,14 +5,28 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.preference.DialogPreference;
+import androidx.preference.EditTextPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
+import androidx.preference.PreferenceScreen;
 import android.text.InputType;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.UUID;
+
+import ru.code22.mtrade.preferences.DatePreference;
+import ru.code22.mtrade.preferences.DateTimePreference;
+import ru.code22.mtrade.preferences.TimePreference;
+import ru.code22.mtrade.preferences.dialog.DatePreferenceDialog;
+import ru.code22.mtrade.preferences.dialog.DateTimePreferenceDialog;
+import ru.code22.mtrade.preferences.dialog.TimePreferenceDialog;
 
 public class PrefActivity extends AppCompatActivity{
 	
@@ -44,13 +58,13 @@ public class PrefActivity extends AppCompatActivity{
 		}
 		super.onCreate(savedInstanceState);
 
-		getFragmentManager()
+		getSupportFragmentManager()
 				.beginTransaction()
 				.replace(android.R.id.content, new SettingsFragment())
 				.commit();
 	}
 
-	public static class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
+	public static class SettingsFragment extends PreferenceFragmentCompat implements OnSharedPreferenceChangeListener {
 
 		boolean m_bHideFormatSettings;
 		boolean m_bWebService;
@@ -65,9 +79,54 @@ public class PrefActivity extends AppCompatActivity{
 		Preference removedPreferenceServerAddressSpare;
 		Preference removedPreferenceCurrency;
 
+
+		@Override
+		public void onDisplayPreferenceDialog(@NonNull Preference preference) {
+			// check if dialog is already showing
+//			if (getParentFragmentManager().findFragmentByTag(DIALOG_FRAGMENT_TAG) != null) {
+//				return;
+//			}
+			DialogFragment dialogFragment = null;
+			if (preference instanceof TimePreference) {
+				// If it is, then set the dialog fragment to their respective Dialog classes as shown below
+				dialogFragment = TimePreferenceDialog.newInstance(preference.getKey());
+			} else if (preference instanceof DatePreference) {
+				// Alternatively, you can specify the minimum date and maximum date as well
+				//dialogFragment = DatePreferenceDialog.newInstance(preference.getKey(), minDate, maxDate);
+				String requestKey = UUID.randomUUID().toString();
+//				getParentFragmentManager().setFragmentResultListener(requestKey, this, (requestKey1, result) -> {
+//					// Handle for result here, if needed
+//				}
+//				);
+				dialogFragment = DatePreferenceDialog.newInstance(preference.getKey());
+//				Bundle args = new Bundle();
+//				args.putString("requestKey", requestKey);
+//				dialogFragment.setArguments(args);
+//				dialogFragment.show(getParentFragmentManager(), getClass().getSimpleName());
+			} else if (preference instanceof DateTimePreference) {
+				dialogFragment = DateTimePreferenceDialog.newInstance(preference.getKey());
+				// You can also specify the minimum and maximum date here
+				//dialogFragment = DateTimePreferenceDialog.newInstance(preference.getKey(), minDate, maxDate);
+			}
+			if (dialogFragment != null) {
+				// If it is one of our preferences, show it
+				dialogFragment.setTargetFragment(this, 0);
+				dialogFragment.show(getFragmentManager(), "YOUR TAG HERE");
+			} else {
+				// Let super handle it
+				super.onDisplayPreferenceDialog(preference);
+			}
+
+		}
+
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
+		}
+
+
+		@Override
+		public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
 			addPreferencesFromResource(R.xml.pref);
 
 			removedPreferenceWebServerAddress=null;
@@ -77,6 +136,7 @@ public class PrefActivity extends AppCompatActivity{
 			removedPreferenceServerPassword=null;
 			removedPreferenceServerDirectory=null;
 			removedPreferenceServerAddressSpare=null;
+			updatePrefVisibility();
 
 			PreferenceManager.getDefaultSharedPreferences(getActivity()).registerOnSharedPreferenceChangeListener(this);
 
@@ -105,7 +165,8 @@ public class PrefActivity extends AppCompatActivity{
 			//	//EditTextPreference passwordText=(EditTextPreference)findPreference("password");
 			//}
 
-			((EditTextPreference)this.findPreference("server_user")).getEditText().setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+//			// 24.06.2024 перенес в свойства android:inputType="textNoSuggestions", TODO проверить, что это работает
+//			//((EditTextPreference)this.findPreference("server_user")).getEditText().setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
 		}
 
@@ -193,12 +254,6 @@ public class PrefActivity extends AppCompatActivity{
 					}
 				}
 			}
-		}
-
-		@Override
-		public void onResume() {
-			updatePrefVisibility();
-			super.onResume();
 		}
 
 		@Override

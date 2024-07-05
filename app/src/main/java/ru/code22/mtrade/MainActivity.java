@@ -1,5 +1,8 @@
 package ru.code22.mtrade;
 
+// TODO 25.06.2024 почитать
+// https://blog.mindorks.com/implementing-android-jetpack-preferences/
+
 // TODO отсюда можно отправлять уведомления FCM
 // https://console.firebase.google.com/project/ru-code22-mtrade/notification
 // документация
@@ -43,6 +46,8 @@ import java.lang.reflect.Method;
 import java.net.SocketException;
 import java.nio.channels.FileChannel;
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -100,6 +105,7 @@ import ru.code22.mtrade.MyDatabase.OrderLineRecord;
 import ru.code22.mtrade.MyDatabase.OrderRecord;
 import ru.code22.mtrade.MyDatabase.RefundLineRecord;
 import ru.code22.mtrade.MyDatabase.RefundRecord;
+import ru.code22.mtrade.preferences.DatePreference;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
@@ -131,7 +137,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.provider.MediaStore;
 
 import androidx.core.app.ActivityCompat;
@@ -171,6 +177,7 @@ import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.InstallStatus;
 import com.google.android.play.core.install.model.UpdateAvailability;
 import com.nostra13.universalimageloader.utils.L;
+
 
 public class MainActivity extends AppCompatActivity
         implements OnSharedPreferenceChangeListener, NavigationView.OnNavigationItemSelectedListener, UniversalInterface {
@@ -845,8 +852,9 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Если текущая дата больше установленной рабочей даты, меняем рабочую дату
-        java.util.Date date = new java.util.Date();
-        java.util.Date work_date = DatePreference.getDateFor(sharedPreferences, "work_date").getTime();
+        Date date = new java.util.Date();
+
+        Date work_date = DatePreference.getDateFor(sharedPreferences, "work_date").getTime();
         if (work_date.compareTo(date) < 0)
             if (!Common.MyDateFormat("yyyyMMdd", date).equals(Common.MyDateFormat("yyyyMMdd", work_date))) {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -2979,9 +2987,10 @@ public class MainActivity extends AppCompatActivity
             rec.uid = UUID.randomUUID();
             rec.numdoc = getString(R.string.numdoc_new);// "НОВЫЙ"
 
-            java.util.Date date = new java.util.Date();
+            Date date = new Date();
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            java.util.Date work_date = DatePreference.getDateFor(sharedPreferences, "work_date").getTime();
+
+            Date work_date = DatePreference.getDateFor(sharedPreferences, "work_date").getTime();
             if (Common.MyDateFormat("yyyyMMdd", date).equals(Common.MyDateFormat("yyyyMMdd", work_date))) {
                 // День совпал - берем текущее время
                 rec.datedoc = Common.getDateTimeAsString14(date);
@@ -3298,9 +3307,9 @@ public class MainActivity extends AppCompatActivity
 
         if (id == 0) {
             Calendar c = Calendar.getInstance();
-            java.util.Date date = c.getTime();
+            Date date = c.getTime();
             c.set(Calendar.DAY_OF_MONTH, 1);
-            java.util.Date bom = c.getTime();
+            Date bom = c.getTime();
             rec.uid = UUID.randomUUID();
             rec.ver = 0;
             rec.acknowledged = 4;
@@ -4073,7 +4082,7 @@ public class MainActivity extends AppCompatActivity
 
                 if (m_filter_date_begin_current.isEmpty()) {
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                    java.util.Date work_date = DatePreference.getDateFor(sharedPreferences, "work_date").getTime();
+                    Date work_date = DatePreference.getDateFor(sharedPreferences, "work_date").getTime();
                     m_filter_date_begin_current = Common.MyDateFormat("yyyyMMdd", work_date);
                 }
                 if (m_filter_date_end_current.isEmpty()) {
@@ -4112,7 +4121,7 @@ public class MainActivity extends AppCompatActivity
                             }
                             if (m_filter_date_type_current == 0) {
                                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                                java.util.Date work_date = DatePreference.getDateFor(sharedPreferences, "work_date").getTime();
+                                Date work_date = DatePreference.getDateFor(sharedPreferences, "work_date").getTime();
                                 m_filter_date_begin_current = Common.MyDateFormat("yyyyMMdd", work_date);
                                 m_filter_date_end_current = m_filter_date_begin_current;
                             }
@@ -4273,8 +4282,9 @@ public class MainActivity extends AppCompatActivity
                         // без отбора
                         // это будет установлено по умолчанию
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                        java.util.Date work_date = DatePreference.getDateFor(sharedPreferences, "work_date").getTime();
+                        Date work_date = DatePreference.getDateFor(sharedPreferences, "work_date").getTime();
                         m_query_date_begin_current = Common.MyDateFormat("yyyyMMdd", work_date);
+                        //
                         m_query_date_end_current = m_query_date_begin_current;
                         break;
                     }
@@ -8018,76 +8028,6 @@ public class MainActivity extends AppCompatActivity
                             ArrayList<UUID> uuidsRefunds = new ArrayList();
                             ArrayList<UUID> uuidsDistribs = new ArrayList();
 
-                            // Текстовый файл
-                            ZipEntry ze = new ZipEntry("eout.txt");
-                            zipStream.putNextEntry(ze);
-                            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(bytes, "cp1251"));
-                            // Версии
-                            bytes.reset();
-                            TextDatabase.SaveVersions(bw, g.MyDatabase);
-                            bw.flush();
-                            zipStream.write(bytes.toByteArray());
-                            // Сообщения
-                            bytes.reset();
-                            TextDatabase.SaveSendMessages(bw, getContentResolver(), g.MyDatabase, m_bExcludeImageMessages);
-                            bw.flush();
-                            zipStream.write(bytes.toByteArray());
-                            // Заказы отправляемые
-                            bytes.reset();
-                            TextDatabase.SaveSendOrders(bw, getContentResolver(), g.MyDatabase, uuids);
-                            bw.flush();
-                            zipStream.write(bytes.toByteArray());
-                            // Подтверждение сумм реализаций на основании заказов
-                            if ((g.Common.PRODLIDER || g.Common.TANDEM) && g.MyDatabase.m_acks_shipping_sums.size() > 0) {
-                                bytes.reset();
-                                bw.write("##SUM_SHIPPING_NOTIFICATIONS##\r\n");
-                                for (Map.Entry<UUID, Double> it : g.MyDatabase.m_acks_shipping_sums.entrySet()) {
-                                    bw.write(String.format("%s#%.2f\r\n", it.getKey().toString(), it.getValue()));
-                                }
-                                bw.flush();
-                                zipStream.write(bytes.toByteArray());
-                                // Очистка перенесена ниже
-                                //g.MyDatabase.m_acks_shipping_sums.clear();
-                            }
-                            // Платежи отправляемые
-                            if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.ISTART || g.Common.FACTORY) {
-                                bytes.reset();
-                                TextDatabase.SaveSendPayments(bw, getContentResolver(), g.MyDatabase, uuidsPayments);
-                                bw.flush();
-                                zipStream.write(bytes.toByteArray());
-                            }
-                            // Возвраты отправляемые
-                            bytes.reset();
-                            TextDatabase.SaveSendRefunds(bw, getContentResolver(), g.MyDatabase, uuidsRefunds);
-                            bw.flush();
-                            zipStream.write(bytes.toByteArray());
-                            // Визиты отправляемые
-                            bytes.reset();
-                            TextDatabase.SaveSendVisits(bw, getContentResolver(), g.MyDatabase, idsVisits);
-                            bw.flush();
-                            zipStream.write(bytes.toByteArray());
-                            // Дистрибьюции отправляемые
-                            if (g.Common.PRODLIDER || g.Common.TANDEM) {
-                                bytes.reset();
-                                TextDatabase.SaveSendDistribs(bw, getContentResolver(), g.MyDatabase, uuidsDistribs);
-                                bw.flush();
-                                zipStream.write(bytes.toByteArray());
-                            }
-                            // Раздел "Разное"
-                            if (g.Common.PRODLIDER) {
-                                bytes.reset();
-                                bw.write("##MISC##\r\n");
-                                bw.write(String.format("DeviceName=%s\r\n", Common.getDeviceName()));
-                                String fcm_instanceId=pref.getString("fcm_instanceId", "");
-                                if (fcm_instanceId!=null&&!fcm_instanceId.isEmpty())
-                                {
-                                    bw.write(String.format("FCM_InstanceId=%s\r\n", fcm_instanceId));
-                                }
-                                bw.flush();
-                                zipStream.write(bytes.toByteArray());
-                            }
-
                             // увеличиваем счетчик отправленных файлов
                             g.MyDatabase.m_sent_count++;
                             ContentValues cv_ver = new ContentValues();
@@ -8096,26 +8036,99 @@ public class MainActivity extends AppCompatActivity
                             cv_ver.put("ver", g.MyDatabase.m_sent_count);
                             getContentResolver().insert(MTradeContentProvider.VERSIONS_CONTENT_URI, cv_ver);
                             //
-                            if (g.Common.PRODLIDER || g.Common.TANDEM) {
-                                // GPS координаты
+
+                            // Те, кому пока еще нужен текстовый файл выгрузки
+                            if (!g.Common.PRODLIDER && !g.Common.PRAIT && !g.Common.FACTORY) {
+                                // Текстовый файл
+                                ZipEntry ze = new ZipEntry("eout.txt");
+                                zipStream.putNextEntry(ze);
+                                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(bytes, "cp1251"));
+                                // Версии
                                 bytes.reset();
-                                bw.write("##GPS##\r\n");
-                                TextDatabase.SaveSendGps(bw, getContentResolver(), g.MyDatabase, g.MyDatabase.m_sent_count);
+                                TextDatabase.SaveVersions(bw, g.MyDatabase);
                                 bw.flush();
                                 zipStream.write(bytes.toByteArray());
-                            }
-                            // Конец файла
-                            bytes.reset();
-                            bw.write("##EOF##");
-                            bw.flush();
-                            zipStream.write(bytes.toByteArray());
+                                // Сообщения
+                                bytes.reset();
+                                TextDatabase.SaveSendMessages(bw, getContentResolver(), g.MyDatabase, m_bExcludeImageMessages);
+                                bw.flush();
+                                zipStream.write(bytes.toByteArray());
+                                // Заказы отправляемые
+                                bytes.reset();
+                                TextDatabase.SaveSendOrders(bw, getContentResolver(), g.MyDatabase, uuids);
+                                bw.flush();
+                                zipStream.write(bytes.toByteArray());
+                                // Подтверждение сумм реализаций на основании заказов
+                                if ((g.Common.PRODLIDER || g.Common.TANDEM) && g.MyDatabase.m_acks_shipping_sums.size() > 0) {
+                                    bytes.reset();
+                                    bw.write("##SUM_SHIPPING_NOTIFICATIONS##\r\n");
+                                    for (Map.Entry<UUID, Double> it : g.MyDatabase.m_acks_shipping_sums.entrySet()) {
+                                        bw.write(String.format("%s#%.2f\r\n", it.getKey().toString(), it.getValue()));
+                                    }
+                                    bw.flush();
+                                    zipStream.write(bytes.toByteArray());
+                                    // Очистка перенесена ниже
+                                    //g.MyDatabase.m_acks_shipping_sums.clear();
+                                }
+                                // Платежи отправляемые
+                                if (g.Common.PRODLIDER || g.Common.TITAN || g.Common.TANDEM || g.Common.ISTART || g.Common.FACTORY) {
+                                    bytes.reset();
+                                    TextDatabase.SaveSendPayments(bw, getContentResolver(), g.MyDatabase, uuidsPayments);
+                                    bw.flush();
+                                    zipStream.write(bytes.toByteArray());
+                                }
+                                // Возвраты отправляемые
+                                bytes.reset();
+                                TextDatabase.SaveSendRefunds(bw, getContentResolver(), g.MyDatabase, uuidsRefunds);
+                                bw.flush();
+                                zipStream.write(bytes.toByteArray());
+                                // Визиты отправляемые
+                                bytes.reset();
+                                TextDatabase.SaveSendVisits(bw, getContentResolver(), g.MyDatabase, idsVisits);
+                                bw.flush();
+                                zipStream.write(bytes.toByteArray());
+                                // Дистрибьюции отправляемые
+                                if (g.Common.PRODLIDER || g.Common.TANDEM) {
+                                    bytes.reset();
+                                    TextDatabase.SaveSendDistribs(bw, getContentResolver(), g.MyDatabase, uuidsDistribs);
+                                    bw.flush();
+                                    zipStream.write(bytes.toByteArray());
+                                }
+                                // Раздел "Разное"
+                                if (g.Common.PRODLIDER) {
+                                    bytes.reset();
+                                    bw.write("##MISC##\r\n");
+                                    bw.write(String.format("DeviceName=%s\r\n", Common.getDeviceName()));
+                                    String fcm_instanceId = pref.getString("fcm_instanceId", "");
+                                    if (fcm_instanceId != null && !fcm_instanceId.isEmpty()) {
+                                        bw.write(String.format("FCM_InstanceId=%s\r\n", fcm_instanceId));
+                                    }
+                                    bw.flush();
+                                    zipStream.write(bytes.toByteArray());
+                                }
 
-                            zipStream.closeEntry();
-                            zipStream.flush();
+                                if (g.Common.PRODLIDER || g.Common.TANDEM) {
+                                    // GPS координаты
+                                    bytes.reset();
+                                    bw.write("##GPS##\r\n");
+                                    TextDatabase.SaveSendGps(bw, getContentResolver(), g.MyDatabase, g.MyDatabase.m_sent_count);
+                                    bw.flush();
+                                    zipStream.write(bytes.toByteArray());
+                                }
+                                // Конец файла
+                                bytes.reset();
+                                bw.write("##EOF##");
+                                bw.flush();
+                                zipStream.write(bytes.toByteArray());
+
+                                zipStream.closeEntry();
+                                zipStream.flush();
+                            }
 
                             if (g.Common.PRODLIDER||g.Common.VK||g.Common.PRAIT||g.Common.FACTORY) {
                                 // XML файл
-                                ze = new ZipEntry("versions.xml");
+                                ZipEntry ze = new ZipEntry("versions.xml");
                                 zipStream.putNextEntry(ze);
                                 TextDatabase.SaveVersionsXML(zipStream, g.MyDatabase);
                                 zipStream.closeEntry();

@@ -9,4 +9,6 @@
     <!-- Magic print-->
     <dimen name="view_width_small">1dp</dimen>
 
+    <dimen name="alert_def_padding">18dp</dimen>
+
 </resources>

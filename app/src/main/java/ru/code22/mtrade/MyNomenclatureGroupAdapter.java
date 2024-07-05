@@ -23,7 +23,7 @@ public class MyNomenclatureGroupAdapter extends BaseAdapter {
 
     private RedrawListLisnener mListener;
 
-    static class Tree {String _id; String id; String parent_id; String descr; int level;};
+    static class Tree {String _id; String id; String parent_id; String descr; int level; boolean dont_use_in_hierarchy; };
 
     Context context;
     LayoutInflater inflater;
