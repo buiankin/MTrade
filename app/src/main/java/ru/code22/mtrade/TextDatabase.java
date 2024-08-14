@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -11912,6 +11913,12 @@ public class TextDatabase {
 		serializer.startTag(null, "Versions");
 		//serializer.attribute(null, "uid", uid.toString());
 		//serializer.attribute(null, "_version", String.format("%d", version));
+
+		TimeZone tz=TimeZone.getDefault();
+		serializer.attribute(null, "time_zone_id", tz.getID());
+		serializer.attribute(null, "time_zone_descr", tz.getDisplayName(false, TimeZone.SHORT));
+		serializer.attribute(null, "time_zone_descr_daylight", tz.getDisplayName(true, TimeZone.SHORT));
+		serializer.attribute(null, "time_in_pda", Common.getDateTimeAsString14(null));
 
 		serializer.attribute(null, "mtrade_version", String.format("%d", g.Common.m_mtrade_version));
 		serializer.attribute(null, "nomenclature_version", String.format("%d", g.Common.ZERO_MINUS_VER(myBase.m_nomenclature_version)));

@@ -220,7 +220,7 @@ JNIEXPORT jint JNICALL Java_ru_code22_mtrade_NativeCallsClass_convertJpegFile
             for (i=textLeft; i<textLeft+textWidth*scaleText; i++)
             {
                 // R,G,B
-            	int alpha=textData[((i-textLeft)/scaleText+textWidth*((dcinfo.output_scanline-textTop)/scaleText))*4+3]&0x0FF; // не всякий случай, если байт знаковое например
+            	int alpha=textData[((i-textLeft)/scaleText+textWidth*((dcinfo.output_scanline-textTop)/scaleText))*4+3]&0x0FF; // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 buffer[0][i*3]=((buffer[0][i*3]&0xFF)*(255-alpha)+((textData[((i-textLeft)/scaleText+textWidth*((dcinfo.output_scanline-textTop)/scaleText))*4]&0xFF)*alpha))/255;
                 buffer[0][i*3+1]=((buffer[0][i*3+1]&0xFF)*(255-alpha)+((textData[((i-textLeft)/scaleText+textWidth*((dcinfo.output_scanline-textTop)/scaleText))*4+1]&0xFF)*alpha))/255;
                 buffer[0][i*3+2]=((buffer[0][i*3+2]&0xFF)*(255-alpha)+((textData[((i-textLeft)/scaleText+textWidth*((dcinfo.output_scanline-textTop)/scaleText))*4+2]&0xFF)*alpha))/255;
