@@ -536,5 +536,6 @@
     <string name="message_settings_loaded">Налаштування завантажено</string>
     <string name="message_settings_not_changed">Налаштування не змінено</string>
     <string name="message_ftp_server_refused_connection">FTP-сервер відмовився підключитися</string>
+    <string name="message_cannot_connect_to_server" formatted="false">Неможливо підключитися до сервера: %s</string>
 
 </resources>

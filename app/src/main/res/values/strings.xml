@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- tools:ignore="MissingTranslation" -->
 <resources xmlns:tools="http://schemas.android.com/tools" >
-    <string translatable="false" name="app_name">Mobile Trade 3.107</string>
-    <string translatable="false" name="app_label">Mobile Trade 3.107</string>
-    <string translatable="false" name="nav_header_title">MTrade 3.107</string>
+    <string translatable="false" name="app_name">Mobile Trade 3.108</string>
+    <string translatable="false" name="app_label">Mobile Trade 3.108</string>
+    <string translatable="false" name="nav_header_title">MTrade 3.108</string>
     <string translatable="false" name="nav_header_subtitle">denisbds71@gmail.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="search_hint">Search hint!</string>
@@ -232,6 +232,7 @@
 	<string name="message_file_error">File error</string>
 	<string name="message_file_not_sent">File not sent</string>
     <string name="message_file_not_sent_reply_code">File not sent, reply code: %d</string>
+    <string name="message_cannot_connect_to_server" formatted="false">Can\'t connect to server: %s</string>
 	<string name="message_cannot_authorize_on_server">Can\'t authorize on server</string>
 	<string name="message_cannot_enter_ftp_user_directory">Can\'t enter FTP user directory</string>
     <string name="message_ftp_server_refused_connection">FTP server refused connection</string>

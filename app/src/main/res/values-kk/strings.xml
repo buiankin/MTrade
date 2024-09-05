@@ -541,5 +541,6 @@
     <string name="message_settings_loaded">Параметрлер жүктелді</string>
     <string name="message_settings_not_changed">Параметрлер өзгертілмеген</string>
     <string name="message_ftp_server_refused_connection">FTP сервері қосылудан бас тартты</string>
+    <string name="message_cannot_connect_to_server" formatted="false">Серверге қосылу мүмкін емес: %s</string>
 
 </resources>

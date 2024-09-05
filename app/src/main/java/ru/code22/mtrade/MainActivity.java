@@ -28,7 +28,6 @@ package ru.code22.mtrade;
 
 // http://developer.android.com/guide/practices/screen-compat-mode.html
 
-import static ru.code22.mtrade.Common.isPortOpen;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -7099,26 +7098,6 @@ public class MainActivity extends AppCompatActivity
             int mode = (Integer) params[0];
             textToLog.clear();
 
-            // http://chizztectep.blogspot.ru/2011/07/java-ftp-ftp-client.html
-            FTPClient ftpClient = new FTPClient();
-
-            // 29.11.2022 убрал эти таймауты - это не то, что я думал, похоже))))
-            //ftpClient.setControlKeepAliveTimeout(120); // раз в 2 минуты отправлять пустую команду
-            //ftpClient.setControlKeepAliveReplyTimeout(120); // чем они отличаются, не знаю
-
-        	/*
-        	HostnameResolver resolver=new HostnameResolver() {
-				@Override
-				public String resolve(String hostname) throws UnknownHostException {
-					// Тут должен возвращать IP адрес на самом деле
-					return hostname;
-				}
-			};
-			*/
-            //ftpClient.setPassiveNatWorkaroundStrategy(resolver);
-            //ftpClient.setPassiveNatWorkaroundStrategy(null);
-            //ftpClient.setCharset(Charset.forName("cp1251"));
-            //ftpClient.setAutodetectUTF8(true);
             ArrayList<UUID> sales_uuids = null;
             int sales_version = -1;
 
@@ -7158,57 +7137,77 @@ public class MainActivity extends AppCompatActivity
                 return null;
             }
 
-            String ftp_address=g.m_FTP_server_address;
+            // http://chizztectep.blogspot.ru/2011/07/java-ftp-ftp-client.html
+            FTPClient ftpClient = new FTPClient();
 
-            if (!g.m_FTP_server_address_spare.isEmpty())
-            {
-                // 10 секунд
-                int timeout=10000;
-                boolean mainServerAvaliable;
-                // Проверяем доступность основного сервера
-                int portIndex = g.m_FTP_server_address.indexOf(':');
-                if (portIndex < 0) {
-                    mainServerAvaliable=isPortOpen(g.m_FTP_server_address.trim(), 21, timeout);
-                } else {
-                    mainServerAvaliable=isPortOpen(g.m_FTP_server_address.substring(0, portIndex).trim(), Integer.parseInt(g.m_FTP_server_address.substring(portIndex + 1)), timeout);
+            // 29.11.2022 убрал эти таймауты - это не то, что я думал, похоже))))
+            //ftpClient.setControlKeepAliveTimeout(120); // раз в 2 минуты отправлять пустую команду
+            //ftpClient.setControlKeepAliveReplyTimeout(120); // чем они отличаются, не знаю
+
+        	/*
+        	HostnameResolver resolver=new HostnameResolver() {
+				@Override
+				public String resolve(String hostname) throws UnknownHostException {
+					// Тут должен возвращать IP адрес на самом деле
+					return hostname;
+				}
+			};
+			*/
+            //ftpClient.setPassiveNatWorkaroundStrategy(resolver);
+            //ftpClient.setPassiveNatWorkaroundStrategy(null);
+            //ftpClient.setCharset(Charset.forName("cp1251"));
+            //ftpClient.setAutodetectUTF8(true);
+
+            // 10 секунд
+            ftpClient.setConnectTimeout(10000);
+
+//        } catch (InterruptedException e) {
+//            textToLog.add(getString(R.string.ftp_message_interrupted) + " " + e.toString());
+//            publishProgress(-2, textToLog.size());
+//            Thread.currentThread().interrupt();
+//        } catch (Exception e) {
+//            // Ошибка
+//            textToLog.add(getString(R.string.ftp_message_error) + " " + e.toString());
+//            publishProgress(-2, textToLog.size());
+//        }
+
+            Exception connectError=null;
+            boolean connected=false;
+            // Если оба адреса пустые, то пользователь увидит это, поэтому инициализируем первым значением
+            String ftp_address=g.m_FTP_server_address;
+            String currentAddress=g.m_FTP_server_address;
+
+            try {
+                for (int i=0; i<2; i++) {
+                    if (i==1) {
+                        currentAddress=g.m_FTP_server_address_spare;
+                    }
+                    if (!currentAddress.isEmpty()) {
+                        int portIndex = currentAddress.indexOf(':');
+                        if (portIndex < 0) {
+                            ftpClient.connect(currentAddress.trim());
+                        } else {
+                            ftpClient.connect(currentAddress.substring(0, portIndex).trim(), Integer.parseInt(currentAddress.substring(portIndex + 1)));
+                        }
+                        ftp_address=currentAddress;
+                        connected=true;
+                        break;
+                    }
                 }
-                if (!mainServerAvaliable) {
-                    // Проверяем доступность резервного сервера
-                    boolean spareServerAvaliable;
-                    portIndex = g.m_FTP_server_address_spare.indexOf(':');
-                    if (portIndex < 0) {
-                        spareServerAvaliable=isPortOpen(g.m_FTP_server_address_spare.trim(), 21, timeout);
-                    } else {
-                        spareServerAvaliable=isPortOpen(g.m_FTP_server_address_spare.substring(0, portIndex).trim(), Integer.parseInt(g.m_FTP_server_address_spare.substring(portIndex + 1)), timeout);
-                    }
-                    if (spareServerAvaliable) {
-                        ftp_address=g.m_FTP_server_address_spare;
-                    }
+            } catch (SocketException e) {
+                // Интересует только первая ошибка, при подключении к основному серверу, или
+                // к резервному, если основной не указан
+                if (connectError==null) {
+                    ftp_address=currentAddress;
+                    connectError = e;
+                }
+            } catch (IOException e) {
+                if (connectError==null) {
+                    ftp_address=currentAddress;
+                    connectError = e;
                 }
             }
 
-
-
-//            boolean connectedImmediately=false;
-//            // Если указан резервный сервер, то сначала пытаемся подключиться к основному серверу
-//            // Потом к резервному
-//            // А потом еще раз к основному, уже в следующей попытке-исключении
-//            if (!g.m_FTP_server_address_spare.isEmpty()) {
-//                for (int i = 0; i < 2; i++) {
-//                    try {
-//                        String ftp_address = i == 0 ? g.m_FTP_server_address : g.m_FTP_server_address_spare;
-//                        int portIndex = ftp_address.indexOf(':');
-//                        if (portIndex < 0) {
-//                            ftpClient.connect(ftp_address.trim());
-//                        } else {
-//                            ftpClient.connect(ftp_address.substring(0, portIndex).trim(), Integer.parseInt(ftp_address.substring(portIndex + 1)));
-//                        }
-//                        connectedImmediately = true;
-//                        break;
-//                    } catch (Exception e) {
-//                    }
-//                }
-//            }
             try {
        			/*
        			// read the initial response (aka "Welcome message")
@@ -7218,25 +7217,13 @@ public class MainActivity extends AppCompatActivity
     			publishProgress(-2, textToLog.size());
     			*/
 
-                // Если выше не было успешного подключения, то подключаемся к основному, на этот раз
-                // с сообщением об ошибке
-//                if (!connectedImmediately) {
-//                    String ftp_address = g.m_FTP_server_address;
-//                    int portIndex = ftp_address.indexOf(':');
-//                    if (portIndex < 0) {
-//                        ftpClient.connect(ftp_address.trim());
-//                    } else {
-//                        ftpClient.connect(ftp_address.substring(0, portIndex).trim(), Integer.parseInt(ftp_address.substring(portIndex + 1)));
-//                    }
-//                }
-
-                int portIndex = ftp_address.indexOf(':');
-                if (portIndex < 0) {
-                    ftpClient.connect(ftp_address.trim());
-                } else {
-                    ftpClient.connect(ftp_address.substring(0, portIndex).trim(), Integer.parseInt(ftp_address.substring(portIndex + 1)));
+                if (!connected) {
+                    if (connectError!=null) {
+                        throw new RuntimeException(connectError);
+                    } else {
+                        throw new Exception(getString(R.string.message_cannot_connect_to_server, ftp_address));
+                    }
                 }
-
 
                 if (!ftpClient.login(decodeLoginOrPassword(g.m_FTP_server_user, g.m_FTP_server_directory), decodeLoginOrPassword(g.m_FTP_server_password, g.m_FTP_server_directory)))
                     throw new Exception(getString(R.string.message_cannot_authorize_on_server));

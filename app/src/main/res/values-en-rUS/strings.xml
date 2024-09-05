@@ -399,14 +399,12 @@
     <string name="currency_rur">RUR</string>
     <string name="currency_uah">UAH</string>
     <string name="currency_kzt">KZT</string>
-    <string translatable="false" name="currency_usd">$</string>
     <string name="currency_default">$</string>
 
 
     <string name="currency_format_rur" formatted="false">%s RUR</string>
     <string name="currency_format_uah" formatted="false">%s UAH</string>
     <string name="currency_format_kzt" formatted="false">%s KZT</string>
-    <string translatable="false" name="currency_format_usd" formatted="false">$%s</string>
     <string name="currency_format_default" formatted="false">$%s</string>
 
     <string name="app_theme">App theme</string>
@@ -565,6 +563,7 @@
     <string name="message_settings_loaded">Settings loaded</string>
     <string name="message_settings_not_changed">Settings not changed</string>
     <string name="message_ftp_server_refused_connection">FTP server refused connection</string>
+    <string name="message_cannot_connect_to_server" formatted="false">Can\'t connect to server: %s</string>
 
 
 </resources>

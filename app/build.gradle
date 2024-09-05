@@ -35,8 +35,8 @@ android {
         minSdkVersion 24
         targetSdkVersion 34
         compileSdk 34
-        versionCode 3107
-        versionName "3.107"
+        versionCode 3108
+        versionName "3.108"
         //testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk{
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
@@ -92,7 +92,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.fragment:fragment:1.8.1'
+    implementation 'androidx.fragment:fragment:1.8.3'
 
     implementation 'com.android.support:multidex'
 
@@ -110,7 +110,7 @@ dependencies {
     //implementation "commons-io:commons-io:2.7"
 
     //implementation 'android.arch.work:work-runtime:1.0.1'
-    implementation 'androidx.work:work-runtime:2.9.0'
+    implementation 'androidx.work:work-runtime:2.9.1'
     implementation 'androidx.preference:preference:1.2.1'
 
     // хотя пока не используется
@@ -129,7 +129,7 @@ dependencies {
 
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
 
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.2'
 
     //testImplementation 'junit:junit:4.13.2'
     //androidTestImplementation 'androidx.test.ext:junit:1.1.5'

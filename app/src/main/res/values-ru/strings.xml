@@ -540,5 +540,6 @@
     <string name="message_settings_loaded">Настройки загружены</string>
     <string name="message_settings_not_changed">Настройки не изменились</string>
     <string name="message_ftp_server_refused_connection">Отказ в подключении к FTP серверу</string>
+    <string name="message_cannot_connect_to_server">Невозможно подключиться к серверу: %s</string>
 
 </resources>
