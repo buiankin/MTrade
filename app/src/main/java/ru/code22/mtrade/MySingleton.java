@@ -109,7 +109,7 @@ public class MySingleton {
 				m_preferences_from_ini=true;
 				if (!strFtpAddress.equals("#")&&!sharedPreferences.getString("server_address", "").equals(strFtpAddress))
 					bSettingsChanged=true;
-				if (!strFtpAddressSpare.equals("#")&&!sharedPreferences.getString("server_address_spare", "").equals(strFtpAddress))
+				if (strFtpAddressSpare!=null&&!strFtpAddressSpare.equals("#")&&!sharedPreferences.getString("server_address_spare", "").equals(strFtpAddressSpare))
 					bSettingsChanged=true;
 				if (!strFtpUser.equals("#")&&!sharedPreferences.getString("server_user", "").equals(strFtpUser))
 					bSettingsChanged=true;
@@ -131,7 +131,7 @@ public class MySingleton {
 		        SharedPreferences.Editor editor = sharedPreferences.edit();
 		        if (!strFtpAddress.equals("#"))
 		        	editor.putString("server_address", strFtpAddress);
-				if (!strFtpAddress.equals("#"))
+				if (strFtpAddressSpare!=null&&!strFtpAddress.equals("#"))
 					editor.putString("server_address_spare", strFtpAddressSpare);
 		        if (!strFtpUser.equals("#"))
 		        	editor.putString("server_user", strFtpUser);

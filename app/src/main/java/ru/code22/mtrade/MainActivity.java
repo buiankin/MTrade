@@ -7139,6 +7139,7 @@ public class MainActivity extends AppCompatActivity
 
             // http://chizztectep.blogspot.ru/2011/07/java-ftp-ftp-client.html
             FTPClient ftpClient = new FTPClient();
+            ftpClient.setRemoteVerificationEnabled(false);
 
             // 29.11.2022 убрал эти таймауты - это не то, что я думал, похоже))))
             //ftpClient.setControlKeepAliveTimeout(120); // раз в 2 минуты отправлять пустую команду
