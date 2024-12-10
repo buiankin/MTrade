@@ -4956,6 +4956,12 @@ public class TextDatabase {
 								it.quantity = 0.0;
 							}
 						}
+					} else {
+						String createIfNotFound=xpp.getAttributeValue(null, "create_order_if_not_found");
+						if (createIfNotFound!=null && createIfNotFound.equals("true")) {
+							bRecordValid = true;
+						}
+
 					}
 					cursor.close();
 

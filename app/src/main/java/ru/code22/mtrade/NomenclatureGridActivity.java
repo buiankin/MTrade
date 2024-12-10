@@ -375,6 +375,11 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
         mGroupAdapter.setOnRedrawListListener(new MyNomenclatureGroupAdapter.RedrawListLisnener() {
             @Override
             public void onRestartLoader() {
+                // 10.12.2024 Заляп, скпопировал из NomenclatureActivity,
+                // там комментарий, что из-за того это сделано, что пришлось вернуть на место старый вариант иерархии
+                m_group_id=mGroupAdapter.m_group_id;
+                m_group_ids=mGroupAdapter.m_group_ids;
+                //
                 LoaderManager.getInstance(NomenclatureGridActivity.this).restartLoader(NOMENCLATURE_LOADER_ID, null, NomenclatureGridActivity.this);
             }
         });
