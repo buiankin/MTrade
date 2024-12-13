@@ -9604,6 +9604,8 @@ public class TextDatabase {
 		// Не знаю, что это, но пусть будет
 		serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
 
+		serializer.startTag(null, "SumShippingNotifications");
+
 		// один раз отправляем и забываем. если еще раз придут отсутствующие заявки
 		// тогда отправятся еще раз
 		//QMap<QUuid, int>::iterator it_e;
@@ -9620,6 +9622,8 @@ public class TextDatabase {
 			serializer.endTag(null, "Entry");
 
 		}
+
+		serializer.endTag(null, "SumShippingNotifications");
 
 		serializer.endDocument();
 		serializer.flush();
