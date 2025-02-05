@@ -35,8 +35,8 @@ android {
         minSdkVersion 24
         targetSdkVersion 35
         compileSdk 35
-        versionCode 3108
-        versionName "3.108"
+        versionCode 3109
+        versionName "3.109"
         //testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk{
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'

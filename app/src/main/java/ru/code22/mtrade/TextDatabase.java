@@ -4858,6 +4858,7 @@ public class TextDatabase {
 					cv.put("order_for_sorting", Integer.parseInt(StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "order_for_sorting"), "-1")));
 					cv.put("group_of_analogs", Integer.parseInt(StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "group_of_analogs"), "-1")));
 					cv.put("nomenclature_color", Integer.parseInt(StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "color"), "0")));
+					cv.put("backorder", Integer.parseInt(StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "backorder"), "0")));
 					// с 06.02.2019
 					// после загрузки номенклатуры все равно происходит сканирование каталога с фото
 					cv.put("image_file", "");

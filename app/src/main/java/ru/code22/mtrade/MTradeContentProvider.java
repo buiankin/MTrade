@@ -214,7 +214,7 @@ public class MTradeContentProvider extends ContentProvider {
 	// БД
 	//private static final String DIR = "/sdcard";
     public static final String DB_NAME = "mdata.db";
-    public static final int DB_VERSION = 73;
+    public static final int DB_VERSION = 74;
     
     // Таблица
     private static final String ORDERS_TABLE = "orders";
@@ -1154,6 +1154,7 @@ public class MTradeContentProvider extends ContentProvider {
 		    		"order_for_sorting INT," +
 		    		"group_of_analogs INT," +
 		    		"nomenclature_color int default 0,"+
+                    "backorder int default 0,"+
                     "image_width INT,"+
                     "image_height INT,"+
                     "image_file_size INT,"+
@@ -2914,6 +2915,11 @@ public class MTradeContentProvider extends ContentProvider {
 //                        editor.commit();
 //                    }
 
+                }
+
+                if (oldVersion<74) {
+                    db.execSQL("alter table nomenclature add column backorder int default 0");
+                    db.execSQL("update nomenclature set backorder=0");
                 }
 
 

@@ -1069,7 +1069,10 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
         switch(id) {
             case NOMENCLATURE_LOADER_ID: {
 
-                String conditionString = null;
+                //String conditionString = null;
+                // Начиная с версии 3.109
+                String conditionString = "backorder<>1";
+                //
                 ArrayList<String> conditionArgs = new ArrayList<>();
 
                 String orderString=null;
@@ -1177,7 +1180,7 @@ public class NomenclatureGridActivity extends AppCompatActivity implements Loade
                     }
 
                 }
-                // TODO вспомнить, в каких случаях isFolder=3 (иерархия?)
+                // TODO вспомнить, в каких случаях isFolder=3 (иерархия?). Может быть, это корневой элемент
                 if (g.Common.PHARAOH)
                 {
                     return new CursorLoader(this, MTradeContentProvider.NOMENCLATURE_LIST_CONTENT_URI,
