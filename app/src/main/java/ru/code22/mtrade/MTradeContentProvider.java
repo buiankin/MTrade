@@ -214,7 +214,7 @@ public class MTradeContentProvider extends ContentProvider {
 	// БД
 	//private static final String DIR = "/sdcard";
     public static final String DB_NAME = "mdata.db";
-    public static final int DB_VERSION = 74;
+    public static final int DB_VERSION = 75;
     
     // Таблица
     private static final String ORDERS_TABLE = "orders";
@@ -1049,6 +1049,7 @@ public class MTradeContentProvider extends ContentProvider {
                         "descr text," +
                         "price_type_id text," +
                         "default_manager_id text," +
+                        "default_stock_id text," +
                         "sale_id text," +
                         "kredit_days int," +
                         "kredit_sum double," +
@@ -2920,6 +2921,11 @@ public class MTradeContentProvider extends ContentProvider {
                 if (oldVersion<74) {
                     db.execSQL("alter table nomenclature add column backorder int default 0");
                     db.execSQL("update nomenclature set backorder=0");
+                }
+
+                if (oldVersion<75) {
+                    db.execSQL("alter table agreements30 add column default_stock_id text default ''");
+                    db.execSQL("update agreements30 set default_stock_id=''");
                 }
 
 

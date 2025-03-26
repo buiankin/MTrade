@@ -1065,6 +1065,7 @@ public class TextDatabase {
 					cv.put("kredit_sum", ar.kredit_sum);
 					cv.put("organization_id", ar.organization_id.toString());
 					cv.put("default_manager_id", ar.default_manager_id.toString());
+					cv.put("default_stock_id", "");
 					cv.put("sale_id", ar.sale_id.toString());
 					cv.put("flags", ar.flags);
 
@@ -3847,6 +3848,11 @@ public class TextDatabase {
 		E_MODE_AGREEMENT_RECORD,
 		E_MODE_AGREEMENT_TO_DELETE,
 
+		E_MODE_AGREEMENTS30,
+		E_MODE_AGREEMENT30_RECORD,
+		E_MODE_AGREEMENT30_TO_DELETE,
+
+
 		E_MODE_CLIENTS,
 		E_MODE_CLIENT_RECORD,
 		E_MODE_CLIENT_TO_DELETE,
@@ -4164,6 +4170,116 @@ public class TextDatabase {
 		// Загружены договоры
 		return new ResultLoadXML(true, XMLMode.E_MODE_AGREEMENTS, context.getString(R.string.message_agreements_loaded));
 	}
+
+	static ResultLoadXML LoadXML_Agreements30(Context context, MyDatabase myBase, XmlPullParser xpp, boolean bUpdateMode) throws IOException, XmlPullParserException {
+
+		ContentResolver contentResolver=context.getContentResolver();
+
+		List<XMLMode> stack = new ArrayList<XMLMode>();
+		XMLMode xmlmode = XMLMode.E_MODE_AGREEMENTS30;
+
+		final int BULK_SIZE = 300;
+		int bulk_idx = 0;
+		ContentValues[] values = new ContentValues[BULK_SIZE];
+
+		if (bUpdateMode) {
+			int ver = Integer.parseInt(xpp.getAttributeValue(null, "ver"));
+			if (myBase.m_agreements_version >= ver && ver >= 0) {
+				// версия старая или текущая, не загружаем
+				return new ResultLoadXML(false, XMLMode.E_MODE_AGREEMENTS30);
+			}
+			if (ver < 0) {
+				myBase.m_agreements_version = -ver;
+				contentResolver.delete(MTradeContentProvider.AGREEMENTS30_CONTENT_URI, null, null);
+				bUpdateMode = false;
+			} else
+				myBase.m_agreements_version = ver;
+		} else {
+			contentResolver.delete(MTradeContentProvider.AGREEMENTS30_CONTENT_URI, null, null);
+			myBase.m_agreements30_version = Integer.parseInt(xpp.getAttributeValue(null, "ver"));
+		}
+
+		//int agreements30_system_version = Integer.parseInt(StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "system_ver"), "0"));
+
+		while (true) {
+			int eventType = xpp.next();
+			if (eventType == XmlPullParser.START_TAG) {
+				stack.add(xmlmode);
+				//System.out.println("Start tag " + xpp.getName());
+				String name = xpp.getName();
+
+				if (xmlmode == XMLMode.E_MODE_AGREEMENTS30 && name.equals("AgreementToDelete")) {
+					xmlmode = XMLMode.E_MODE_AGREEMENT30_TO_DELETE;
+					if (bUpdateMode)
+					{
+						// запись с указанным ID надо удалить
+						//contentResolver.delete(MTradeContentProvider.AGREEMENTS30_CONTENT_URI, "id=?", new String[]{xpp.getAttributeValue(null, "agreement_id")});
+
+
+						// запись с указанным ID надо удалить
+						// соглашение+партнер
+						contentResolver.delete(MTradeContentProvider.AGREEMENTS30_CONTENT_URI, "id=? and and owner_id=?",
+								new String[]{xpp.getAttributeValue(null, "agreement_id"), xpp.getAttributeValue(null, "owner_id")}
+						);
+
+					}
+				} else if (xmlmode == XMLMode.E_MODE_AGREEMENTS30 && name.equals("Agreement")) {
+					xmlmode = XMLMode.E_MODE_AGREEMENT30_RECORD;
+
+					ContentValues cv = new ContentValues();
+					cv.clear();
+					cv.put("id", xpp.getAttributeValue(null, "agreement_id"));
+					cv.put("owner_id", xpp.getAttributeValue(null, "owner_id"));
+					cv.put("code", xpp.getAttributeValue(null, "code"));
+					cv.put("descr", xpp.getAttributeValue(null, "descr"));
+					cv.put("price_type_id", xpp.getAttributeValue(null, "price_type_id"));
+					cv.put("kredit_days", Integer.parseInt(StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "kredit_days"), "0")));
+					cv.put("kredit_sum", Double.parseDouble(StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "kredit_sum"), "0.0")));
+					cv.put("organization_id", xpp.getAttributeValue(null, "organization_id"));
+					cv.put("default_manager_id", xpp.getAttributeValue(null, "main_manager_id"));
+					cv.put("default_stock_id", xpp.getAttributeValue(null, "default_stock_id"));
+					cv.put("sale_id", StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "sale_id"), Constants.emptyID));
+					cv.put("flags", Integer.parseInt(StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "flags"), "0")));
+
+					values[bulk_idx] = cv;
+					bulk_idx++;
+					if (bulk_idx >= BULK_SIZE) {
+						contentResolver.bulkInsert(MTradeContentProvider.AGREEMENTS30_CONTENT_URI, values);
+						bulk_idx = 0;
+					}
+				}  else xmlmode=XMLMode.E_MODE_UNKNOWN;
+
+			} else if (eventType == XmlPullParser.END_TAG) {
+
+				if (xmlmode == XMLMode.E_MODE_AGREEMENTS30) {
+					if (bulk_idx > 0) {
+						ContentValues[] values_2 = new ContentValues[bulk_idx];
+						int i;
+						for (i = 0; i < bulk_idx; i++) {
+							values_2[i] = values[i];
+						}
+						contentResolver.bulkInsert(MTradeContentProvider.AGREEMENTS30_CONTENT_URI, values_2);
+					}
+
+					ContentValues cv = new ContentValues();
+					cv.clear();
+					cv.put("param", "AGREEMENTS");
+					cv.put("ver", myBase.m_agreements30_version);
+					Uri newUri = contentResolver.insert(MTradeContentProvider.VERSIONS_CONTENT_URI, cv);
+				}
+
+				// Закончилась вся номенклатура
+				if (stack.size() == 0)
+					break;
+				xmlmode = stack.get(stack.size() - 1);
+				stack.remove(stack.size() - 1);
+			}
+		}
+
+		// Загружены договоры
+		return new ResultLoadXML(true, XMLMode.E_MODE_AGREEMENTS30, context.getString(R.string.message_agreements30_loaded));
+	}
+
 
 
 	static ResultLoadXML LoadXML_Clients(Context context, MyDatabase myBase, XmlPullParser xpp, boolean bUpdateMode) throws IOException, XmlPullParserException {
@@ -7044,6 +7160,8 @@ public class TextDatabase {
 						result=LoadXML_Agents(context, myBase, xpp, bUpdateMode);
 					} else if (xmlmode == XMLMode.E_MODE_NODE && name.equals("Agreements")) {
 						result=LoadXML_Agreements(context, myBase, xpp, bUpdateMode);
+					} else if (xmlmode == XMLMode.E_MODE_NODE && name.equals("Agreements30")) {
+						result=LoadXML_Agreements30(context, myBase, xpp, bUpdateMode);
 					} else if (xmlmode == XMLMode.E_MODE_NODE && name.equals("Clients")) {
 						result=LoadXML_Clients(context, myBase, xpp, bUpdateMode);
 					} else if (xmlmode == XMLMode.E_MODE_NODE && name.equals("Curators")) {
