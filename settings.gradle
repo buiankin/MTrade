@@ -1,8 +1,14 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()
-        google()
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
         mavenCentral()
+        gradlePluginPortal()
     }
 }
 
@@ -12,6 +18,8 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url 'https://oss.sonatype.org/content/repositories/ksoap2-android-releases/' }
+        //maven { url = uri("https://jitpack.io") }
+
     }
 }
 
