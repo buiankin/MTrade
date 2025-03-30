@@ -46,7 +46,7 @@ public class MySingleton {
 		bNeedInitImageLoader=true;
 	}
 	
-    boolean readIniFile(Activity activity, @NotNull Context context, SharedPreferences sharedPreferences)
+    boolean readIniFile(Activity activity, Context context, SharedPreferences sharedPreferences)
     {
 		//if (android.os.Build.VERSION.SDK_INT< Build.VERSION_CODES.Q&&Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
 		if (true)
@@ -299,13 +299,8 @@ public class MySingleton {
 		SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(activity);
 		Common.m_app_theme=sharedPreferences.getString("app_theme", "DARK");
 		Common.m_currency=sharedPreferences.getString("currency", "DEFAULT");
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-			Common.m_locale=activity.getResources().getConfiguration().getLocales().get(0);
-		} else{
-			//noinspection deprecation
-			Common.m_locale=activity.getResources().getConfiguration().locale;
-		}
-		readIniFile(activity, activity, sharedPreferences);
+        Common.m_locale = activity.getResources().getConfiguration().getLocales().get(0);
+        readIniFile(activity, activity, sharedPreferences);
 		readPreferences(sharedPreferences);
 	}
 	

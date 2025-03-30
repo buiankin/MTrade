@@ -24,6 +24,7 @@ import ru.code22.mtrade.OrderPageFragment.onSomeEventListener;
 import ru.code22.mtrade.preferences.DatePreference;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -2187,6 +2188,7 @@ public boolean onKeyDown(int keyCode, KeyEvent event) {
 }
       
 // Alternative variant for API 5 and higher
+@SuppressLint("MissingSuperCall")
 @Override
 public void onBackPressed() {
 	onCloseActivity();

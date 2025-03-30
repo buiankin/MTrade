@@ -69,6 +69,8 @@ android {
     }
     packagingOptions {
         jniLibs {
+            // Это для того, чтобы совместимость с 16Кб ELF игнорировать, но это не работает
+            useLegacyPackaging true
             pickFirsts += ['lib/armeabi-v7a/libmain.so', 'lib/mips/libmain.so', 'lib/x86/libmain.so']
         }
     }
@@ -82,7 +84,7 @@ android {
         viewBinding true
         compose true
     }
-    ndkVersion '25.0.8775105'
+    ndkVersion '29.0.13113456 rc1'
     lint {
         abortOnError false
         checkReleaseBuilds false
@@ -150,6 +152,9 @@ dependencies {
     implementation platform(libs.androidx.compose.bom)
     implementation libs.androidx.material3
     implementation libs.androidx.ui.tooling.preview.android
+
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.data.store.core)
 
 
     coreLibraryDesugaring libs.desugar.jdk.libs

@@ -1,30 +1,32 @@
-package ru.code22.mtrade;
+package ru.code22.mtrade
 
-import android.content.Context;
+import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.SharedPreferencesMigration
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.multidex.MultiDexApplication
 
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.multidex.MultiDexApplication;
 
-public class Globals extends MultiDexApplication {
 
-	// Это чисто для того, чтобы получить контекст для выполнения запроса из PrefActivity, где нет контекста
-	private static Context context;
+class Globals : MultiDexApplication() {
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		RoboErrorReporter.bindReporter(this); // this, либо getApplicationContext()
-		MySingleton.initInstance();
+    override fun onCreate() {
+        super.onCreate()
+        RoboErrorReporter.bindReporter(this) // this, либо getApplicationContext()
+        MySingleton.initInstance()
 
-		// Make sure we use vector drawables
-		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        // Make sure we use vector drawables
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 
-		Globals.context = getApplicationContext();
-		//FirebaseApp.initializeApp(this);
-	}
+        appContext = getApplicationContext()
+        //FirebaseApp.initializeApp(this);
+    }
 
-	public static Context getAppContext() {
-		return Globals.context;
-	}
-
+    companion object {
+        // Это чисто для того, чтобы получить контекст для выполнения запроса из PrefActivity, где нет контекста
+        lateinit var appContext: Context
+            private set
+    }
 }
