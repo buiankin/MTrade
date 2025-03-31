@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.Menu
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,9 +22,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -30,7 +39,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -48,15 +62,35 @@ import ru.code22.mtrade.ui.theme.MTradeTheme
 
 
 class AgentsActivity: ComponentActivity() {
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-    @OptIn(ExperimentalMaterial3Api::class)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
-            MTradeTheme {
+            MainContent()
+        }
+    }
+
+
+    @Composable
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+
+    fun MainContent() {
+
+        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
+        var mDisplayMenu by remember { mutableStateOf(false) }
+        val mContext = LocalContext.current
+
+        val settingDataStore = DataStoreManager(this)
+
+        setContent {
+            MTradeTheme(darkTheme = true) {
                 Surface(
                     // on below line we are specifying modifier and color for our app
-                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
+                    modifier = Modifier.fillMaxSize()//, color = MaterialTheme.colorScheme.background
                 ) {
                     // on the below line we are specifying the theme as the scaffold.
                     Scaffold(
@@ -89,7 +123,34 @@ class AgentsActivity: ComponentActivity() {
                                 colors = TopAppBarDefaults.topAppBarColors(
                                     containerColor = MaterialTheme.colorScheme.primary
                                 ),
+                                actions = {
 
+                                    // Creating Icon button favorites, on click
+                                    // would create a Toast message
+                                    IconButton(onClick = { Toast.makeText(mContext, "Favorite", Toast.LENGTH_SHORT).show() }) {
+                                        Icon(Icons.Default.Favorite, "")
+                                    }
+
+                                    // Creating Icon button for dropdown menu
+                                    IconButton(onClick = { mDisplayMenu = !mDisplayMenu }) {
+                                        Icon(Icons.Default.MoreVert, "")
+                                    }
+
+                                    // Creating a dropdown menu
+                                    DropdownMenu(
+                                        expanded = mDisplayMenu,
+                                        onDismissRequest = { mDisplayMenu = false }
+                                    ) {
+
+                                        // Creating dropdown menu item, on click
+                                        // would create a Toast message
+                                        DropdownMenuItem(text = {Text("Settings")}, onClick = { Toast.makeText(mContext, "Settings", Toast.LENGTH_SHORT).show() })
+
+                                        // Creating dropdown menu item, on click
+                                        // would create a Toast message
+                                        DropdownMenuItem(text = {Text("Logout")}, onClick = { Toast.makeText(mContext, "Logout", Toast.LENGTH_SHORT).show() })
+                                    }
+                                }
                             )
                         }) { innerPadding ->
                         // on below line we are calling our method to display UI
@@ -148,7 +209,7 @@ class AgentsActivity: ComponentActivity() {
                             modifier = Modifier.padding(4.dp),
 
                             // on below line we are adding color for our text
-                            color = Color.Black, textAlign = TextAlign.Center
+                            //color = Color.Black, textAlign = TextAlign.Center
                         )
                         // on below line inside row we are adding spacer
                         Spacer(modifier = Modifier.width(5.dp))
@@ -165,13 +226,20 @@ class AgentsActivity: ComponentActivity() {
                             modifier = Modifier.padding(4.dp),
 
                             // on below line we are adding color for our text
-                            color = Color.Black, textAlign = TextAlign.Center
+                            //color = Color.Black, textAlign = TextAlign.Center
                         )
                     }
                 }
             }
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.agents, menu)
+        return true
+    }
+
 
     companion object {
         const val AGENTS_RESULT_OK = 1

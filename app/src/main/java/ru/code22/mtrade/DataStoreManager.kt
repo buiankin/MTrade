@@ -23,6 +23,9 @@ import kotlin.coroutines.CoroutineContext
 // по синтаксису больше всего подходит этот вариант
 // https://developermemos.com/posts/migrating-from-sharedpreferences-to-datastore
 
+// Здесь параметр context
+// https://www.boltuix.com/2022/09/dark-mode-for-android-app-in-kotlin.html
+
 // По умолчанию DARK
 //<item>Dark</item>
 //<item>Light</item>
@@ -43,16 +46,23 @@ import kotlin.coroutines.CoroutineContext
 //)
 
 /*
-private val DataStoreManager.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings", produceMigrations = { context->
+ */
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings", produceMigrations = { context->
     listOf(
         SharedPreferencesMigration(context, "${context.packageName}_preferences", setOf("app_theme", "currency"))
     )
 })
- */
 
-class DataStoreManager(private val dataStore1: DataStore<Preferences>) {
 
-    val appThemeFlow: Flow<String> = dataStore1.data
+//class DataStoreManager(private val dataStore1: DataStore<Preferences>) {
+class DataStoreManager(private val context: Context) {
+
+    // Еще один пример есть, у них здесь так
+    // private val appContext = context.applicationContext
+    // а потом в тексте, где у меня context, у них appContext
+
+    val appThemeFlow: Flow<String> = context.dataStore.data
         .catch { exception ->
             if (exception is IOException) {
                 emit(emptyPreferences())
@@ -64,13 +74,13 @@ class DataStoreManager(private val dataStore1: DataStore<Preferences>) {
             preferences[exampleKey] ?: "test"
         }
 
-    suspend fun getAppTheme() = dataStore1.data.map { preferences ->
+    suspend fun getAppTheme() = context.dataStore.data.map { preferences ->
         preferences[exampleKey] ?: "test"
     }.first()
 
 
 
-    suspend fun setAppTheme(appTheme: String) = dataStore1.edit { preferences ->
+    suspend fun setAppTheme(appTheme: String) = context.dataStore.edit { preferences ->
         preferences[exampleKey] = appTheme
     }
 
