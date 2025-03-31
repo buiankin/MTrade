@@ -6800,7 +6800,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
             val g = MySingleton.getInstance()
             if (m_bNeedCoord) {
                 m_bNeedCoord = false
-                m_locationManager!!.removeUpdates(locListener)
+                m_locationManager!!.removeUpdates(this)
             }
 
             var accept_coord_where: String?
@@ -7693,7 +7693,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
                         var bNothingReceived = true
                         // Получаем данные
                         var zipFile: File? = null
-                        var fileList: Array<FTPFile>? = null
+                        val fileList: Array<FTPFile>
                         run {
                             var zipFileName: String? = null
                             publishProgress(FTP_STATE_RECEIVE_ARCH, 0)
@@ -9745,10 +9745,9 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
                             }
                              */
                             //File zipFile=null;
-                            var fileList: Array<FTPFile>? = null
                             publishProgress(FTP_STATE_RECEIVE_IMAGE, 0)
                             Common.ftpEnterMode(ftpClient, !g.Common.VK)
-                            fileList = ftpClient.listFiles()
+                            val fileList = ftpClient.listFiles()
                             for (ftpFile in fileList) {
                                 val ftpName = ftpFile.getName()
                                 var id = ""
