@@ -6871,19 +6871,19 @@ public class TextDatabase {
 
 		if (bUpdateMode) {
 			int ver = Integer.parseInt(xpp.getAttributeValue(null, "ver"));
-			if (myBase.m_distribs_contracts_version >= ver && ver >= 0) {
+			if (myBase.m_distr_points_version >= ver && ver >= 0) {
 				// версия старая или текущая, не загружаем
 				return new ResultLoadXML(false);
 			}
 			if (ver < 0) {
-				myBase.m_distribs_contracts_version = -ver;
+				myBase.m_distr_points_version = -ver;
 				contentResolver.delete(MTradeContentProvider.DISTR_POINTS_CONTENT_URI, null, null);
 				bUpdateMode = false;
 			} else
-				myBase.m_distribs_contracts_version = ver;
+				myBase.m_distr_points_version = ver;
 		} else {
 			contentResolver.delete(MTradeContentProvider.DISTR_POINTS_CONTENT_URI, null, null);
-			myBase.m_distribs_contracts_version = Integer.parseInt(xpp.getAttributeValue(null, "ver"));
+			myBase.m_distr_points_version = Integer.parseInt(xpp.getAttributeValue(null, "ver"));
 		}
 
 		int distribs_contracts_system_version = Integer.parseInt(StringUtils.defaultIfBlank(xpp.getAttributeValue(null, "system_ver"), "0"));
@@ -6940,7 +6940,7 @@ public class TextDatabase {
 					ContentValues cv = new ContentValues();
 					cv.clear();
 					cv.put("param", "D_POINTS");
-					cv.put("ver", myBase.m_distribs_contracts_version);
+					cv.put("ver", myBase.m_distr_points_version);
 					Uri newUri = contentResolver.insert(MTradeContentProvider.VERSIONS_CONTENT_URI, cv);
 				}
 
