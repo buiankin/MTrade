@@ -12081,8 +12081,8 @@ public class TextDatabase {
 		serializer.attribute(null, "sales_loaded_version", String.format("%d", Common.ZERO_MINUS_VER(myBase.m_sales_loaded_version)));
 		serializer.attribute(null, "saldo_extended_version", String.format("%d", Common.ZERO_MINUS_VER(myBase.m_saldo_extended_version)));
 		//}
-		if (g.Common.PRODLIDER||g.Common.TANDEM||g.Common.TITAN||g.Common.FACTORY)
-		{
+		//if (g.Common.PRODLIDER||g.Common.TANDEM||g.Common.TITAN||g.Common.FACTORY)
+		//{
 			serializer.attribute(null, "vicarious_power_version", String.format("%d", Common.ZERO_MINUS_VER(myBase.m_vicarious_power_version)));
 			serializer.attribute(null, "sent_count", String.format("%d", myBase.m_sent_count));
 			serializer.attribute(null, "distribs_contracts_version", String.format("%d", Common.ZERO_MINUS_VER(myBase.m_distribs_contracts_version)));
@@ -12092,7 +12092,7 @@ public class TextDatabase {
 			serializer.attribute(null, "prices_agreements30_version", String.format("%d", Common.ZERO_MINUS_VER(myBase.m_prices_agreements30_version)));
 			serializer.attribute(null, "routes_version", String.format("%d", Common.ZERO_MINUS_VER(myBase.m_routes_version)));
 			serializer.attribute(null, "routes_dates_version", String.format("%d", Common.ZERO_MINUS_VER(myBase.m_routes_dates_version)));
-		}
+		//}
 
 		serializer.endTag(null, "Versions");
 
